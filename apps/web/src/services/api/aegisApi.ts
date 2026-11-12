@@ -24,7 +24,7 @@ function normalizeSnapshot(raw: any): SnapshotResponse {
     return {
       junction_id, camera_id, camera_status: status, traffic_lights: camera.traffic_lights || {}, phase: signalPhase(camera.traffic_lights),
       observed_count: camera.observed_vehicle_count ?? null,
-      lane_counts: camera.lane_counts ?? null, estimated_queue: null, queue_interval: null,
+      lane_counts: camera.lane_counts ?? null, estimated_queue: null, estimated_queue_status: 'not_published', queue_interval: null, queue_interval_status: 'not_published',
       frame_url: camera.frame_url ?? null, source: 'p2_camera_observation',
       data_quality: camera.lane_count_semantics || 'whole_image_detection',
     };

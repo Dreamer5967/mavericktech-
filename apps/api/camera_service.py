@@ -56,7 +56,8 @@ def dashboard_snapshot(snapshot: dict[str, Any]) -> dict[str, Any]:
             "phase":signal_phase(camera.get("traffic_lights")),"traffic_lights":camera.get("traffic_lights") or {},
             "observed_count":camera.get("observed_vehicle_count"),
             "lane_counts":camera.get("lane_counts"),"estimated_queue":None,
-            "queue_interval":None,"frame_url":camera.get("frame_url"),
+            "estimated_queue_status":"not_published","queue_interval":None,
+            "queue_interval_status":"not_published","frame_url":camera.get("frame_url"),
             "source":"p2_camera_observation","data_quality":camera.get("lane_count_semantics", "whole_image_detection"),
         })
     return {**snapshot,"notice":"ROI occupancy is not a queue estimate.","junctions":junctions}

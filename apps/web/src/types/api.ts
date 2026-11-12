@@ -15,7 +15,9 @@ export interface JunctionData {
   observed_count: number | null;
   lane_counts: Record<string, number | null> | null;
   estimated_queue: number | null;
+  estimated_queue_status: 'not_published' | 'published' | string;
   queue_interval: [number, number] | null;
+  queue_interval_status: 'not_published' | 'published' | string;
   frame_url: string | null;
   source: string;
   data_quality: string;
