@@ -95,11 +95,10 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
           <AlertCircle className="w-4 h-4 text-[#C0392B] shrink-0 mt-0.5" />
           <div className="flex-1 leading-relaxed">
             <span className="font-semibold text-[#C0392B]">Backend Connection Disconnected: </span>
-            <span>Cannot reach the mock server on http://127.0.0.1:8000. Data displayed below is frozen or cached.</span>
+            <span>Cannot reach the P2 observation feed on http://127.0.0.1:8765. Data displayed below is frozen or cached.</span>
           </div>
         </div>
       )}
     </div>
   );
 };
-

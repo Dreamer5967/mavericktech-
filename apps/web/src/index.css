@@ -10,3 +10,76 @@
     -webkit-font-smoothing: antialiased;
   }
 }
+
+.aegis-dashboard {
+  color-scheme: dark;
+}
+
+.aegis-dashboard [class~="bg-white"] {
+  background-color: #111a1d;
+}
+
+.aegis-dashboard [class~="bg-[#F5F5F5]"] {
+  background-color: #162125;
+}
+
+.aegis-dashboard [class~="bg-[#FAFAFA]"] {
+  background-color: #10191c;
+}
+
+.aegis-dashboard [class~="bg-[#FFFBEB]"],
+.aegis-dashboard [class~="bg-[#FFFEFA]"] {
+  background-color: #302716;
+}
+
+.aegis-dashboard [class~="bg-[#FDF2F2]"],
+.aegis-dashboard [class~="bg-[#FFF5F5]"] {
+  background-color: #321f21;
+}
+
+.aegis-dashboard [class~="bg-[#EAF4EE]"],
+.aegis-dashboard [class~="bg-[#F0FDF4]"] {
+  background-color: #142a21;
+}
+
+.aegis-dashboard [class~="border-[#E5E5E5]"] {
+  border-color: #29383a;
+}
+
+.aegis-dashboard [class~="text-[#171717]"] {
+  color: #e8f0ed;
+}
+
+.aegis-dashboard [class~="text-[#262626]"] {
+  color: #d3ded9;
+}
+
+.aegis-dashboard [class~="text-[#737373]"] {
+  color: #9ba9a5;
+}
+
+.aegis-dashboard [class~="text-[#A3A3A3]"] {
+  color: #879590;
+}
+
+.aegis-dashboard [class~="text-[#D4D4D4]"] {
+  color: #71807b;
+}
+
+.aegis-dashboard [class~="hover:bg-[#F5F5F5]"]:hover {
+  background-color: #1d2b2e;
+}
+
+.aegis-dashboard [class~="hover:bg-[#EAEAEA]"]:hover {
+  background-color: #263638;
+}
+
+.aegis-dashboard [class~="hover:text-[#171717]"]:hover {
+  color: #f4faf7;
+}
+
+.aegis-dashboard input,
+.aegis-dashboard textarea,
+.aegis-dashboard select {
+  color-scheme: dark;
+}

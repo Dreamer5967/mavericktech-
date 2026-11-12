@@ -6,6 +6,7 @@ import { PageHeader } from '../components/layout/PageHeader';
 import { ReadinessPanel } from '../components/readiness/ReadinessPanel';
 import { JunctionGrid } from '../components/junctions/JunctionGrid';
 import { CameraViewer } from '../components/camera/CameraViewer';
+import { LiveDigitalTwinCommandBanner } from '../components/dashboard/LiveDigitalTwinCommandBanner';
 import { AiAssistantSection } from '../components/assistant/AiAssistantSection';
 
 export const DashboardPage: React.FC = () => {
@@ -48,9 +49,11 @@ export const DashboardPage: React.FC = () => {
   const isStale = connectionStatus === 'STALE';
 
   return (
-    <div className="min-h-screen bg-white text-[#171717] flex flex-col font-sans">
+    <div className="aegis-dashboard min-h-screen bg-[#080D10] text-white flex flex-col font-sans">
       {/* Top Navigation */}
       <Navbar activeTab={activeTab} onTabChange={handleTabChange} />
+
+      <LiveDigitalTwinCommandBanner snapshot={snapshot} />
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
@@ -84,8 +87,9 @@ export const DashboardPage: React.FC = () => {
           <CameraViewer junctions={snapshot?.junctions} />
         </div>
 
-        <section id="incidents-section" className="border border-[#E5E5E5] rounded p-4 text-sm text-[#525252]">
-          This integrated console is read-only. Fault injection and scenario reset are not exposed by the P2 camera API.
+        <section id="incidents-section" className="bg-white border border-[#E5E5E5] rounded p-4 text-sm text-[#737373]">
+          <h2 className="text-sm font-semibold text-[#171717]">Incident Controls</h2>
+          <p className="mt-1">This dashboard is read-only. Fault injection requires a runtime token and is not exposed here.</p>
         </section>
 
         {/* AI Assistant Section — P4-04 */}
@@ -140,7 +144,7 @@ export const DashboardPage: React.FC = () => {
       <footer className="border-t border-[#E5E5E5] bg-[#F5F5F5] py-3 px-4 sm:px-6 text-xs text-[#737373]">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>AEGIS Traffic Management System &bull; Operator Console</span>
-          <span>Target Service: http://127.0.0.1:8000</span>
+          <span>P2 observation feed: http://127.0.0.1:8765</span>
         </div>
       </footer>
     </div>

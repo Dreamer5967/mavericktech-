@@ -175,13 +175,13 @@ export const PageTurnTransition: React.FC<PageTurnTransitionProps> = ({ children
                   {direction === 'to-dashboard' ? 'Entering Operator Console' : 'Returning to Experience'}
                 </div>
                 <div className="font-mono text-xs text-white/50 tracking-wider">
-                  INITIALIZING TELEMETRY STREAMS &bull; SYNCHRONIZING DIGITAL TWIN
+                  OPENING PLATFORM VIEW
                 </div>
               </div>
 
               <div className="flex items-center justify-between text-[11px] font-mono text-white/40">
-                <span>CARLA CO-SIMULATION BRIDGE v2.4</span>
-                <span>REVISION #{Math.floor(100 + eased * 900)}</span>
+                <span>AEGIS TRAFFIC PLATFORM</span>
+                <span>{direction === 'to-dashboard' ? 'OPERATOR CONSOLE' : 'PLATFORM TOUR'}</span>
               </div>
             </div>
 
@@ -225,7 +225,7 @@ export const PageTurnTransition: React.FC<PageTurnTransitionProps> = ({ children
 
               <div className="flex flex-col items-center justify-center space-y-3 my-auto opacity-90">
                 <div className="text-xs font-mono text-[#45C982] tracking-widest uppercase animate-pulse">
-                  &bull; LIVE DIGITAL TWIN ACTIVE &bull;
+                  &bull; AEGIS PLATFORM &bull;
                 </div>
                 <div className="font-space font-bold text-xl text-white tracking-wider">
                   {direction === 'to-dashboard' ? 'AEGIS COMMAND VIEWPORT' : 'AEGIS MISSION BRIEFING'}
@@ -233,8 +233,8 @@ export const PageTurnTransition: React.FC<PageTurnTransitionProps> = ({ children
               </div>
 
               <div className="flex items-center justify-between text-[11px] font-mono text-white/40">
-                <span>DETERMINISTIC PHASE GUARD ACTIVE</span>
-                <span>FPS: 60 &bull; LATENCY: 12ms</span>
+                <span>LIVE DATA STATUS IS SHOWN IN THE CONSOLE</span>
+                <span>CAMERA AND API STATUS</span>
               </div>
             </div>
           </div>

@@ -877,11 +877,11 @@ export const LiveDigitalTwinCommandBanner: React.FC<LiveDigitalTwinCommandBanner
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#45C982] opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#45C982]" />
           </span>
-          <span className="font-semibold text-white tracking-wide">LIVE DIGITAL TWIN</span>
+          <span className="font-semibold text-white tracking-wide">ILLUSTRATIVE VISUALIZATION</span>
           <span className="text-white/40">|</span>
-          <span className="text-[#45C982]">SUMO &bull; CARLA CO-SIMULATION</span>
+          <span className="text-[#45C982]">NOT CONNECTED TO LIVE SIMULATION</span>
           <span className="hidden md:inline text-white/40">|</span>
-          <span className="hidden md:inline text-white/70">60 FPS</span>
+          <span className="hidden md:inline text-white/70">UI PREVIEW</span>
         </div>
 
         {/* Tactical Control Pills */}
@@ -889,7 +889,7 @@ export const LiveDigitalTwinCommandBanner: React.FC<LiveDigitalTwinCommandBanner
           {/* Phase Badge */}
           <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#080D10]/85 border border-white/10 text-[11px] text-white/80">
             <Activity className="w-3 h-3 text-[#45C982]" />
-            <span>PHASE:</span>
+            <span>CONCEPT:</span>
             <span
               className={`font-semibold ${
                 phaseDisplay.includes('GREEN')
@@ -911,7 +911,7 @@ export const LiveDigitalTwinCommandBanner: React.FC<LiveDigitalTwinCommandBanner
                 ? 'border-[#E9A23B]/60 bg-[#E9A23B]/10 text-[#E9A23B]'
                 : 'border-white/10 bg-[#080D10]/80 text-white/60 hover:text-white'
             }`}
-            title="Toggle Traffic Density"
+            title="Adjust illustrative animation density"
           >
             {trafficDensity === 'rush' ? 'RUSH HOUR (1.6x)' : 'NOMINAL FLOW'}
           </button>
@@ -946,7 +946,7 @@ export const LiveDigitalTwinCommandBanner: React.FC<LiveDigitalTwinCommandBanner
           <button
             onClick={() => setIsPlaying(!isPlaying)}
             className="p-1 rounded border border-white/10 bg-[#080D10]/80 text-white/70 hover:text-white hover:border-white/30 transition-all cursor-pointer"
-            title={isPlaying ? 'Pause Simulation' : 'Resume Simulation'}
+            title={isPlaying ? 'Pause illustrative animation' : 'Resume illustrative animation'}
           >
             {isPlaying ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3 text-[#45C982]" />}
           </button>
@@ -958,7 +958,7 @@ export const LiveDigitalTwinCommandBanner: React.FC<LiveDigitalTwinCommandBanner
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-[#45C982]" />
-            FLEET IN MOTION: <strong className="text-white/80">{vehicleCount}</strong>
+            ILLUSTRATIVE VEHICLES: <strong className="text-white/80">{vehicleCount}</strong>
           </span>
           <span className="hidden sm:inline">NODES: J1 (CORE) &bull; J2 (ARTERIAL) &bull; J3 (WEST) &bull; J4 (SOUTH)</span>
         </div>
@@ -967,7 +967,7 @@ export const LiveDigitalTwinCommandBanner: React.FC<LiveDigitalTwinCommandBanner
             <ShieldCheck className="w-3 h-3 text-[#45C982]" />
             DETERMINISTIC PHASE GUARD ACTIVE
           </span>
-          <span className="hidden md:inline">REVISION #{snapshot?.state_revision ?? 108}</span>
+          <span className="hidden md:inline">FEED REVISION #{snapshot?.state_revision ?? '—'}</span>
         </div>
       </div>
     </div>
