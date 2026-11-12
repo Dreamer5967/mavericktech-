@@ -67,6 +67,32 @@ queues, learned-policy control and P4 frontend integration remain incomplete.
 Policy readiness is false; evaluator signal/actor reference data is kept out of
 the observation API.
 
+## Independent lane-count and fault validation
+
+The 1280x1280 overhead coverage profile was tested on the existing asynchronous
+world, with no manual ticks, restart or map change. All 24 lane ROIs are in frame.
+A controlled 24-vehicle stationary-target test detected targets in every region;
+duplicate suppression corrected two overcounts on the saved detections. Twenty-two
+clear ROIs are enabled; tree-occluded lanes `20_3` and `20_4` stay null. This is
+limited detector/assignment validation, not a traffic or queue-accuracy benchmark.
+All owned test vehicles and cameras were removed. Evidence run:
+`p2-smoke-20261112T095308Z-fb29b96b` under `evidence/lane-fixture`.
+
+The subsequent live lane-feed/dropout test passed over 156 sampled snapshots:
+22 lane IDs published counts, both occluded lanes stayed null, and cam_g3's
+8-second interruption produced 30 stale samples with null counts and one unchanged
+source frame/timestamp. The camera recovered; cam_g1/cam_g4/cam_g5 delivered
+8/8/7 distinct fresh frames during the fault. JPEGs decoded at 1280x1280 and
+cleanup reported no errors or remaining RGB actors. Sampled fresh-frame median
+ages were 1.00-1.17 simulation seconds. Observed per-camera processed-frame
+updates were about 0.68-0.70/s, or 0.53/s for the intentionally interrupted camera;
+higher FPS is not claimed. This is slower than the simpler oblique preview.
+Run: `lane-feed-d3f5706949` under
+`/workspace/aegis/evidence/lane-feed/p2-lane-feed-0f0fd396338f434f801e6a1e6d414ad4`.
+
+Source timestamps, staleness masking and queue/policy boundaries remain enforced.
+The tests expired and stopped; they are not a permanently running deployment.
+
 Before execution, check the existing map, synchronization owner and RGB sensors.
 Clock advancement or environment changes require approval. Clean up only actors
 owned by the current worker. Never restart CARLA or load a map automatically.

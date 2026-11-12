@@ -101,6 +101,8 @@ class CorridorController:
         Calculates the required pre-flush green duration:
         t_flush = t_startup + (queue / s)
         """
+        if not math.isfinite(queue_vehicles) or queue_vehicles < 0:
+            raise ValueError("Finite nonnegative queue required.")
         if queue_vehicles <= 0:
             return 0.0
         return self.startup_lost_time + (queue_vehicles / self.saturation_rate)
@@ -120,16 +122,21 @@ class CorridorController:
         ctx = self.firewall.authenticate(f"Bearer {token}")
         authorized, auth_msg = self.firewall.authorize_actuation(ctx, "dispatch_corridor")
         if not authorized:
-            self._log("DISPATCH_BLOCKED", {"reason": auth_msg, "token_prefix": token[:4]})
+            self._log("DISPATCH_BLOCKED", {"reason": auth_msg})
             return False, f"SECURITY_FIREWALL_REJECTED: {auth_msg}"
 
+        target_route = list(self.distances) if route is None else route
+        if not isinstance(target_route,list) or not target_route or len(set(target_route))!=len(target_route) or any(j not in self.junction_states for j in target_route):
+            return False, "INVALID_ROUTE"
+        if isinstance(priority_level,bool) or priority_level not in (1,2,3):
+            return False, "INVALID_PRIORITY"
         # 2. Priority conflict check
         if self.mode in {CorridorMode.FLUSHING, CorridorMode.ACTIVE} and self.active_vehicle:
             if self.active_vehicle.priority_level <= priority_level:
                 return False, f"CORRIDOR_CONFLICT: Equal or higher priority vehicle {self.active_vehicle.vehicle_id} in transit"
 
         # 3. Setup corridor
-        target_route = route or list(self.distances.keys())
+        target_route = list(target_route)
         self.active_vehicle = PriorityVehicleState(
             vehicle_id=vehicle_id,
             vehicle_type=vehicle_type,
@@ -159,6 +166,8 @@ class CorridorController:
         Advances corridor progression by dt seconds.
         Evaluates look-ahead ETA, triggers preemption, and applies compensation.
         """
+        if isinstance(dt,bool) or not isinstance(dt,(int,float)) or not math.isfinite(dt) or dt<=0:
+            raise ValueError("Finite positive dt required.")
         if self.mode == CorridorMode.STANDBY or not self.active_vehicle:
             return self.get_status()
 
@@ -194,7 +203,7 @@ class CorridorController:
                         })
 
                 # Simulate queue reduction during pre-flush
-                if js.estimated_queue > 0:
+                if js.estimated_queue > 0 and not self.phase_mgr.states[jid].in_transition and self.phase_mgr.states[jid].current_phase == js.corridor_phase:
                     js.estimated_queue = max(0.0, js.estimated_queue - self.saturation_rate * dt)
 
             # Stage B: Vehicle inside junction conflict area
@@ -253,6 +262,8 @@ class CorridorController:
             }
 
         return {
+            "data_mode": "SYNTHETIC_DIAGNOSTIC",
+            "actuation_permitted": False,
             "mode": self.mode.value,
             "vehicle": veh_data,
             "junctions": {

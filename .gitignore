@@ -5,40 +5,22 @@
 *.pem
 *.key
 id_ed25519*
-id_rsa*
-id_ecdsa*
-id_dsa*
-*.ppk
-*.p12
-*.pfx
 aegis_p2*
 secrets/
-*.token
-credentials*.json
 
 # Python, Node and generated models
 __pycache__/
 *.py[cod]
-*$py.class
 .pytest_cache/
 .venv/
 .venv*/
 venv-*/
-venv/
-env/
 node_modules/
 *.pt
 *.pth
 *.onnx
 *.engine
 *.ckpt
-*.safetensors
-*.bin
-*.tflite
-*.h5
-*.pb
-*.weights
-*.bag
 
 # CARLA, downloaded content and raw evidence
 CarlaUE4/
@@ -49,37 +31,32 @@ downloads/
 raw_frames/
 evidence/raw/
 *.log
+
+# Local OS/editor artifacts
+.DS_Store
+.vscode/settings.json
+
+# Additional private keys, credentials, model formats and generated evidence
+id_rsa*
+id_ecdsa*
+id_dsa*
+*.ppk
+*.p12
+*.pfx
+credentials*.json
+*.safetensors
+*.bin
+*.tflite
+*.h5
+*.pb
+venv/
+env/
+evidence/
 local-evidence/
 local-models/
 outputs/
 runs/
-results_raw/
-temp/
-tmp/
-tripinfo_*.xml
-
-# Local OS/editor artifacts
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Builds and packaging
-build/
-develop-eggs/
-dist/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
+*.zip
 *.egg
 *.whl
 *.exe
@@ -88,12 +65,18 @@ wheels/
 *.so.*
 *.pak
 
-# Retain handoff docs outside repo
+# Original handoff documents retained locally
 /AEGIS_Beginner_Quickstart.docx
 /AEGIS_Beginner_Quickstart.pdf
 /AEGIS_Implementation_Handbook.docx
 /AEGIS_Implementation_Handbook.pdf
 /team/*.docx
 /team/*.pdf
+
+# Generated model and experiment outputs
 /checkpoints/
 /results/
+tripinfo_*.xml
+.idea/
+*.swp
+*.swo

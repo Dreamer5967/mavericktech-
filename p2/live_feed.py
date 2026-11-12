@@ -20,6 +20,7 @@ from urllib.parse import urlparse
 import uuid
 
 from p2.capture_four import load_warmed_model, infer_frame, require_async, validate_config, utc_now
+from p2.lane_counts import measure, validate_regions
 
 
 def check_clock_mode(world, mode):
@@ -59,7 +60,7 @@ if(active)setTimeout(poll,500)}poll();</script></body></html>'''
 
 class FeedStore:
     """Bounded JPEG cache permits slow transfers without a disk frame dump."""
-    def __init__(self, camera_ids, run_id, threshold=2.0, max_frames_per_camera=32):
+    def __init__(self, camera_ids, run_id, threshold=2.0, max_frames_per_camera=32, lane_templates=None):
         self.lock=threading.Lock()
         self.camera_ids=list(camera_ids)
         self.run_id=run_id
@@ -72,6 +73,8 @@ class FeedStore:
         self.sim_time=None
         self.phase='STARTING'
         self.error=None
+        self.lane_templates=lane_templates or {}
+        self.active_faults=[]
 
     def publish(self, rows, sim_time):
         with self.lock:
@@ -113,13 +116,17 @@ class FeedStore:
                     'status':status,'missing':missing,'stale':stale,
                     'observed_vehicle_count':row.get('vehicle_count') if status=='fresh' else None,
                     'counts_by_class':row.get('counts_by_class') if status=='fresh' else None,
-                    'lane_counts':None,'queue_estimate':None,
+                    'lane_counts':(row.get('lane_counts') if status=='fresh' else
+                        {lane:None for lane in self.lane_templates[camera_id]}) if camera_id in self.lane_templates else None,
+                    'lane_count_semantics':'detected_vehicle_roi_occupancy' if camera_id in self.lane_templates else None,
+                    'queue_estimate':None,
                     'preview_frame_id':row.get('preview_frame_id'),'frame_url':row.get('frame_url'),
                     'inference_call_wall_ms':row.get('inference_call_wall_ms'),'error':row.get('error')})
             return {'schema_version':'aegis.p2.live-feed.v1-draft','mode':'LIVE' if self.phase=='RUNNING' else self.phase,
                     'run_id':self.run_id,'state_revision':self.revision,'phase':self.phase,
                     'as_of_sim_time_s':self.sim_time,'generated_at_utc':utc_now(),
-                    'ready_for_live_policy':False,'lane_attribution_status':'uncalibrated',
+                    'ready_for_live_policy':False,'lane_attribution_status':'partial_reviewed_regions' if self.lane_templates else 'uncalibrated',
+                    'active_faults':list(self.active_faults),
                     'error':self.error,'cameras':cameras}
 
     def frame(self, token):
@@ -183,7 +190,7 @@ def make_handler(store, allowed_origin=None):
     return Handler
 
 
-def run(config, duration, port, output_root, allowed_origin, clock_mode='standalone'):
+def run(config, duration, port, output_root, allowed_origin, clock_mode='standalone',lane_regions=None,fault=None):
     import carla
     import cv2
     import numpy as np
@@ -198,7 +205,13 @@ def run(config, duration, port, output_root, allowed_origin, clock_mode='standal
     run_id=datetime.now(timezone.utc).strftime('p2-feed-%Y%m%dT%H%M%SZ-')+uuid.uuid4().hex[:8]
     output=output_root/run_id
     output.mkdir(parents=True,exist_ok=False)
-    store=FeedStore([c['camera_id'] for c in config['cameras']],run_id,config['stale_after_sim_s'])
+    if lane_regions is not None:
+        validate_regions(lane_regions,config)
+        if hashlib.sha256(world.get_map().to_opendrive().encode()).hexdigest()!=lane_regions['xodr_sha256']:
+            raise RuntimeError('Live map geometry differs from the calibrated map.')
+    camera_regions={c['camera_id']:c for c in lane_regions['cameras']} if lane_regions else {}
+    templates={key:[r['lane_id'] for r in c['regions']] for key,c in camera_regions.items()}
+    store=FeedStore([c['camera_id'] for c in config['cameras']],run_id,config['stale_after_sim_s'],lane_templates=templates)
     server=ThreadingHTTPServer(('127.0.0.1',port),make_handler(store,allowed_origin))
     server.daemon_threads=True
     http_thread=threading.Thread(target=server.serve_forever,daemon=True)
@@ -225,8 +238,8 @@ def run(config, duration, port, output_root, allowed_origin, clock_mode='standal
         for camera in config['cameras']:
             check_clock_mode(world,clock_mode)
             bp=world.get_blueprint_library().find('sensor.camera.rgb')
-            for key,value in [('image_size_x',960),('image_size_y',540),('fov',config['fov']),
-                              ('sensor_tick',0.2),('role_name','aegis_p2_feed_'+camera['camera_id'])]:
+            for key,value in [('image_size_x',config['image_width']),('image_size_y',config['image_height']),('fov',config['fov']),
+                              ('sensor_tick',config['sensor_tick_s']),('role_name','aegis_p2_feed_'+camera['camera_id'])]:
                 bp.set_attribute(key,str(value))
             t=camera['transform']
             sensor=world.spawn_actor(bp,carla.Transform(carla.Location(x=t['x'],y=t['y'],z=t['z']),
@@ -239,9 +252,16 @@ def run(config, duration, port, output_root, allowed_origin, clock_mode='standal
                 started=time.monotonic()
                 check_clock_mode(world,clock_mode)
                 batch=[]
-                with buffer_lock:
-                    samples=dict(latest)
-                for camera_id,(image,received) in samples.items():
+                elapsed=duration-(deadline-time.monotonic())
+                dropping=[fault['camera_id']] if fault and fault['start_s']<=elapsed<fault['start_s']+fault['duration_s'] else []
+                with store.lock:store.active_faults=dropping
+                for camera in config['cameras']:
+                    camera_id=camera['camera_id']
+                    if camera_id in dropping:continue
+                    with buffer_lock:
+                        sample=latest.get(camera_id)
+                    if sample is None:continue
+                    image,received=sample
                     if processed.get(camera_id)==image.frame:
                         continue
                     row={'frame_id':image.frame,'source_sim_time_s':image.timestamp,'received_at_utc':received,'error':None}
@@ -251,13 +271,18 @@ def run(config, duration, port, output_root, allowed_origin, clock_mode='standal
                         counts=dict(Counter(d['class_name'] for d in detections))
                         row.update(counts_by_class=counts,vehicle_count=sum(counts.get(name,0) for name in config['vehicle_classes']),
                                    inference_call_wall_ms=elapsed)
+                        if camera_id in camera_regions:
+                            lane_result=measure(detections,camera_regions[camera_id],config['vehicle_classes'],
+                                enabled=lane_regions['can_publish_lane_counts'],anchor='center' if config.get('tiled_inference') else 'bottom_center')
+                            row['lane_counts']=lane_result['lane_counts']
                     except Exception as exc:
                         annotated=bgr
                         row['error']=type(exc).__name__+': '+str(exc)
                     ok,encoded=cv2.imencode('.jpg',annotated,[cv2.IMWRITE_JPEG_QUALITY,75])
                     if not ok:
                         raise RuntimeError('JPEG encoding failed.')
-                    batch.append((camera_id,row,encoded.tobytes()))
+                    # Publish immediately; a slower camera must not hold back fresh results.
+                    store.publish([(camera_id,row,encoded.tobytes())],world.get_snapshot().timestamp.elapsed_seconds)
                     processed[camera_id]=image.frame
                 store.publish(batch,world.get_snapshot().timestamp.elapsed_seconds)
                 snapshot=store.snapshot()
@@ -303,15 +328,24 @@ def main():
     parser.add_argument('--output-root',type=Path,default=Path('/workspace/aegis/evidence/live-feed'))
     parser.add_argument('--allowed-origin')
     parser.add_argument('--clock-mode',choices=('standalone','observer'),default='standalone')
+    parser.add_argument('--lane-regions',type=Path)
+    parser.add_argument('--drop-camera')
+    parser.add_argument('--drop-after',type=float,default=10)
+    parser.add_argument('--drop-for',type=float,default=8)
     args=parser.parse_args()
     config_text=args.config.read_text(encoding='utf-8') if args.config else base64.b64decode(args.config_base64,validate=True).decode()
     config=validate_config(json.loads(config_text))
+    regions=validate_regions(json.loads(args.lane_regions.read_text(encoding='utf-8')),config) if args.lane_regions else None
+    if args.drop_camera and (args.drop_camera not in {c['camera_id'] for c in config['cameras']} or
+        not 0<=args.drop_after<=args.duration or not 0<args.drop_for<=args.duration-args.drop_after):
+        parser.error('Fault camera and bounded timing must fit this run.')
+    fault={'camera_id':args.drop_camera,'start_s':args.drop_after,'duration_s':args.drop_for} if args.drop_camera else None
     if not 10<=args.duration<=3600 or not 1024<=args.port<=65535:
         parser.error('Use a 10–3600 second duration and a nonprivileged port.')
     if not args.execute:
         print('Description only; no cameras, API, or simulator connection created.')
         return 0
-    return run(config,args.duration,args.port,args.output_root,args.allowed_origin,args.clock_mode)
+    return run(config,args.duration,args.port,args.output_root,args.allowed_origin,args.clock_mode,regions,fault)
 
 
 if __name__=='__main__':

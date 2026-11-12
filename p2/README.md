@@ -20,11 +20,19 @@ Read [runtime status](../docs/runtime.md) before cloud execution and
 | `runtime_mapping.py` | Offline hash-verified lane geometry and actual signal program inventory |
 | `lane_calibration.py` | Camera projection helpers for lane regions |
 | `controller_gate.py` | Offline checkpoint, network, lane-slot and green-action compatibility audit |
+| `coverage_layout.py` | Fit overhead cameras to real incoming lane corridors |
+| `tiled_detector.py` | Rotated tiles and duplicate suppression for overhead YOLO |
+| `lane_counts.py` | Reviewed lane-region vehicle occupancy with null unavailable lanes |
+| `validate_lane_feed.py` | Bounded asynchronous lane-feed and camera-dropout recovery check |
 | `setup_sumo.py` | Hash-pinned package setup; already completed on this instance |
 
-`camera_sites.oblique.json` is the tested angled configuration; its partial
-approach views do not establish lane coverage. `camera_sites.candidate.json`
-retains the original overhead configuration.
+`camera_sites.coverage.json` and `configs/lane_regions.coverage.json` provide the
+tested 1280x1280 overhead profile. All 24 lane regions project into view; 22 have
+reviewed ROI occupancy counts and two tree-occluded regions remain null. Detection
+uses rotated tiles. These counts are not stopped queues or a traffic benchmark.
+`camera_sites.oblique.json` remains the tested lower-cost 960x540 preview profile;
+its partial views do not provide complete lane counts. `camera_sites.candidate.json`
+retains the original smoke positions.
 
 Describe the camera configuration locally without cloud contact:
 
@@ -48,6 +56,22 @@ source checkout and forward port 8765 over authenticated SSH:
 ```bash
 /workspace/aegis/venv-sim/bin/python -m p2.live_feed --config p2/camera_sites.oblique.json --execute --duration 600
 ```
+
+For the independently tested lane-count profile, use `--config
+p2/camera_sites.coverage.json --lane-regions configs/lane_regions.coverage.json`.
+For a bounded dropout test add `--drop-camera cam_g3 --drop-after 10 --drop-for 8`;
+the worker stops processing that camera while preserving its last source time.
+Other cameras continue; stale lane counts become null and real frames resume
+after the interval. This changes no simulator settings or traffic signals.
+
+Build a self-contained lane-feed runner locally:
+
+```powershell
+python -B -m p2.build_feed_runner --config p2/camera_sites.coverage.json --lane-regions configs/lane_regions.coverage.json --duration 600 --out C:/path/to/new_lane_feed.sh
+```
+
+The generated runner requires `AEGIS_APPROVE_LIVE_CAMERA_FEED=yes`; it uses the
+existing cloud venv, writes only new runtime/evidence directories and expires.
 
 The published standalone worker expects asynchronous CARLA and owns no clock.
 Stop the standalone worker before starting the stock synchronous bridge. For a

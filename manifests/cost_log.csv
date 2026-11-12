@@ -1,8 +1,0 @@
-checkpoint,wall_time,instance_id,balance_usd,compute_rate_usd_h,storage_rate_usd_h,transfer_cost_usd,evidence_exported,operator,notes
-00,2026-11-12T10:00:00+05:30,LOCAL_INIT,5.00,0.00,0.00,0.00,NO,P1,"Initial balance; local development before rental"
-01,2026-11-12T11:30:00+05:30,VAST_3090TI_01,4.55,0.30,0.015,0.00,NO,P2,"Vast.ai RTX 3090 Ti rented; CARLA 0.9.15 Town10HD_Opt preflight and venv validation (1.5 hrs)"
-02,2026-11-12T12:45:00+05:30,VAST_3090TI_01,4.10,0.30,0.015,0.08,YES,P2,"Four-camera YOLOv10n pipeline test; evidence p2-smoke-20261112T070404Z-86ad7e08 (1.25 hrs, 2.0GB transfer)"
-03,2026-11-12T13:45:00+05:30,VAST_3090TI_01,3.75,0.30,0.015,0.05,YES,P2,"30-second SUMO-CARLA bridge test cosim-smoke test-20261112T081204Z-6199.jsonl (1.0 hr, 1.2GB transfer)"
-04,2026-11-12T14:30:00+05:30,VAST_3090TI_01,3.50,0.30,0.015,0.00,YES,P2,"Combined pipeline validation pipeline-20261112T091232Z-8ce0c931 (0.75 hr); instance spun down"
-05,2026-11-12T15:00:00+05:30,STORAGE_ONLY,3.34,0.00,0.015,0.00,NO,P1,"Instance terminated; preserved 50GB snapshot for evaluation replay. Storage active."
-06,2026-11-12T15:30:00+05:30,LOCAL_AUDIT,3.34,0.00,0.00,0.00,YES,P1,"Final cost audit: total spent $1.66 ($1.35 compute + $0.18 storage + $0.13 transfer). Reserve $3.34 intact."

@@ -1,56 +1,108 @@
 {
-  "schema_version": "1.0",
-  "description": "Observation vector layout per junction for AEGIS live inference & training.",
+  "schema_version": "2.0",
+  "description": "Observation vector layout per junction for AEGIS MAPPO inference and training. Per-junction lane counts reflect P2 actual Town10HD_Opt SUMO network geometry (network SHA256: 3ef9501d4bb19f868f49395e39007876f834cbfe713f864a7ea8413f98115004). Model uses slot_count=4 for all junctions with partial masking where actual lanes < 4. Joint P2/P3 review required before actuation.",
   "num_junctions": 4,
-  "num_lanes_per_junction": 4,
+  "max_model_lane_slots": 4,
+  "max_model_action_slots": 4,
   "decision_interval_s": 5,
-  "_metadata": {
-    "schema_version": "1.0",
-    "description": "Frozen observation vector definition per junction for the AEGIS traffic control project.",
-    "num_junctions": 4,
-    "num_lanes_per_junction": 4,
-    "decision_interval_s": 5
+  "junctions": {
+    "J1": {
+      "sumo_tls_id": "719",
+      "actual_incoming_lanes": 6,
+      "model_lane_slots": 4,
+      "active_slots": 3,
+      "masked_slots": [
+        3
+      ],
+      "_note": "6 actual lanes aggregated into 3 approach-pair slots. Slot 3 unused/masked."
+    },
+    "J2": {
+      "sumo_tls_id": "23",
+      "actual_incoming_lanes": 6,
+      "model_lane_slots": 4,
+      "active_slots": 3,
+      "masked_slots": [
+        3
+      ],
+      "_note": "6 actual lanes aggregated into 3 approach-pair slots. Slot 3 unused/masked."
+    },
+    "J3": {
+      "sumo_tls_id": "189",
+      "actual_incoming_lanes": 8,
+      "model_lane_slots": 4,
+      "active_slots": 4,
+      "masked_slots": [],
+      "_note": "8 actual lanes aggregated into 4 approach-pair slots. Full slot utilisation."
+    },
+    "J4": {
+      "sumo_tls_id": "468",
+      "actual_incoming_lanes": 4,
+      "model_lane_slots": 4,
+      "active_slots": 2,
+      "masked_slots": [
+        2,
+        3
+      ],
+      "_note": "4 actual lanes in 2 approach pairs. Slots 2 and 3 unused/masked."
+    }
   },
   "observation_fields": {
     "lane_queues": {
       "type": "array",
       "items": "float",
       "length": 4,
-      "description": "Normalized queue length per inbound lane (0.0 = empty, 1.0 = at capacity)."
+      "description": "Normalized queue length per lane slot (0.0=empty, 1.0=at capacity). Slots beyond active_slots are zero-padded."
     },
     "missing_masks": {
       "type": "array",
-      "items": "bool",
+      "items": "float",
       "length": 4,
-      "description": "True if the camera/sensor is down for that lane; the agent must impute or act conservatively."
+      "description": "1.0 if the sensor for that slot is unavailable; agent must impute or act conservatively. Unused slots report 0.0."
     },
     "observation_ages_s": {
       "type": "array",
       "items": "float",
       "length": 4,
-      "description": "Seconds since the last valid observation was received for each lane."
+      "description": "Seconds since last valid observation for each slot. Unused slots report 0.0."
     },
     "current_phase_onehot": {
       "type": "array",
-      "items": "int",
+      "items": "float",
       "length": 4,
-      "description": "One-hot encoding of the current green phase (exactly one element is 1)."
+      "description": "One-hot encoding of current policy action index (not raw SUMO phase index). Policy index 0-3; masked positions are always 0."
     },
     "elapsed_phase_s": {
       "type": "float",
-      "description": "Seconds elapsed in the current green phase."
+      "description": "Seconds elapsed in current green phase, normalised by max_green_s."
     },
     "neighbor_inflow": {
       "type": "array",
       "items": "float",
       "length": 4,
-      "description": "Estimated inflow rate from each neighboring junction (vehicles per decision interval)."
+      "description": "Estimated inflow from each of the 4 neighbouring junction slots (vehicles per decision interval). Zero if no neighbour."
     },
     "junction_id_onehot": {
       "type": "array",
-      "items": "int",
+      "items": "float",
       "length": 4,
-      "description": "One-hot encoding identifying which junction this observation belongs to (J1–J4)."
+      "description": "One-hot encoding identifying which junction (J1=slot0, J2=slot1, J3=slot2, J4=slot3)."
     }
+  },
+  "_obs_dim_per_junction": 25,
+  "_obs_dim_breakdown": "4(queues)+4(masks)+4(ages)+4(phase_onehot)+1(elapsed)+4(neighbor_inflow)+4(junction_id_onehot)=25",
+  "_metadata": {
+    "schema_version": "2.0",
+    "description": "Candidate 25-dimensional aggregated-slot contract. Compatible shape does not imply old checkpoint compatibility.",
+    "num_junctions": 4,
+    "num_lanes_per_junction": 4,
+    "max_model_lane_slots": 4,
+    "decision_interval_s": 5
+  },
+  "slot_normalization": "sum of lane beliefs / (15 vehicles per physical lane * number of lanes in slot)",
+  "unused_slot_semantics": {
+    "queue_feature": 0,
+    "missing_mask": true,
+    "age_feature": 0,
+    "meaning": "structurally unused, not a measured empty lane"
   }
 }

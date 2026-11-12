@@ -106,6 +106,7 @@ def build(network, manifest, geometry, cameras, policy):
                 'opendrive_lane_id': source['lane_id'], 'mapping_verified': True,
                 'stop_to_centerline_error_m': round(gap, 4), 'upstream_region_m': round(length, 2),
                 'width_m': stop['width_m'], 'polygon_pixels': polygon,
+                'ground_polygon_world': ground,
                 'projected_area_pixels': round(area(polygon), 2),
                 'geometrically_visible': area(polygon) >= 100,
                 'coverage_reviewed': False, 'occlusion_reviewed': False, 'usable_for_counts': False})
@@ -140,6 +141,9 @@ def main():
         read(args.inventory / 'map_manifest.json'), read(args.inventory / 'lane_geometry.json'),
         read(repository / 'p2/camera_sites.oblique.json'), read(repository / 'configs/action_mapping.json'))
     args.out.mkdir(parents=True, exist_ok=False)
+    for camera in calibration['cameras']:
+        for region in camera['regions']:
+            region.pop('ground_polygon_world',None)
     for name, value in [('lane_regions.json', calibration), ('runtime_mapping.json', runtime)]:
         (args.out / name).write_text(json.dumps(value, indent=2) + '\n', encoding='utf-8')
     for camera in calibration['cameras']:
