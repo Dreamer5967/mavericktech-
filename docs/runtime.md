@@ -43,9 +43,27 @@ Lane and policy-action mappings remain unverified.
 
 ## Remaining validation
 
-Combined cameras with synchronized traffic have not been cloud-tested.
-Per-signal phase equality, lane counts, queues, learned-policy control and P4
-frontend integration remain incomplete. Policy readiness is false.
+Combined cameras and synchronized traffic passed an approved bounded test on
+12 November 2026, using merged main commit `de2883a` plus the observer/validation
+modules. Evidence run: `pipeline-20261112T091232Z-8ce0c931` under
+`/workspace/aegis/evidence/pipeline-validation/p2-combined-2961dcd55cbc46f6ac0a933ee5f86e72`.
+
+- One bridge clock owner ran for 30 seconds; SUMO finished at 29.95 seconds.
+- 30 evaluator checks found no missing selected landmarks and no CARLA/SUMO
+  signal-state mismatches; up to 14 vehicles were mirrored into CARLA.
+- 63 snapshots were sampled while synchronous mode was observed. Each camera
+  was fresh in 58; startup-stale observations retained null usable counts.
+  Cameras supplied 56–57 distinct fresh frames each. Fresh sample simulation
+  ages were 0–0.396 seconds, with per-camera medians 0.15–0.20 seconds.
+- All four HTTP JPEGs decoded at 960x540; downloaded hashes matched. Visual
+  inspection confirmed annotated vehicle detections and partial approach views.
+- The camera worker reported no errors or cleanup failures; no RGB sensors
+  remained. The post-check confirmed the same map and asynchronous mode.
+
+This validates fixed-time synchronization with camera observations. Lane counts,
+queues, learned-policy control and P4 frontend integration remain incomplete.
+Policy readiness is false; evaluator signal/actor reference data is kept out of
+the observation API.
 
 Before execution, check the existing map, synchronization owner and RGB sensors.
 Clock advancement or environment changes require approval. Clean up only actors

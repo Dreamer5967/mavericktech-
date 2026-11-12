@@ -22,6 +22,14 @@ import uuid
 from p2.capture_four import load_warmed_model, infer_frame, require_async, validate_config, utc_now
 
 
+def check_clock_mode(world, mode):
+    if mode not in ('standalone','observer'):
+        raise ValueError('Unknown clock mode.')
+    if mode=='standalone':
+        require_async(world)
+    # An observer accepts frames from an external coordinator and never ticks.
+
+
 PAGE = r'''<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
 <title>AEGIS camera feed</title><style>
 body{font:15px system-ui;background:#101826;color:#e8edf4;margin:24px}h1{font-size:24px}#status{color:#7dd3fc}
@@ -161,12 +169,21 @@ def make_handler(store, allowed_origin=None):
             return self.reply({'error':'not_found_or_expired'},status=404)
 
         def do_POST(self):
+            # Drain ordinary small requests before closing so clients receive
+            # the explicit refusal rather than a reset from an unread body.
+            try:
+                length=int(self.headers.get('Content-Length','0'))
+            except ValueError:
+                length=0
+            if 0<length<=4096:
+                self.connection.settimeout(2)
+                self.rfile.read(length)
             self.reply({'error':'read_only_feed'},status=405)
 
     return Handler
 
 
-def run(config, duration, port, output_root, allowed_origin):
+def run(config, duration, port, output_root, allowed_origin, clock_mode='standalone'):
     import carla
     import cv2
     import numpy as np
@@ -175,7 +192,7 @@ def run(config, duration, port, output_root, allowed_origin):
     if (client.get_client_version(),client.get_server_version())!=('0.9.15','0.9.15'):
         raise RuntimeError('CARLA version mismatch.')
     world=client.get_world()
-    require_async(world)
+    check_clock_mode(world,clock_mode)
     if world.get_map().name!=config['map'] or list(world.get_actors().filter('sensor.camera.rgb')):
         raise RuntimeError('Map mismatch or existing cameras; inspect ownership before continuing.')
     run_id=datetime.now(timezone.utc).strftime('p2-feed-%Y%m%dT%H%M%SZ-')+uuid.uuid4().hex[:8]
@@ -206,7 +223,7 @@ def run(config, duration, port, output_root, allowed_origin):
     try:
         model,timings=load_warmed_model(Path(config['weights_path']),config,output)
         for camera in config['cameras']:
-            require_async(world)
+            check_clock_mode(world,clock_mode)
             bp=world.get_blueprint_library().find('sensor.camera.rgb')
             for key,value in [('image_size_x',960),('image_size_y',540),('fov',config['fov']),
                               ('sensor_tick',0.2),('role_name','aegis_p2_feed_'+camera['camera_id'])]:
@@ -220,7 +237,7 @@ def run(config, duration, port, output_root, allowed_origin):
         with (output/'observations.jsonl').open('x',encoding='utf-8') as log:
             while not stop.is_set() and time.monotonic()<deadline:
                 started=time.monotonic()
-                require_async(world)
+                check_clock_mode(world,clock_mode)
                 batch=[]
                 with buffer_lock:
                     samples=dict(latest)
@@ -266,7 +283,7 @@ def run(config, duration, port, output_root, allowed_origin):
             except Exception as exc:
                 cleanup.append({'actor_id':sensor.id,'operation':'destroy','error':str(exc)})
         summary={'run_id':run_id,'revisions':store.revision,'duration_limit_s':duration,
-                 'cleanup_errors':cleanup,'error':failure,'final_snapshot':store.snapshot()}
+                 'cleanup_errors':cleanup,'error':failure,'final_snapshot':store.snapshot(),'clock_mode':clock_mode}
         (output/'summary.json').write_text(json.dumps(summary,indent=2,allow_nan=False)+'\n',encoding='utf-8')
         server.shutdown()
         server.server_close()
@@ -285,6 +302,7 @@ def main():
     parser.add_argument('--port',type=int,default=8765)
     parser.add_argument('--output-root',type=Path,default=Path('/workspace/aegis/evidence/live-feed'))
     parser.add_argument('--allowed-origin')
+    parser.add_argument('--clock-mode',choices=('standalone','observer'),default='standalone')
     args=parser.parse_args()
     config_text=args.config.read_text(encoding='utf-8') if args.config else base64.b64decode(args.config_base64,validate=True).decode()
     config=validate_config(json.loads(config_text))
@@ -293,7 +311,7 @@ def main():
     if not args.execute:
         print('Description only; no cameras, API, or simulator connection created.')
         return 0
-    return run(config,args.duration,args.port,args.output_root,args.allowed_origin)
+    return run(config,args.duration,args.port,args.output_root,args.allowed_origin,args.clock_mode)
 
 
 if __name__=='__main__':

@@ -15,6 +15,8 @@ Read [runtime status](../docs/runtime.md) before cloud execution and
 | `prepare_map.py` | Export the existing map and convert static network data |
 | `prepare_demand.py` | Generate seeded routes without running a simulator |
 | `cosim_smoke.sh` | Guarded 30-second stock CARLA–SUMO bridge test |
+| `validate_pipeline.py` | Approved combined camera observer and one bounded bridge clock owner |
+| `bridge_validation.py` | Stock bridge wrapper with read-only signal/vehicle evaluator checks |
 | `setup_sumo.py` | Hash-pinned package setup; already completed on this instance |
 
 `camera_sites.oblique.json` is the tested angled configuration; its partial
@@ -45,7 +47,17 @@ source checkout and forward port 8765 over authenticated SSH:
 ```
 
 The published standalone worker expects asynchronous CARLA and owns no clock.
-Stop it before starting the stock synchronous bridge. `cosim_smoke.sh` requires
+Stop the standalone worker before starting the stock synchronous bridge. For a
+combined run, `validate_pipeline.py` starts the feed with `--clock-mode observer`
+before launching its single bridge child; the observer never ticks or changes
+world settings. It verifies advancing fresh frames and JPEG decoding, saves
+timestamped observations and evaluator records separately, and checks cleanup.
+Use `--execute` and `AEGIS_APPROVE_LIVE_COSIM=yes` only for an approved run of at
+most 30 seconds. Run from an isolated source checkout using the existing venv
+interpreter, the reviewed `--scenario` and `--config` paths. Without `--execute`,
+both validation modules only describe the test.
+
+`cosim_smoke.sh` also requires
 `AEGIS_APPROVE_LIVE_COSIM=yes`; it advances clocks and changes synchronization
 settings for its bounded run. Do not start it without approval and an available
 clock owner.
