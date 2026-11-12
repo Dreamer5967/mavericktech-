@@ -136,6 +136,42 @@ class SafetyPhaseManager:
 
         return [f"{state.current_phase}_YELLOW", "ALL_RED", target_phase]
 
+    def request_emergency_preemption(
+        self, jid: str, target_phase: str, priority_level: int = 1
+    ) -> Tuple[bool, str, List[str]]:
+        """
+        Processes an emergency vehicle preemption (EVC) request.
+        Allows safe truncation of non-emergency green to a reduced safety interval (5s),
+        while strictly preserving mandatory YELLOW and ALL_RED clearance stages.
+        """
+        if jid not in self.allowed_phases:
+            return False, "unknown_junction", []
+        if target_phase not in self.allowed_phases[jid]:
+            return False, "unknown_phase", []
+
+        state = self.states[jid]
+
+        # Case 1: Already in target green phase
+        if state.current_phase == target_phase and not state.in_transition:
+            # Prevent max-green timeout during emergency passage
+            state.elapsed_s = min(state.elapsed_s, 5.0)
+            return True, "corridor_green_locked", [target_phase]
+
+        # Case 2: Currently transitioning
+        if state.in_transition:
+            if state.target_phase == target_phase:
+                return True, "clearance_already_underway", [state.target_phase]
+            state.target_phase = target_phase
+            return True, "transition_target_overridden", [state.target_phase]
+
+        # Case 3: In conflicting phase -> initiate safe clearance sequence
+        emergency_min_green_s = 5.0 if priority_level == 1 else self.min_green_s
+        if state.elapsed_s < emergency_min_green_s:
+            return False, "emergency_minimum_green_pending", []
+
+        seq = self.schedule_transition(jid, target_phase)
+        return True, "emergency_clearance_initiated", seq
+
     def tick(self, dt: float) -> Dict[str, str]:
         """
         Advance simulation time by dt seconds and progress clearance states.
