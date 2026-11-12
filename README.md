@@ -3,6 +3,24 @@
 CARLA 0.9.15 camera perception and CARLA–SUMO simulation, with MAPPO policy and
 recovery-planner source. `main` is the integration branch.
 
+## Open acceptance work
+
+Reviewed 12 November 2026. The P1 security and P3 policy/planner source PRs are
+merged; their full ZIP deliverables remain incomplete. Passing unit tests does
+not establish live-policy, application or presentation acceptance.
+
+| Owner | Verified progress | Remaining work |
+|---|---|---|
+| P1 / Amal | Security contribution merged; presentation/checklist drafts reviewed | [#4: Final deck, compliance evidence, actual costs, backup and rehearsal](https://github.com/Dreamer5967/mavericktech-/issues/4) |
+| P2 | Combined fixed-time CARLA/SUMO/camera smoke passed; physical lane inventory mapped | [#6: Camera coverage, lane observations, action/fault hooks and runtime acceptance](https://github.com/Dreamer5967/mavericktech-/issues/6) |
+| P3 / Shivanshu | Policy, estimator and planner source integrated and unit-tested | [#5: BLOCKED - checkpoint/network compatibility, lane/action mappings and measured control evaluation](https://github.com/Dreamer5967/mavericktech-/issues/5) |
+| P4 | Dashboard foundation on its branch; security helpers available | [#7: Live frames, operator API, VQA, tracing, deployment and speech](https://github.com/Dreamer5967/mavericktech-/issues/7) |
+
+Live learned-policy control and the complete end-to-end demo are not ready.
+Use the linked issue checklists and evidence to determine completion; team role
+ownership remains unchanged. Artifacts completed outside Git can be linked in
+the relevant issue for verification.
+
 ## Source layout
 
 | Directory | Contents |
