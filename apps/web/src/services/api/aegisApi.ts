@@ -1,4 +1,4 @@
-import { FaultRequestPayload, HealthResponse, SnapshotResponse } from '../../types/api';
+import { FaultRequestPayload, HealthResponse, ResetRequestPayload, SnapshotResponse } from '../../types/api';
 
 export class ApiError extends Error {
   status: number;
@@ -25,7 +25,7 @@ async function parseApiError(response: Response, defaultMessage: string): Promis
           errorMsg = 'Unauthorized: Invalid operator token (401)';
           break;
         case 'invalid_request':
-          errorMsg = 'Invalid request: Check junction ID and parameters (400)';
+          errorMsg = 'Invalid request: Check parameters and junction identifier (400)';
           break;
         case 'body_too_large':
           errorMsg = 'Payload too large: Request exceeded 4KB limit (413)';
@@ -93,7 +93,10 @@ export async function postFault(
   return response.json();
 }
 
-export async function postReset(operatorToken: string): Promise<SnapshotResponse> {
+export async function postReset(
+  operatorToken: string,
+  payload?: ResetRequestPayload
+): Promise<SnapshotResponse> {
   const response = await fetch('/api/v1/reset', {
     method: 'POST',
     headers: {
@@ -101,7 +104,7 @@ export async function postReset(operatorToken: string): Promise<SnapshotResponse
       'Authorization': `Bearer ${operatorToken}`,
       'Accept': 'application/json',
     },
-    body: JSON.stringify({}),
+    body: JSON.stringify(payload || {}),
   });
 
   if (!response.ok) {

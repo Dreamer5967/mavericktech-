@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { Terminal, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react';
 import { useAegisSnapshot } from '../hooks/useAegisSnapshot';
+import { useIncidentMutation } from '../hooks/useIncidentMutation';
 import { Navbar } from '../components/layout/Navbar';
 import { PageHeader } from '../components/layout/PageHeader';
 import { ReadinessPanel } from '../components/readiness/ReadinessPanel';
 import { JunctionGrid } from '../components/junctions/JunctionGrid';
 import { CameraViewer } from '../components/camera/CameraViewer';
+import { IncidentControlPanel } from '../components/incidents/IncidentControlPanel';
+import { IncidentHistoryLog } from '../components/incidents/IncidentHistoryLog';
+import { JunctionId } from '../types/api';
 
 export const DashboardPage: React.FC = () => {
   const {
@@ -17,9 +21,20 @@ export const DashboardPage: React.FC = () => {
     refetch,
   } = useAegisSnapshot();
 
+  const [operatorToken, setOperatorToken] = useState('local-demo-only');
   const [activeTab, setActiveTab] = useState('overview');
   const [showRawJson, setShowRawJson] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  const {
+    triggerFault,
+    triggerReset,
+    isPending,
+    feedback,
+    clearFeedback,
+    incidentLogs,
+    clearLogs,
+  } = useIncidentMutation(operatorToken);
 
   const handleCopyJson = () => {
     if (snapshot) {
@@ -35,9 +50,15 @@ export const DashboardPage: React.FC = () => {
       document.getElementById('intersections-section')?.scrollIntoView({ behavior: 'smooth' });
     } else if (tabId === 'cameras') {
       document.getElementById('cameras-section')?.scrollIntoView({ behavior: 'smooth' });
+    } else if (tabId === 'incidents') {
+      document.getElementById('incidents-section')?.scrollIntoView({ behavior: 'smooth' });
     } else if (tabId === 'overview') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+  };
+
+  const handleFaultTrigger = (junctionId: JunctionId, enabled: boolean) => {
+    return triggerFault({ junction_id: junctionId, enabled });
   };
 
   const isStale = connectionStatus === 'STALE';
@@ -77,6 +98,25 @@ export const DashboardPage: React.FC = () => {
         {/* Camera Viewer Inspection Section */}
         <div id="cameras-section">
           <CameraViewer junctions={snapshot?.junctions} />
+        </div>
+
+        {/* Incident Management Section */}
+        <div id="incidents-section" className="space-y-4">
+          <IncidentControlPanel
+            junctions={snapshot?.junctions}
+            operatorToken={operatorToken}
+            onTokenChange={setOperatorToken}
+            onTriggerFault={handleFaultTrigger}
+            onTriggerReset={triggerReset}
+            isPending={isPending}
+            feedback={feedback}
+            onClearFeedback={clearFeedback}
+          />
+
+          <IncidentHistoryLog
+            logs={incidentLogs}
+            onClear={clearLogs}
+          />
         </div>
 
         {/* Data Contract Inspection Drawer (Clean Industrial Collapsible) */}

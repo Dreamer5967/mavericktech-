@@ -37,4 +37,20 @@ export interface HealthResponse {
 export interface FaultRequestPayload {
   junction_id: JunctionId;
   enabled: boolean;
+  request_id?: string;
+}
+
+export interface ResetRequestPayload {
+  request_id?: string;
+}
+
+export interface IncidentLogEntry {
+  id: string;
+  request_id: string;
+  timestamp: string;
+  type: 'FAULT_INJECTION' | 'FAULT_CLEAR' | 'SCENARIO_RESET';
+  junction_id?: JunctionId | 'ALL';
+  status: 'PENDING' | 'APPLIED' | 'REJECTED';
+  state_revision?: number;
+  message?: string;
 }

@@ -68,4 +68,28 @@ class ServerTests(unittest.TestCase):
   with self.assertRaises(urllib.error.HTTPError) as cm:self.req('/api/v1/faults',{'junction_id':'X','enabled':True},'test-token')
   self.assertEqual(cm.exception.code,400)
  def test_reset(self):self.assertTrue(all(j['camera_status']=='AVAILABLE' for j in json.load(self.req('/api/v1/reset',{},'test-token'))['junctions']))
+ def test_idempotent_fault(self):
+  body={'junction_id':'J3','enabled':True,'request_id':'test-req-fault-1'}
+  s1=json.load(self.req('/api/v1/faults',body,'test-token'))
+  rev1=s1['state_revision']
+  s2=json.load(self.req('/api/v1/faults',body,'test-token'))
+  rev2=s2['state_revision']
+  self.assertEqual(rev1,rev2)
+ def test_idempotent_reset(self):
+  body={'request_id':'test-req-reset-1'}
+  s1=json.load(self.req('/api/v1/reset',body,'test-token'))
+  rev1=s1['state_revision']
+  s2=json.load(self.req('/api/v1/reset',body,'test-token'))
+  rev2=s2['state_revision']
+  self.assertEqual(rev1,rev2)
+ def test_different_request_ids(self):
+  s1=json.load(self.req('/api/v1/faults',{'junction_id':'J1','enabled':True,'request_id':'test-diff-1'},'test-token'))
+  rev1=s1['state_revision']
+  s2=json.load(self.req('/api/v1/faults',{'junction_id':'J1','enabled':False,'request_id':'test-diff-2'},'test-token'))
+  rev2=s2['state_revision']
+  self.assertEqual(rev2,rev1+1)
+ def test_bad_request_id(self):
+  with self.assertRaises(urllib.error.HTTPError) as cm:
+   self.req('/api/v1/faults',{'junction_id':'J1','enabled':True,'request_id':12345},'test-token')
+  self.assertEqual(cm.exception.code,400)
 if __name__=='__main__':unittest.main()

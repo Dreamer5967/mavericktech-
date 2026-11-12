@@ -14,7 +14,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'overview', label: 'Overview', available: true },
     { id: 'intersections', label: 'Intersections', available: true },
     { id: 'cameras', label: 'Cameras', available: true },
-    { id: 'incidents', label: 'Incidents', available: false, tag: 'P4-03' },
+    { id: 'incidents', label: 'Incidents', available: true },
     { id: 'assistant', label: 'AI Assistant', available: false, tag: 'P4-04' },
     { id: 'experiments', label: 'Experiments', available: false, tag: 'P4-06' },
   ];
@@ -48,13 +48,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                   }
                 }}
                 disabled={!item.available}
-                className={`relative px-3 py-1.5 text-xs font-medium rounded transition-colors whitespace-nowrap flex items-center gap-1.5 ${
-                  isActive
+                className={`relative px-3 py-1.5 text-xs font-medium rounded transition-colors whitespace-nowrap flex items-center gap-1.5 ${isActive
                     ? 'bg-[#F5F5F5] text-[#171717] font-semibold'
                     : item.available
-                    ? 'text-[#737373] hover:text-[#171717] hover:bg-[#F5F5F5]'
-                    : 'text-[#A3A3A3] cursor-not-allowed'
-                }`}
+                      ? 'text-[#737373] hover:text-[#171717] hover:bg-[#F5F5F5]'
+                      : 'text-[#A3A3A3] cursor-not-allowed'
+                  }`}
               >
                 <span>{item.label}</span>
                 {item.tag && (
@@ -70,4 +69,3 @@ export const Navbar: React.FC<NavbarProps> = ({
     </nav>
   );
 };
-

@@ -6,7 +6,11 @@ from pathlib import Path
 from http.server import ThreadingHTTPServer,BaseHTTPRequestHandler
 from urllib.parse import urlparse
 class Store:
-    def __init__(self):self.lock=threading.Lock();self.failed=set();self.revision=0
+    def __init__(self):
+        self.lock = threading.Lock()
+        self.failed = set()
+        self.revision = 0
+        self.processed_requests = {}
     def snapshot(self):
         with self.lock:
             junctions=[]
@@ -21,13 +25,25 @@ class Store:
                 'state_revision':self.revision,'sim_time_s':100.0,
                 'notice':'DEVELOPMENT FIXTURES. NO CARLA, YOLO, MARL OR REAL METRICS.',
                 'junctions':junctions,'plans':[], 'metrics':None}
-    def fault(self,j,enabled):
+    def fault(self,j,enabled,request_id=None):
         with self.lock:
+            if request_id is not None and request_id in self.processed_requests:
+                return False
             if enabled:self.failed.add(j)
             else:self.failed.discard(j)
             self.revision+=1
-    def reset(self):
-        with self.lock:self.failed.clear();self.revision+=1
+            if request_id is not None:
+                self.processed_requests[request_id]=True
+            return True
+    def reset(self,request_id=None):
+        with self.lock:
+            if request_id is not None and request_id in self.processed_requests:
+                return False
+            self.failed.clear()
+            self.revision+=1
+            if request_id is not None:
+                self.processed_requests[request_id]=True
+            return True
 
 def make_handler(store:Store,token:str):
     class Handler(BaseHTTPRequestHandler):
@@ -53,11 +69,17 @@ def make_handler(store:Store,token:str):
                 if not 0 <= size <= 4096:return self.send_json({'error':'body_too_large'},413)
                 obj=json.loads(self.rfile.read(size) or b'{}')
                 if not isinstance(obj,dict):raise ValueError('Expected JSON object')
-                if self.path=='/api/v1/reset':store.reset();return self.send_json(store.snapshot())
+                req_id=obj.get('request_id')
+                if req_id is not None and (not isinstance(req_id,str) or not req_id.strip() or len(req_id)>128):
+                    raise ValueError('Bad request_id')
+                if self.path=='/api/v1/reset':
+                    store.reset(req_id)
+                    return self.send_json(store.snapshot())
                 if self.path!='/api/v1/faults':return self.send_json({'error':'not_found'},404)
                 j=obj.get('junction_id');enabled=obj.get('enabled')
                 if j not in {'J1','J2','J3','J4'} or not isinstance(enabled,bool):raise ValueError('Bad fault fields')
-                store.fault(j,enabled);self.send_json(store.snapshot())
+                store.fault(j,enabled,req_id)
+                self.send_json(store.snapshot())
             except (ValueError,TypeError):self.send_json({'error':'invalid_request'},400)
     return Handler
 
