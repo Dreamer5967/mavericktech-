@@ -1,180 +1,100 @@
-"""
-Inference Entrypoint for Person 2 (Live Coordinator)
-===================================================
-A clean, lightweight, inference-only module with zero training dependencies.
-Called by P2's CARLA-SUMO synchronization bridge on each decision step.
+"""Verified model loading and read-only phase proposals. No simulator actuation.
 
-Input:  Observation dictionary matching configs/observation_schema.json
-Output: Validated action dictionary: { "J1": phase_idx, "J2": phase_idx, ... }
+Live execution is deliberately unavailable until retraining, contract review and
+an independent clearance executor are validated. `actions` is always empty.
 """
-
-import os
-import json
 import hashlib
-import torch
+import json
+from pathlib import Path
+import re
+from typing import Optional
 import numpy as np
-from typing import Dict, Any, Optional, List
-
+import torch
 from training.mappo.actor import ActorMLP
-from services.control.phase_manager import SafetyPhaseManager, PhaseProposal
 from services.planner.coordinator import RecoveryPlannerCoordinator
+from services.control.contracts import dimensions, permanent_mask, phase_mapping, require_action_mask
+
+
+def _build_permanent_mask(junction_cfg,max_action_slots):
+    return permanent_mask(junction_cfg,max_action_slots)
+
+
+def _build_policy_to_sumo_map(junction_cfg):
+    return phase_mapping(junction_cfg)
 
 
 class AEGISInferenceEngine:
-    """
-    Production inference engine for live traffic signal control.
-    Integrates Actor policy, Safety Phase Manager, and Recovery Planner.
-    Fails closed if verified model checkpoint or configuration is missing.
-    """
-
-    def __init__(
-        self,
-        checkpoint_path: Optional[str] = None,
-        config_dir: Optional[str] = None,
-        use_planner: bool = True,
-        fail_closed: bool = True,
-        device: str = "cpu",
-        expected_checkpoint_sha256: Optional[str] = None,
-    ):
-        self.device = device
-        self.use_planner = use_planner
-        self.fail_closed = fail_closed
-
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        cfg_dir = config_dir or os.path.join(base_dir, "configs")
-
-        with open(os.path.join(cfg_dir, "observation_schema.json")) as f:
-            self.obs_schema = json.load(f)
-        with open(os.path.join(cfg_dir, "action_mapping.json")) as f:
-            self.action_schema = json.load(f)
-
-        # Resilient schema parsing: handles root or _metadata placement
-        meta = self.obs_schema.get("_metadata", {})
-        self.num_junctions = self.obs_schema.get("num_junctions", meta.get("num_junctions", 4))
-        self.num_lanes = self.obs_schema.get("num_lanes_per_junction", meta.get("num_lanes_per_junction", 4))
-
-        # Resilient junction parsing: handles list or dict
-        junctions_raw = self.action_schema.get("junctions", [])
-        if isinstance(junctions_raw, dict):
-            self.junction_list = list(junctions_raw.values())
-        else:
-            self.junction_list = list(junctions_raw)
-
-        if not self.junction_list:
-            raise ValueError("[AEGIS Init Error] No junctions defined in action_mapping.json")
-
-        self.max_phases = max(j.get("num_phases", len(j.get("phase_names", [4]))) for j in self.junction_list)
-
-        # Calculate exact obs dimension
-        self.obs_dim = (
-            self.num_lanes * 3 + self.max_phases + 1 + self.num_junctions * 2
-        )
-
-        # Load Actor - Fail closed on missing/unverified checkpoint
-        self.actor = ActorMLP(self.obs_dim, self.max_phases, hidden_dim=64).to(device)
-        if checkpoint_path and os.path.isfile(checkpoint_path):
-            if self.fail_closed or expected_checkpoint_sha256 is not None:
-                expected = expected_checkpoint_sha256
-                if expected is None:
-                    manifest_file = os.path.join(base_dir, "manifests", "model_manifest.json")
-                    with open(manifest_file) as manifest_stream:
-                        expected = json.load(manifest_stream).get("checkpoint_sha256")
-                if not isinstance(expected, str) or len(expected) != 64:
-                    raise ValueError("Verified checkpoint SHA256 is required for live inference.")
-                digest = hashlib.sha256()
-                with open(checkpoint_path, "rb") as checkpoint_stream:
-                    for chunk in iter(lambda: checkpoint_stream.read(1024 * 1024), b""):
-                        digest.update(chunk)
-                if digest.hexdigest() != expected:
-                    raise ValueError("Checkpoint SHA256 mismatch; inference is blocked.")
-            state = torch.load(checkpoint_path, map_location=device, weights_only=True)
-            if "actor_state_dict" in state:
-                self.actor.load_state_dict(state["actor_state_dict"])
-            else:
-                self.actor.load_state_dict(state)
-            self.checkpoint_loaded = True
-        else:
-            if self.fail_closed:
-                raise FileNotFoundError(
-                    f"[AEGIS Security Fail-Closed] Live inference cannot run without a verified "
-                    f"checkpoint artifact. Provided path: '{checkpoint_path}'. "
-                    f"To bypass for debugging only, set fail_closed=False."
-                )
-            self.checkpoint_loaded = False
-
+    """Diagnostic proposal engine; loaded weights do not confer execution authority."""
+    def __init__(self,checkpoint_path:Optional[str]=None,config_dir:Optional[str]=None,
+                 use_planner=True,fail_closed=True,device='cpu',expected_checkpoint_sha256=None):
+        self.device=device;self.use_planner=use_planner;self.fail_closed=fail_closed
+        root=Path(__file__).resolve().parents[2]
+        directory=Path(config_dir) if config_dir else root/'configs'
+        self.obs_schema=json.loads((directory/'observation_schema.json').read_text())
+        self.action_schema=json.loads((directory/'action_mapping.json').read_text())
+        self.num_lanes,self.max_phases=dimensions(self.obs_schema)
+        self.num_junctions=self.obs_schema['num_junctions']
+        raw=self.action_schema['junctions']
+        self.junction_list=list(raw.values()) if isinstance(raw,dict) else list(raw)
+        if len(self.junction_list)!=self.num_junctions:raise ValueError('Junction count mismatch.')
+        self._permanent_masks={j['alias']:permanent_mask(j,self.max_phases) for j in self.junction_list}
+        self._policy_to_sumo={j['alias']:phase_mapping(j) for j in self.junction_list}
+        self.obs_dim=self.num_lanes*3+self.max_phases+1+self.num_junctions*2
+        self.actor=ActorMLP(self.obs_dim,self.max_phases,hidden_dim=64).to(device)
+        self.checkpoint_loaded=False
+        if checkpoint_path and Path(checkpoint_path).is_file():
+            expected=expected_checkpoint_sha256
+            if expected is None:
+                manifest=json.loads((root/'manifests/model_manifest.json').read_text())
+                expected=manifest.get('checkpoint_sha256')
+                if manifest.get('status')!='TRAINED_FROZEN' or manifest.get('deployment_status','').startswith('BLOCKED'):
+                    raise ValueError('Checkpoint deployment status is blocked; a compatible retrained artifact is required.')
+            if not isinstance(expected,str) or re.fullmatch('[0-9a-fA-F]{64}',expected) is None:
+                raise ValueError('Verified checkpoint SHA256 is required before loading.')
+            digest=hashlib.sha256()
+            with Path(checkpoint_path).open('rb') as stream:
+                for chunk in iter(lambda:stream.read(1024*1024),b''):digest.update(chunk)
+            if digest.hexdigest()!=expected.lower():raise ValueError('Checkpoint SHA256 mismatch; inference is blocked.')
+            state=torch.load(checkpoint_path,map_location=device,weights_only=True)
+            self.actor.load_state_dict(state.get('actor_state_dict',state))
+            self.checkpoint_loaded=True
+        elif fail_closed:
+            raise FileNotFoundError('[AEGIS Security Fail-Closed] Verified checkpoint artifact is missing.')
         self.actor.eval()
+        self.planner=RecoveryPlannerCoordinator(actor_model=self.actor,horizon_s=30,
+            decision_dt=self.obs_schema.get('decision_interval_s',5)) if use_planner else None
 
-        # Build Phase Manager
-        allowed_phases = {
-            j["alias"]: set(j["phase_names"]) for j in self.junction_list
-        }
-        first_j = self.junction_list[0]
-        self.phase_mgr = SafetyPhaseManager(
-            allowed_phases=allowed_phases,
-            min_green_s=first_j.get("min_green_s", 10.0),
-            yellow_s=first_j.get("yellow_s", 3.0),
-            all_red_s=first_j.get("all_red_s", 2.0),
-            max_green_s=first_j.get("max_green_s", 60.0),
-        )
+    def _apply_permanent_mask(self,jid,caller_mask):
+        if jid not in self._permanent_masks:raise ValueError('Unknown junction.')
+        return require_action_mask(caller_mask,self._permanent_masks[jid])
 
-        # Recovery Planner
-        self.planner = RecoveryPlannerCoordinator(
-            actor_model=self.actor,
-            horizon_s=30,
-            decision_dt=self.obs_schema.get("decision_interval_s", meta.get("decision_interval_s", 5))
-        )
+    def _policy_to_sumo_phase(self,jid,policy_idx):
+        value=self._policy_to_sumo[jid].get(policy_idx)
+        if value is None:raise ValueError('Masked action has no SUMO phase mapping.')
+        return value
 
-    def step(
-        self,
-        observations: Dict[str, np.ndarray],
-        action_masks: Dict[str, np.ndarray],
-        run_id: str,
-        state_revision: int,
-        sim_time_s: float
-    ) -> Dict[str, Any]:
-        """
-        Produce a validated action proposal for each intersection.
-
-        Returns:
-            dict containing:
-              - 'actions': dict mapping junction_id -> phase_index
-              - 'planner_records': list of candidate evaluations (for UI)
-              - 'active_signals': dict mapping junction_id -> signal string
-        """
-        executed_actions = {}
-        planner_records = []
-
+    def step(self,observations,action_masks,run_id,state_revision,sim_time_s):
+        """Return diagnostic proposals only, never safe-to-execute phase changes."""
+        expected=set(self._permanent_masks)
+        if set(observations)!=expected or set(action_masks)!=expected:
+            raise ValueError('All configured junction observations and masks are required.')
+        masks={jid:self._apply_permanent_mask(jid,action_masks[jid]) for jid in expected}
+        for value in observations.values():
+            array=np.asarray(value)
+            if array.shape!=(self.obs_dim,) or not np.isfinite(array).all():raise ValueError('Invalid observation vector.')
+        policies={};proposals={};unavailable={};records=[]
+        plan=None
         if self.use_planner:
-            plan = self.planner.plan(
-                current_obs=observations,
-                action_masks=action_masks,
-                run_id=run_id,
-                state_revision=state_revision,
-                sim_time_s=sim_time_s
-            )
-            planner_records = plan.get("candidate_evaluations", [])
-
-            for jid, obs in observations.items():
-                mask = action_masks.get(jid, np.ones(self.max_phases, dtype=bool))
-                action_idx = plan["first_action"]
-                if not mask[action_idx]:
-                    valid_indices = np.where(mask)[0]
-                    action_idx = int(valid_indices[0]) if len(valid_indices) > 0 else 0
-                executed_actions[jid] = action_idx
-        else:
-            for jid, obs in observations.items():
-                mask = action_masks.get(jid, np.ones(self.max_phases, dtype=bool))
-                act, _ = self.actor.get_action(obs, mask, deterministic=True)
-                executed_actions[jid] = act
-
-        # Advance phase manager safety timer
-        dt = self.obs_schema.get("decision_interval_s", 5.0)
-        active_signals = self.phase_mgr.tick(dt=dt)
-
-        return {
-            "actions": executed_actions,
-            "planner_records": planner_records,
-            "active_signals": active_signals,
-            "state_revision": state_revision + 1,
-            "sim_time_s": sim_time_s
-        }
+            plan=self.planner.plan(current_obs=observations,action_masks=masks,run_id=run_id,
+                state_revision=state_revision,sim_time_s=sim_time_s)
+            records=plan.get('candidate_evaluations',[])
+        for jid,obs in observations.items():
+            index=plan['first_action'] if plan is not None else self.actor.get_action(obs,masks[jid],deterministic=True)[0]
+            if isinstance(index,bool) or not isinstance(index,(int,np.integer)) or not 0<=index<self.max_phases or not masks[jid][index]:
+                unavailable[jid]='selected_action_masked';continue
+            policies[jid]=int(index);proposals[jid]=self._policy_to_sumo_phase(jid,int(index))
+        return {'actions':{},'proposed_sumo_phases':proposals,'policy_actions':policies,
+            'unavailable':unavailable,'planner_records':records,'active_signals':{},
+            'run_id':run_id,'based_on_revision':state_revision,'state_revision':state_revision,
+            'sim_time_s':sim_time_s,'actuation_permitted':False,'requires_transition_validation':True,
+            'mode':'READ_ONLY_PROPOSALS','checkpoint_loaded':self.checkpoint_loaded}

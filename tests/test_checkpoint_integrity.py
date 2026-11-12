@@ -31,7 +31,9 @@ class CheckpointIntegrityTests(unittest.TestCase):
             result=engine.step({f'J{i}':np.zeros(25,dtype=np.float32) for i in range(1,5)},
                                {f'J{i}':np.ones(4,dtype=bool) for i in range(1,5)},'offline-fixture',1,5)
             self.assertTrue(engine.checkpoint_loaded)
-            self.assertEqual(set(result['actions']),{'J1','J2','J3','J4'})
+            self.assertEqual(set(result['proposed_sumo_phases']),{'J1','J2','J3','J4'})
+            self.assertEqual(result['actions'],{})
+            self.assertFalse(result['actuation_permitted'])
 
 
 if __name__=='__main__':

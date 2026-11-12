@@ -65,12 +65,13 @@ Random test fixtures do not count as trained-policy verification.
 - [Security module scope](docs/security.md)
 - [Lane calibration and policy mapping status](docs/lane_mapping.md)
 
-P3 source is integrated; live learned control remains blocked by external
-checkpoint verification, lane calibration and actual map-specific phase mapping.
-The four-phase action labels are draft model slots, not verified SUMO phase
-indices. Inference returns proposals and internal phase-manager state; it does
-not execute simulator signal changes. Synthetic diagnostics and rollouts are not
-live traffic benchmarks.
+P3's v2 geometry contract is integrated. Physical lanes aggregate into four
+model slots; unused slots remain masked. Model actions translate through the
+actual SUMO green-phase table. Inference is read-only: `actions` is always empty,
+and `proposed_sumo_phases` requires independent transition validation. Live policy
+remains disabled pending contract/clearance review and compatible retraining.
+Standalone SUMO training refuses to launch with the current unreviewed contract.
+Synthetic diagnostics and rollouts are not live traffic benchmarks.
 
 Cloud code uses the existing Python 3.10 `venv-sim`. Do not run policy development
 requirements against it as setup. Live execution needs appropriate approval;

@@ -41,16 +41,18 @@ vehicle counts must not be substituted for lane counts or stopped queues.
 
 ## P3 compatibility
 
-The current model declares four lane slots and four green actions at every
-junction. This does not match the inventories above. Generic NS/EW/left labels
-cannot be assigned to these phase indices without checking the trained action
-semantics. The recorded runtime mapping leaves policy slot/action mappings null
-instead of truncating lanes or inventing missing phases.
+The remake's v2 candidate contract in `configs/action_mapping.json` groups the
+physical lanes into four approach slots and permanently masks unused action
+slots. It explicitly translates model indices to actual green phases. These
+candidate mappings agree with the runtime inventory, but their review flags
+remain false. `runtime_mapping.json` retains null reviewed-policy mappings until
+contract approval; no lanes are silently truncated.
 
-The model manifest's declared network hash also differs from the actual hash;
-its external checkpoint has not been verified. The original model provenance is
-preserved rather than rewritten to claim compatibility. `python -B -m
-p2.controller_gate` lists these blockers. It can check an external artifact with
+The candidate manifest now names the correct target network and explicitly marks
+the old synthetic checkpoint incompatible and unverified. Matching dimensions
+do not establish compatibility: aggregation, masks, normalization and action
+semantics changed. Retraining and external artifact verification remain required.
+`python -B -m p2.controller_gate` lists the remaining blockers. It can check an external artifact with
 `--checkpoint C:/path/to/model.pt`; weights stay outside Git. The pure
 `actor_vectors` adapter accepts explicit lane beliefs, masks, ages and phase
 context; it rejects unexpected truth fields and missing-count substitutions.
@@ -59,7 +61,12 @@ Before learned control, P3 must establish a compatible checkpoint and reviewed
 lane/action semantics (or train against the actual lane/phase contract). P2 must
 validate sufficient camera coverage and lane observations. Clearance programs
 and live execution then need a separate bounded validation. Policy actuation
-remains disabled.
+remains disabled. The source fixes add explicit aggregation, reject all-false
+masks and preserve hash verification with tensor-only checkpoint loading.
+The inference engine emits no executable actions. Standalone training blocks
+launch until the training contract and clearance paths are reviewed, checks the
+network hash, translates green slots and uses explicit reviewed yellow/all-red
+phase paths. These transitions have been tested with fake TraCI, not cloud-run.
 
 ## Reproduce offline
 

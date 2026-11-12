@@ -51,5 +51,14 @@ Checkpoint loading verifies SHA256 against `manifests/model_manifest.json`
 (or an explicitly supplied expected digest for an offline fixture) and uses
 `torch.load(weights_only=True)`. The declared external artifact has not yet been
 verified. A correctly formatted manifest is not proof of model provenance.
-The engine returns proposed actions; its internal phase-manager output is not a
-record of executed simulator actions. No P2 feed route applies those proposals.
+The v2 engine returns `proposed_sumo_phases`, `policy_actions` and
+`requires_transition_validation=true`. Its `actions` and `active_signals` maps
+are empty and `actuation_permitted` is always false. A proposal is never safe to
+pass directly to `setPhase`. No P2 feed route applies these proposals.
+
+V2 slots aggregate the declared physical lanes by approach. Any unavailable
+member masks the aggregate slot; it is not treated as a complete measured count.
+Beliefs sum across lanes and normalize by 15 vehicles per physical lane times
+the number of lanes in the slot. Structurally unused slots have zero features
+and a true missing mask. This candidate normalization/aggregation contract still
+requires review and retraining. ROI vehicle occupancy is not a queue measurement.
