@@ -5,7 +5,7 @@ from datetime import datetime
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
 from http.server import ThreadingHTTPServer
-from p2.live_feed import FeedStore, make_handler
+from p2.live_feed import FeedStore, make_handler, read_signal_states
 
 
 class FeedTests(unittest.TestCase):
@@ -51,6 +51,22 @@ class FeedTests(unittest.TestCase):
         self.assertTrue(row['missing'])
         self.assertIsNone(row['observed_vehicle_count'])
         self.assertIsNone(row['frame_url'])
+
+    def test_signal_states_are_read_only_and_exposed_per_camera(self):
+        class Light:
+            attributes={}
+            def get_opendrive_id(self): return '960'
+            def get_state(self): return 'TrafficLightState.Green'
+        class Actors(list):
+            def filter(self, pattern):
+                self.pattern=pattern
+                return self
+        class World:
+            def get_actors(self): return Actors([Light()])
+        states=read_signal_states(World(),[{'camera_id':'cam_g1','opendrive_signal_ids':['960','961']}])
+        self.assertEqual(states,{'cam_g1':{'960':'GREEN','961':'UNAVAILABLE'}})
+        self.store.publish_signal_states(states)
+        self.assertEqual(self.store.snapshot()['cameras'][0]['traffic_lights']['960'],'GREEN')
 
     def test_http_frame_access_is_allowlisted_and_controls_refused(self):
         self.store.publish([('cam_g1',self.row(),b'jpeg')],10.1)

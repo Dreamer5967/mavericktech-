@@ -23,11 +23,15 @@ def check_lights(synchronization, helper, selected):
     return {'missing_signal_ids':missing,'light_mismatches':mismatches}
 
 
-def run(scenario, config, seconds, output, policy_checkpoint=None, policy_sha256=None):
+def run(scenario, config, seconds, output, policy_checkpoint=None, policy_sha256=None, policy_execute=False):
     if os.environ.get('AEGIS_APPROVE_LIVE_COSIM')!='yes':
         raise RuntimeError('Explicit approval for live clock advancement is required.')
     if (policy_checkpoint is None)!=(policy_sha256 is None):
         raise ValueError('Read-only policy diagnostics require both checkpoint path and SHA256.')
+    if policy_execute and policy_checkpoint is None:
+        raise ValueError('Learned-policy actuation requires a verified checkpoint and SHA256.')
+    if policy_execute and os.environ.get('AEGIS_APPROVE_LEARNED_POLICY')!='yes':
+        raise RuntimeError('Explicit learned-policy approval is required.')
     import carla
     import sumolib
     import traci
@@ -51,7 +55,7 @@ def run(scenario, config, seconds, output, policy_checkpoint=None, policy_sha256
     policy=None
     if policy_checkpoint is not None:
         from services.control.live_proposals import BoundedPolicyAdapter
-        policy=BoundedPolicyAdapter(policy_checkpoint,policy_sha256,output/'policy',execute=False)
+        policy=BoundedPolicyAdapter(policy_checkpoint,policy_sha256,output/'policy',execute=policy_execute)
     original=bridge.SimulationSynchronization.tick
     started=None
     samples=[]
@@ -87,13 +91,15 @@ def run(scenario, config, seconds, output, policy_checkpoint=None, policy_sha256
     client=carla.Client('127.0.0.1',2000)
     client.set_timeout(8)
     world=client.get_world()
-    summary={'mode':'FIXED_TIME_COSIM_VALIDATION','policy_enabled':False,'policy_diagnostics':policy_summary,'error':error,
+    summary={'mode':'BOUNDED_MAPPO_COSIM_TEST' if policy_execute else 'FIXED_TIME_COSIM_VALIDATION',
+             'policy_enabled':policy_execute,'policy_diagnostics':policy_summary,'error':error,
              'samples':len(samples),'max_mirrored_vehicle_count':max((s['mirrored_vehicle_count'] for s in samples),default=0),
              'missing_signal_ids':sorted({x for s in samples for x in s['missing_signal_ids']}),
              'light_mismatch_samples':sum(bool(s['light_mismatches']) for s in samples),
              'post_map':world.get_map().name,'post_synchronous_mode':world.get_settings().synchronous_mode,
              'finished_at_utc':datetime.now(timezone.utc).isoformat(),
-             'evaluator_only':True,'note':'Reference signal/actor checks must never enter the policy observation input.'}
+             'evaluator_only':not policy_execute,
+             'note':'MAPPO actuation, when enabled, is bounded to reviewed SUMO phases with yellow/all-red clearance and fresh camera inputs.'}
     summary['passed']=bool(samples) and error is None and not summary['missing_signal_ids'] and not summary['light_mismatch_samples'] and not summary['post_synchronous_mode'] and summary['post_map']==config['map']
     (output/'summary.json').write_text(json.dumps(summary,indent=2)+'\n',encoding='utf-8')
     print('BRIDGE_VALIDATION',json.dumps(summary),flush=True)
@@ -107,10 +113,12 @@ def main():
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--seconds',type=float,default=30)
     parser.add_argument('--policy-checkpoint',type=Path,
-                        help='Verified external checkpoint for read-only proposals; no signal actuation.')
+                        help='Verified external checkpoint for MAPPO proposals.')
     parser.add_argument('--policy-sha256',
                         help='Required SHA256 for --policy-checkpoint.')
     parser.add_argument('--execute',action='store_true')
+    parser.add_argument('--enable-policy',action='store_true',
+                        help='Run bounded MAPPO signal actuation; requires AEGIS_APPROVE_LEARNED_POLICY=yes.')
     args=parser.parse_args()
     if not 1<=args.seconds<=30:
         parser.error('This validation is limited to at most 30 seconds of clock ownership.')
@@ -118,7 +126,7 @@ def main():
         print('Prepared only: would run one bounded clock owner and inspect selected signal agreement.')
         return 0
     return run(args.scenario,json.loads(args.config.read_text(encoding='utf-8')),args.seconds,args.output,
-               args.policy_checkpoint,args.policy_sha256)
+               args.policy_checkpoint,args.policy_sha256,args.enable_policy)
 
 
 if __name__=='__main__':

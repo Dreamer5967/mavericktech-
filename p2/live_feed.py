@@ -31,6 +31,36 @@ def check_clock_mode(world, mode):
     # An observer accepts frames from an external coordinator and never ticks.
 
 
+def _light_state_name(state):
+    """Return a stable, JSON-safe CARLA light-state name."""
+    value=getattr(state,'name',str(state))
+    return value.rsplit('.',1)[-1].upper()
+
+
+def read_signal_states(world, cameras):
+    """Read, but never control, the configured CARLA traffic lights.
+
+    CARLA exposes the OpenDRIVE identifier through different accessors across
+    builds, so support both forms.  Unknown IDs remain ``UNAVAILABLE`` rather
+    than being guessed from the SUMO schedule.
+    """
+    wanted={str(signal) for camera in cameras for signal in camera.get('opendrive_signal_ids',[])}
+    states={}
+    for actor in world.get_actors().filter('traffic.traffic_light'):
+        try:
+            getter=getattr(actor,'get_opendrive_id',None)
+            signal_id=getter() if callable(getter) else actor.attributes.get('opendrive_id')
+            signal_id=str(signal_id) if signal_id is not None else None
+            if signal_id in wanted:
+                states[signal_id]=_light_state_name(actor.get_state())
+        except Exception:
+            # A disappearing actor must not take down perception publishing.
+            continue
+    return {camera['camera_id']:{str(signal):states.get(str(signal),'UNAVAILABLE')
+                                 for signal in camera.get('opendrive_signal_ids',[])}
+            for camera in cameras}
+
+
 PAGE = r'''<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
 <title>AEGIS camera feed</title><style>
 body{font:15px system-ui;background:#101826;color:#e8edf4;margin:24px}h1{font-size:24px}#status{color:#7dd3fc}
@@ -60,7 +90,7 @@ if(active)setTimeout(poll,500)}poll();</script></body></html>'''
 
 class FeedStore:
     """Bounded JPEG cache permits slow transfers without a disk frame dump."""
-    def __init__(self, camera_ids, run_id, threshold=2.0, max_frames_per_camera=32, lane_templates=None):
+    def __init__(self, camera_ids, run_id, threshold=2.0, max_frames_per_camera=32, lane_templates=None, signal_templates=None):
         self.lock=threading.Lock()
         self.camera_ids=list(camera_ids)
         self.run_id=run_id
@@ -74,6 +104,9 @@ class FeedStore:
         self.phase='STARTING'
         self.error=None
         self.lane_templates=lane_templates or {}
+        self.signal_templates=signal_templates or {}
+        self.signal_states={camera_id:{signal:'UNAVAILABLE' for signal in signals}
+                            for camera_id,signals in self.signal_templates.items()}
         self.active_faults=[]
         self.previews={}
 
@@ -107,6 +140,11 @@ class FeedStore:
             self.phase=phase
             self.error=error
 
+    def publish_signal_states(self, states):
+        """Publish a read-only snapshot of CARLA's current signal states."""
+        with self.lock:
+            self.signal_states=copy.deepcopy(states)
+
     def snapshot(self, now=None):
         now=time.time() if now is None else now
         with self.lock:
@@ -134,6 +172,7 @@ class FeedStore:
                         {lane:None for lane in self.lane_templates[camera_id]}) if camera_id in self.lane_templates else None,
                     'lane_count_semantics':'detected_vehicle_roi_occupancy' if camera_id in self.lane_templates else None,
                     'queue_estimate':None,
+                    'traffic_lights':copy.deepcopy(self.signal_states.get(camera_id,{})),
                     'preview_frame_id':preview.get('preview_frame_id'),'frame_url':preview.get('frame_url'),
                     'preview_source_frame_id':preview.get('frame_id'),
                     'preview_source_sim_time_s':preview.get('source_sim_time_s'),
@@ -233,7 +272,10 @@ def run(config, duration, port, output_root, allowed_origin, clock_mode='standal
             raise RuntimeError('Live map geometry differs from the calibrated map.')
     camera_regions={c['camera_id']:c for c in lane_regions['cameras']} if lane_regions else {}
     templates={key:[r['lane_id'] for r in c['regions']] for key,c in camera_regions.items()}
-    store=FeedStore([c['camera_id'] for c in config['cameras']],run_id,config['stale_after_sim_s'],lane_templates=templates)
+    signals={camera['camera_id']:[str(signal) for signal in camera.get('opendrive_signal_ids',[])]
+             for camera in config['cameras']}
+    store=FeedStore([c['camera_id'] for c in config['cameras']],run_id,config['stale_after_sim_s'],
+                    lane_templates=templates,signal_templates=signals)
     server=ThreadingHTTPServer(('127.0.0.1',port),make_handler(store,allowed_origin))
     server.daemon_threads=True
     http_thread=threading.Thread(target=server.serve_forever,daemon=True)
@@ -302,6 +344,7 @@ def run(config, duration, port, output_root, allowed_origin, clock_mode='standal
                 elapsed=duration-(deadline-time.monotonic())
                 dropping=[fault['camera_id']] if fault and fault['start_s']<=elapsed<fault['start_s']+fault['duration_s'] else []
                 with store.lock:store.active_faults=dropping
+                store.publish_signal_states(read_signal_states(world,config['cameras']))
                 for camera in config['cameras']:
                     camera_id=camera['camera_id']
                     if camera_id in dropping:continue

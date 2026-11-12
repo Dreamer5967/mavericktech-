@@ -10,6 +10,7 @@ export interface JunctionData {
   junction_id: string;
   camera_id: string;
   phase: string;
+  traffic_lights: Record<string, string>;
   camera_status: CameraStatus;
   observed_count: number | null;
   lane_counts: Record<string, number | null> | null;

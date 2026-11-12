@@ -28,6 +28,14 @@ class CameraUnavailableError(Exception):
 CAMERA_BY_JUNCTION={"J1":"cam_g1","J2":"cam_g3","J3":"cam_g4","J4":"cam_g5"}
 
 
+def signal_phase(traffic_lights: dict[str, str] | None) -> str:
+    """Compact an observed signal group without inventing a controller phase."""
+    states=sorted({str(state).upper() for state in (traffic_lights or {}).values() if state})
+    if not states or states==["UNAVAILABLE"]:
+        return "NOT_AVAILABLE"
+    return states[0] if len(states)==1 else "MIXED ("+"/".join(states)+")"
+
+
 async def fetch_snapshot() -> dict[str, Any]:
     async with httpx.AsyncClient(timeout=3.0, headers={"Connection": "close"}) as client:
         response=await client.get(f"{settings.camera_api_url}/api/v1/snapshot")
@@ -45,7 +53,8 @@ def dashboard_snapshot(snapshot: dict[str, Any]) -> dict[str, Any]:
         available="AVAILABLE" if status=="fresh" else "STALE" if status=="stale" else "MISSING"
         junctions.append({
             "junction_id":junction_id,"camera_id":camera_id,"camera_status":available,
-            "phase":"not_published","observed_count":camera.get("observed_vehicle_count"),
+            "phase":signal_phase(camera.get("traffic_lights")),"traffic_lights":camera.get("traffic_lights") or {},
+            "observed_count":camera.get("observed_vehicle_count"),
             "lane_counts":camera.get("lane_counts"),"estimated_queue":None,
             "queue_interval":None,"frame_url":camera.get("frame_url"),
             "source":"p2_camera_observation","data_quality":camera.get("lane_count_semantics", "whole_image_detection"),

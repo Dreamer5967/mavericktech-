@@ -1,4 +1,4 @@
-"""Build an SSH-streamed, bounded, read-only policy-diagnostics runner.
+"""Build an SSH-streamed bounded MAPPO policy runner.
 
 The generated shell file is a local artifact. It carries source and an external
 checkpoint to a unique remote runtime directory, never to Git.
@@ -36,6 +36,8 @@ def main():
                         help='Existing remote scenario path; it is never copied or changed.')
     parser.add_argument('--out',type=Path,required=True)
     parser.add_argument('--seconds',type=int,default=30)
+    parser.add_argument('--enable-policy',action='store_true',
+                        help='Generate a bounded learned-policy actuation test runner.')
     args=parser.parse_args()
     if not args.checkpoint.is_file():parser.error('Verified external checkpoint is required.')
     if not 1<=args.seconds<=30:parser.error('Bounded run must be 1–30 seconds.')
@@ -48,7 +50,7 @@ def main():
            'runtime_mapping.json':(ROOT/'configs/runtime_mapping.json').read_text(encoding='utf-8')}
     commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
     provenance={'commit':commit,'source_sha256':{name:hashlib.sha256(text.encode()).hexdigest() for name,text in files.items()},
-                'mode':'fixed_time_cosim_with_read_only_camera_policy_proposals'}
+                'mode':'bounded_mappo_cosim_test' if args.enable_policy else 'fixed_time_cosim_with_read_only_camera_policy_proposals'}
     encoded_files=base64.b64encode(json.dumps(files).encode()).decode()
     encoded_model=base64.b64encode(args.checkpoint.read_bytes()).decode()
     sha=digest(args.checkpoint)
@@ -72,7 +74,7 @@ sys.path.insert(0,str(root))
 output=Path('/workspace/aegis/evidence/pipeline-validation')/root.name
 output.mkdir(parents=True,exist_ok=False)
 (output/'source_provenance.json').write_text(json.dumps(provenance,indent=2),encoding='utf-8')
-sys.argv=['p2.validate_pipeline','--execute','--seconds','{args.seconds}','--config',str(root/'camera_config.json'),'--lane-regions',str(root/'lane_regions.json'),'--scenario',{remote_scenario!r},'--output-root',str(output),'--policy-checkpoint',str(checkpoint),'--policy-sha256','{sha}']
+sys.argv=['p2.validate_pipeline','--execute','--seconds','{args.seconds}','--config',str(root/'camera_config.json'),'--lane-regions',str(root/'lane_regions.json'),'--scenario',{remote_scenario!r},'--output-root',str(output),'--policy-checkpoint',str(checkpoint),'--policy-sha256','{sha}']+({['--enable-policy']!r} if {args.enable_policy!r} else [])
 try:runpy.run_module('p2.validate_pipeline',run_name='__main__')
 finally:
  buffer=io.BytesIO()
@@ -85,6 +87,8 @@ finally:
     script+='export SUMO_HOME=/workspace/aegis/venv-sim/lib/python3.10/site-packages/sumo\n'
     script+='export PATH=/workspace/aegis/venv-sim/bin:$PATH\nunset PYTHONPATH\n'
     script+='if [ "${AEGIS_APPROVE_LIVE_COSIM:-}" != "yes" ]; then exit 2; fi\n'
+    if args.enable_policy:
+        script+='if [ "${AEGIS_APPROVE_LEARNED_POLICY:-}" != "yes" ]; then exit 3; fi\n'
     script+=f"timeout --signal=INT --kill-after=30s {args.seconds+120}s /workspace/aegis/venv-sim/bin/python -B -u - <<'AEGIS_POLICY'\n{bootstrap}\nAEGIS_POLICY\n"
     args.out.write_text(script,encoding='utf-8',newline='\n')
     print('Prepared read-only policy diagnostics runner:',args.out)

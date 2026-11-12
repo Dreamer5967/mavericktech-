@@ -21,6 +21,11 @@ class PipelineValidationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'both checkpoint path and SHA256'):
                 run_bridge(None, None, 30, None, policy_checkpoint='external.pt')
 
+    def test_learned_policy_execution_requires_a_verified_checkpoint(self):
+        with patch.dict(os.environ, {'AEGIS_APPROVE_LIVE_COSIM':'yes','AEGIS_APPROVE_LEARNED_POLICY':'yes'}, clear=True):
+            with self.assertRaisesRegex(ValueError, 'requires a verified checkpoint'):
+                run_bridge(None, None, 30, None, policy_execute=True)
+
     def test_observer_accepts_external_clock_without_calling_tick(self):
         class World:
             def get_settings(self):

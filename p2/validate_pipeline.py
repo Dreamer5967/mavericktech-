@@ -73,6 +73,7 @@ def run(args):
                 '--output',str(output/'bridge'),'--seconds',str(args.seconds)]+(
                 ['--policy-checkpoint',str(args.policy_checkpoint.resolve()),'--policy-sha256',args.policy_sha256]
                 if args.policy_checkpoint else []),
+                *( ['--enable-policy'] if args.enable_policy else []),
                 stdout=bridge_log,stderr=subprocess.STDOUT,env=environment)
             started=time.monotonic()
             while bridge.poll() is None:
@@ -126,7 +127,8 @@ def run(args):
     passed=error is None and not remaining and world.get_map().name==config['map'] and not world.get_settings().synchronous_mode
     passed=passed and all(c['distinct_fresh_frames']>=3 and c['source_time_span_s']>0 and c['preview'] for c in cameras.values())
     summary={'status':'PASSED' if passed else 'FAILED',
-             'mode':'FIXED_TIME_COSIM_WITH_CAMERA_OBSERVATIONS','learned_policy_enabled':False,
+             'mode':'BOUNDED_MAPPO_COSIM_WITH_CAMERA_OBSERVATIONS' if args.enable_policy else 'FIXED_TIME_COSIM_WITH_CAMERA_OBSERVATIONS',
+             'learned_policy_enabled':args.enable_policy,
              'error':error,'snapshot_samples':len(samples),'remaining_rgb_actor_ids':remaining,
              'synchronous_snapshot_samples':len(synchronous_samples),'cameras':cameras,
              'post_map':world.get_map().name,'post_synchronous_mode':world.get_settings().synchronous_mode}
@@ -145,6 +147,8 @@ def main():
     parser.add_argument('--policy-checkpoint',type=Path,
                         help='Optional verified checkpoint for read-only policy diagnostics.')
     parser.add_argument('--policy-sha256',help='Required with --policy-checkpoint.')
+    parser.add_argument('--enable-policy',action='store_true',
+                        help='Enable the bounded MAPPO controller during this test.')
     parser.add_argument('--output-root',type=Path,default=Path('/workspace/aegis/evidence/pipeline-validation'))
     parser.add_argument('--execute',action='store_true')
     args=parser.parse_args()
@@ -152,6 +156,8 @@ def main():
         parser.error('Use at most 30 seconds and a nonprivileged port.')
     if (args.policy_checkpoint is None)!=(args.policy_sha256 is None):
         parser.error('Use --policy-checkpoint and --policy-sha256 together.')
+    if args.enable_policy and args.policy_checkpoint is None:
+        parser.error('--enable-policy requires a verified checkpoint and SHA256.')
     if not args.execute:
         print('Prepared only: warms observer first, then one bridge clock owner. No process or connection started.')
         return 0

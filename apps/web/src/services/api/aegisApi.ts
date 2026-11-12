@@ -10,13 +10,19 @@ import {
 
 const CAMERA_BY_JUNCTION: Record<string, string> = { J1: 'cam_g1', J2: 'cam_g3', J3: 'cam_g4', J4: 'cam_g5' };
 
+function signalPhase(trafficLights: Record<string, string> | undefined): string {
+  const states = [...new Set(Object.values(trafficLights || {}).filter(Boolean).map((state) => state.toUpperCase()))].sort();
+  if (states.length === 0 || (states.length === 1 && states[0] === 'UNAVAILABLE')) return 'NOT_AVAILABLE';
+  return states.length === 1 ? states[0] : `MIXED (${states.join('/')})`;
+}
+
 function normalizeSnapshot(raw: any): SnapshotResponse {
   const cameras = new Map<string, any>((raw.cameras || []).map((camera: any) => [camera.camera_id, camera]));
   const junctions = Object.entries(CAMERA_BY_JUNCTION).map(([junction_id, camera_id]) => {
     const camera = cameras.get(camera_id) || {};
     const status = camera.status === 'fresh' ? 'AVAILABLE' : camera.status === 'stale' ? 'STALE' : 'MISSING';
     return {
-      junction_id, camera_id, camera_status: status, phase: 'not_published',
+      junction_id, camera_id, camera_status: status, traffic_lights: camera.traffic_lights || {}, phase: signalPhase(camera.traffic_lights),
       observed_count: camera.observed_vehicle_count ?? null,
       lane_counts: camera.lane_counts ?? null, estimated_queue: null, queue_interval: null,
       frame_url: camera.frame_url ?? null, source: 'p2_camera_observation',

@@ -36,7 +36,7 @@ export const JunctionCard: React.FC<JunctionCardProps> = ({
               </span>
             </div>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-xs text-[#737373]">Signal Phase:</span>
+              <span className="text-xs text-[#737373]">CARLA Signal:</span>
               <span className="text-xs font-mono font-medium text-[#23865A]">
                 {junction.phase}
               </span>
