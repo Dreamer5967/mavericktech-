@@ -41,7 +41,10 @@ def run(scenario, config, seconds, output, policy_checkpoint=None, policy_sha256
     spec=importlib.util.spec_from_file_location('aegis_reviewed_bridge',source)
     bridge=importlib.util.module_from_spec(spec)
     spec.loader.exec_module(bridge)
-    args=SimpleNamespace(sumo_cfg_file=str(scenario),step_length=0.05,sumo_host=None,
+    # The learned-policy test intentionally advances more slowly so YOLO can
+    # keep observations within the freshness budget; fixed-time validation
+    # retains the original bridge cadence.
+    args=SimpleNamespace(sumo_cfg_file=str(scenario),step_length=0.01 if policy_execute else 0.05,sumo_host=None,
                          sumo_port=None,sumo_gui=False,client_order=1,carla_host='127.0.0.1',
                          carla_port=2000,tls_manager='sumo',sync_vehicle_color=False,sync_vehicle_lights=False)
     tree=ast.parse(source.read_text(encoding='utf-8'))
