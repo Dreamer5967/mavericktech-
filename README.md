@@ -14,7 +14,7 @@ not establish live-policy, application or presentation acceptance.
 | P1 / Amal | Security contribution merged; presentation/checklist drafts reviewed | [#4: Final deck, compliance evidence, actual costs, backup and rehearsal](https://github.com/Dreamer5967/mavericktech-/issues/4) |
 | P2 | Four cameras, YOLO, 22 ROI counts, dropout recovery, and fixed-time CARLA–SUMO validation passed | [#6: Queue semantics, long-run acceptance and remaining runtime work](https://github.com/Dreamer5967/mavericktech-/issues/6) |
 | P3 / Shivanshu | Actual-SUMO MAPPO artifact, hash verification, isolated recovery evaluation and live read-only proposals passed | [#5: Camera-domain and guarded control acceptance remain blocked](https://github.com/Dreamer5967/mavericktech-/issues/5) |
-| P4 | Dashboard foundation on its branch; security helpers available | [#7: Live frames, operator API, VQA, tracing, deployment and speech](https://github.com/Dreamer5967/mavericktech-/issues/7) |
+| P4 | Operator dashboard and cinematic platform experience integrated | [#7: Live frames, operator API, VQA, tracing, deployment and speech](https://github.com/Dreamer5967/mavericktech-/issues/7) |
 
 Live learned-policy control and the complete end-to-end demo are not ready.
 Use the linked issue checklists and evidence to determine completion; team role
@@ -56,6 +56,14 @@ The external trained-checkpoint test skips when its artifact is unavailable.
 Set `AEGIS_P3_CHECKPOINT` to its path and `AEGIS_REQUIRE_P3_CHECKPOINT=1` to require
 that test; inference checks the manifest SHA256 before loading tensor weights.
 Random test fixtures do not count as trained-policy verification.
+
+## Web frontend
+
+From `apps/web/`, run `npm ci` and `npm run dev -- --host 127.0.0.1`.
+Open `http://127.0.0.1:5173/` for the operator dashboard or
+`http://127.0.0.1:5173/experience` for the platform experience. The dashboard
+requires the P2 camera feed on port 8765 for live snapshots; the question and
+VQA endpoints use the API service on port 8001.
 
 ## Runtime and integration
 

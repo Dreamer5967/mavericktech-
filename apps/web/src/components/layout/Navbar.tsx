@@ -1,5 +1,6 @@
 import React from 'react';
-import { Layers } from 'lucide-react';
+import { Layers, Sparkles } from 'lucide-react';
+import { useNavigation } from '../../routes/Router';
 
 interface NavbarProps {
   activeTab?: string;
@@ -10,6 +11,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   activeTab = 'overview',
   onTabChange,
 }) => {
+  const { navigate } = useNavigation();
   const navItems = [
     { id: 'overview', label: 'Overview', available: true },
     { id: 'intersections', label: 'Intersections', available: true },
@@ -64,6 +66,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             );
           })}
+          <button
+            type="button"
+            onClick={() => navigate('/experience')}
+            className="px-3 py-1.5 text-xs font-medium rounded whitespace-nowrap flex items-center gap-1.5 text-[#23865A] hover:bg-[#EAF4EE] transition-colors"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Platform tour</span>
+          </button>
         </div>
       </div>
     </nav>
