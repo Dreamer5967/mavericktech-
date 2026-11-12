@@ -1,8 +1,0 @@
-# Optional LOCAL application dependencies for the original P4 workflow.
-# The cloud API uses requirements-sim.in in venv-sim; no third cloud env.
-fastapi
-uvicorn[standard]
-pydantic
-httpx
-python-dotenv
-langfuse

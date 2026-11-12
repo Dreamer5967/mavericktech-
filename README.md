@@ -1,29 +1,23 @@
-# AEGIS / CodeSpark
+# AEGIS
 
-AEGIS hackathon source and team handoff. Person 2 maintains `main` integration.
-The original P1–P4 responsibilities are unchanged: see `team/`.
+Traffic simulation and camera observations using CARLA 0.9.15, YOLOv10n and
+CARLA–SUMO co-simulation on the existing cloud instance.
 
-Start with `CODEX_START_HERE.md` and `docs/P2_Live_Cloud_Status.md`.
+- [P2 tools and commands](p2/README.md)
+- [Current runtime and verified results](docs/runtime.md)
+- [Camera API and timestamps](docs/api.md)
 
-- `starter/`: the original mock, helpers, and setup references.
-- `p2/`: real camera smoke capture, saved-image detector comparison, and a draft observation-only handoff.
-- `team/`, `docs/`, `assets/`, `presentation/`: original project references and team assignments.
-- `evaluation/`: unfilled benchmark templates; smoke results are not benchmark values.
+`main` is the integration branch. Responsibilities remain unchanged: P1 owns
+presentation and evidence, P2 simulation and perception, P3 policy and planning,
+and P4 the application, security and speech. Teammate branches merge separately.
 
-Run the dependency-free checks from this checkout:
+Run local P2 checks from the repository root:
 
 ```powershell
 py -3.14 -B -m unittest discover -s p2/tests -v
-Push-Location starter
-py -3.14 -B -m unittest discover -s tests -v
-Pop-Location
 ```
 
-The cloud interpreter remains Python 3.10 in the existing `venv-sim`.
-Do not run the historical installation commands against the working environment
-without reviewing their effect. The actual installed NumPy/OpenCV versions differ
-from the starter's candidate dependency inputs.
-
-Simulator binaries, virtual environments, keys, checkpoints, and raw evidence
-belong outside this checkout. No code here automatically commits, pushes, rents,
-restarts, loads a map, or advances the live simulation clock.
+Cloud code uses the existing Python 3.10 `venv-sim`. Live execution requires
+appropriate approval. Do not restart CARLA, change maps or advance the clock as
+part of setup. Keep keys, credentials, weights, environments, simulator binaries
+and generated evidence outside Git.

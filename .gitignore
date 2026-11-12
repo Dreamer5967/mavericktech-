@@ -64,3 +64,11 @@ runs/
 *.so
 *.so.*
 *.pak
+
+# Original handoff documents retained locally
+/AEGIS_Beginner_Quickstart.docx
+/AEGIS_Beginner_Quickstart.pdf
+/AEGIS_Implementation_Handbook.docx
+/AEGIS_Implementation_Handbook.pdf
+/team/*.docx
+/team/*.pdf

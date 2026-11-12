@@ -1,9 +1,0 @@
-# Candidate dependencies for venv-vqa on Python 3.10.
-# Install torch + torchvision with the official selector first.
-# Separate this model/evaluation stack from CARLA and the live controller.
-transformers>=4.40,<5
-Pillow
-numpy<2
-langfuse>=3,<4
-httpx
-python-dotenv
