@@ -44,25 +44,26 @@ vehicle counts must not be substituted for lane counts or stopped queues.
 The remake's v2 candidate contract in `configs/action_mapping.json` groups the
 physical lanes into four approach slots and permanently masks unused action
 slots. It explicitly translates model indices to actual green phases. These
-candidate mappings agree with the runtime inventory, but their review flags
-remain false. `runtime_mapping.json` retains null reviewed-policy mappings until
-contract approval; no lanes are silently truncated.
+candidate mappings agree with the runtime inventory. The frozen actual-SUMO
+training contract uses those lane-slot and action-phase mappings; no lanes are
+silently truncated. It remains blocked from live actuation while camera-domain
+and clearance-executor validation are incomplete.
 
-The candidate manifest now names the correct target network and explicitly marks
-the old synthetic checkpoint incompatible and unverified. Matching dimensions
-do not establish compatibility: aggregation, masks, normalization and action
-semantics changed. Retraining and external artifact verification remain required.
+The manifest records the compatible external checkpoint SHA256, the actual
+network and route hashes, the 100-episode offline training run, and held-out
+evaluation seeds. Matching dimensions alone do not establish live safety:
+aggregation, camera-domain input quality and transition execution require their
+own validation.
 `python -B -m p2.controller_gate` lists the remaining blockers. It can check an external artifact with
 `--checkpoint C:/path/to/model.pt`; weights stay outside Git. The pure
 `actor_vectors` adapter accepts explicit lane beliefs, masks, ages and phase
 context; it rejects unexpected truth fields and missing-count substitutions.
 
-Before learned control, P3 must establish a compatible checkpoint and reviewed
-lane/action semantics (or train against the actual lane/phase contract). P2 must
-validate sufficient camera coverage and lane observations. Clearance programs
-and live execution then need a separate bounded validation. Policy actuation
-remains disabled. The source fixes add explicit aggregation, reject all-false
-masks and preserve hash verification with tensor-only checkpoint loading.
+P3 established a compatible offline checkpoint and P2 validated coverage, null
+masking and camera observations. The remaining gate is a separately reviewed,
+bounded clearance-executor validation against live camera input. Policy
+actuation remains disabled. The source rejects all-false masks and preserves hash
+verification with tensor-only checkpoint loading.
 The inference engine emits no executable actions. Standalone training blocks
 launch until the training contract and clearance paths are reviewed, checks the
 network hash, translates green slots and uses explicit reviewed yellow/all-red

@@ -44,13 +44,15 @@ separate P4 work and are not implemented by this adapter.
 `services/control/inference_entrypoint.py` consumes per-junction feature vectors
 and action masks; it does not consume the raw camera snapshot directly. The
 model declares four lane slots per junction. Whole-image counts cannot fill
-those lane slots. A reviewed lane adapter, real phase-index mapping and runtime
-network-hash verification are still required before connecting live control.
+those lane slots. The reviewed adapter aggregates the 22 usable lane-region
+occupancy counts and masks unavailable members; real phase-index mapping and
+runtime network-hash verification are required before connecting live control.
 
 Checkpoint loading verifies SHA256 against `manifests/model_manifest.json`
-(or an explicitly supplied expected digest for an offline fixture) and uses
-`torch.load(weights_only=True)`. The declared external artifact has not yet been
-verified. A correctly formatted manifest is not proof of model provenance.
+(or an explicitly supplied expected digest for a read-only external artifact) and
+uses `torch.load(weights_only=True)`. The declared external checkpoint has a
+verified SHA256 and was trained against the listed Town10 SUMO contract, but it
+has not completed live camera-domain or live-control validation.
 The v2 engine returns `proposed_sumo_phases`, `policy_actions` and
 `requires_transition_validation=true`. Its `actions` and `active_signals` maps
 are empty and `actuation_permitted` is always false. A proposal is never safe to
@@ -60,5 +62,10 @@ V2 slots aggregate the declared physical lanes by approach. Any unavailable
 member masks the aggregate slot; it is not treated as a complete measured count.
 Beliefs sum across lanes and normalize by 15 vehicles per physical lane times
 the number of lanes in the slot. Structurally unused slots have zero features
-and a true missing mask. This candidate normalization/aggregation contract still
-requires review and retraining. ROI vehicle occupancy is not a queue measurement.
+and a true missing mask. The actual SUMO contract has been retrained and verified
+offline. ROI vehicle occupancy is not a queue measurement.
+
+`p2.validate_pipeline --policy-checkpoint ... --policy-sha256 ...` may attach a
+verified checkpoint to an approved bounded bridge run for read-only diagnostics.
+It records proposals and checks their source freshness, but never applies a
+signal action; `policy_enabled` stays false.

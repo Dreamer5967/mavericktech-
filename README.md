@@ -12,8 +12,8 @@ not establish live-policy, application or presentation acceptance.
 | Owner | Verified progress | Remaining work |
 |---|---|---|
 | P1 / Amal | Security contribution merged; presentation/checklist drafts reviewed | [#4: Final deck, compliance evidence, actual costs, backup and rehearsal](https://github.com/Dreamer5967/mavericktech-/issues/4) |
-| P2 | Combined fixed-time smoke passed; 24 lane regions in frame; 22 ROI counts and camera-dropout recovery tested | [#6: Two occluded lanes, queue validation, action hooks and remaining runtime acceptance](https://github.com/Dreamer5967/mavericktech-/issues/6) |
-| P3 / Shivanshu | Policy, estimator and planner source integrated and unit-tested | [#5: BLOCKED - checkpoint/network compatibility, lane/action mappings and measured control evaluation](https://github.com/Dreamer5967/mavericktech-/issues/5) |
+| P2 | Four cameras, YOLO, 22 ROI counts, dropout recovery, and fixed-time CARLA–SUMO validation passed | [#6: Queue semantics, long-run acceptance and remaining runtime work](https://github.com/Dreamer5967/mavericktech-/issues/6) |
+| P3 / Shivanshu | Actual-SUMO MAPPO artifact, hash verification, isolated recovery evaluation and live read-only proposals passed | [#5: Camera-domain and guarded control acceptance remain blocked](https://github.com/Dreamer5967/mavericktech-/issues/5) |
 | P4 | Dashboard foundation on its branch; security helpers available | [#7: Live frames, operator API, VQA, tracing, deployment and speech](https://github.com/Dreamer5967/mavericktech-/issues/7) |
 
 Live learned-policy control and the complete end-to-end demo are not ready.
@@ -65,13 +65,13 @@ Random test fixtures do not count as trained-policy verification.
 - [Security module scope](docs/security.md)
 - [Lane calibration and policy mapping status](docs/lane_mapping.md)
 
-P3's v2 geometry contract is integrated. Physical lanes aggregate into four
+P3's geometry-aligned training contract is integrated. Physical lanes aggregate into four
 model slots; unused slots remain masked. Model actions translate through the
 actual SUMO green-phase table. Inference is read-only: `actions` is always empty,
 and `proposed_sumo_phases` requires independent transition validation. Live policy
-remains disabled pending contract/clearance review and compatible retraining.
-Standalone SUMO training refuses to launch with the current unreviewed contract.
-Synthetic diagnostics and rollouts are not live traffic benchmarks.
+remains disabled pending camera-domain/clearance review. The isolated SUMO
+environment trains and evaluates only against the hash-verified Town10 network.
+Offline diagnostics and rollouts are not live traffic benchmarks.
 
 Cloud code uses the existing Python 3.10 `venv-sim`. Do not run policy development
 requirements against it as setup. Live execution needs appropriate approval;

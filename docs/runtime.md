@@ -22,9 +22,9 @@ Map bundle: `/workspace/aegis/maps/town10-map-20261112T071329Z-dff47bc2`.
 Demand: `/workspace/aegis/scenarios/town10-demand-20261112T080350Z-bacdddb4/scenario.sumocfg`.
 Demand contains 12 passenger routes and 48 scheduled vehicles, seed 42, with a
 0.05-second step. Camera/signal IDs: cam_g1=719, cam_g3=23, cam_g4=189, cam_g5=468.
-All 24 physical lane IDs and actual signal programs are now inventoried in
-`configs/runtime_mapping.json`; [policy compatibility and camera coverage](lane_mapping.md)
-remain unverified.
+All 24 physical lane IDs and actual signal programs are inventoried in
+`configs/runtime_mapping.json`. The coverage profile has 22 reviewed ROI
+occupancy counters; two tree-occluded lanes intentionally remain unavailable.
 
 ## Completed validation
 
@@ -62,10 +62,9 @@ modules. Evidence run: `pipeline-20261112T091232Z-8ce0c931` under
 - The camera worker reported no errors or cleanup failures; no RGB sensors
   remained. The post-check confirmed the same map and asynchronous mode.
 
-This validates fixed-time synchronization with camera observations. Lane counts,
-queues, learned-policy control and P4 frontend integration remain incomplete.
-Policy readiness is false; evaluator signal/actor reference data is kept out of
-the observation API.
+This validates fixed-time synchronization with camera observations. It does not
+validate queue length or P4 frontend integration. Policy readiness remains false;
+evaluator signal/actor reference data is kept out of the observation API.
 
 ## Independent lane-count and fault validation
 
@@ -92,6 +91,21 @@ Run: `lane-feed-d3f5706949` under
 
 Source timestamps, staleness masking and queue/policy boundaries remain enforced.
 The tests expired and stopped; they are not a permanently running deployment.
+
+## Read-only policy diagnostics
+
+The approved 30-second policy-diagnostics run on 12 November 2026 passed using
+the four-camera coverage profile, the verified external MAPPO checkpoint hash,
+and the same fixed-time CARLA–SUMO bridge. It produced 60 camera-only policy
+proposals with zero adapter errors and started zero phase transitions. The
+pipeline collected 65 synchronous snapshots; each camera supplied 22–23 distinct
+fresh frames over about 29.5 simulation seconds. It left no RGB actors, retained
+`Carla/Maps/Town10HD_Opt`, and restored asynchronous mode. Local archive:
+`local-evidence/policy-readonly-retry6-20261112.tar.gz`.
+
+This is an inference-path validation, not an actuation or traffic-improvement
+claim. `learned_policy_enabled` remains false and automatic deployment remains
+disabled. The approved clock budget now has 240 seconds remaining.
 
 Before execution, check the existing map, synchronization owner and RGB sensors.
 Clock advancement or environment changes require approval. Clean up only actors
