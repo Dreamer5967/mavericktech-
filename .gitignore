@@ -1,52 +1,82 @@
-# Python
+# Secrets / connection credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+id_ed25519*
+aegis_p2*
+secrets/
+
+# Python, Node and generated models
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
-.Python
-
-# Environments
+.pytest_cache/
 .venv/
 .venv*/
-venv/
-ENV/
-env/
-
-# Mac OS
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Archives, Logs, Tripinfo
-*.zip
-*.tar.gz
-*.log
-tripinfo_*.xml
-
-# Handbooks, Team Kit Documents & Internal Plans
-*.pdf
-*.docx
-START_HERE.md
-TEST_STATUS.md
-P3_Implementation_Plan.md
-team/
-starter/
-docs/
-assets/
-presentation/
-
-# Baseline snapshots & temp
-results/baseline_v1/
-evaluation/baseline_v1/
-
-# Model checkpoints (project no-weights in git policy)
+venv-*/
+node_modules/
 *.pt
 *.pth
-*.bin
-checkpoints/
+*.onnx
+*.engine
+*.ckpt
 
-# IDE / Editors
-.vscode/
+# CARLA, downloaded content and raw evidence
+CarlaUE4/
+carla/
+downloads/
+*.tar.gz
+*.tar
+raw_frames/
+evidence/raw/
+*.log
+
+# Local OS/editor artifacts
+.DS_Store
+.vscode/settings.json
+
+# Additional private keys, credentials, model formats and generated evidence
+id_rsa*
+id_ecdsa*
+id_dsa*
+*.ppk
+*.p12
+*.pfx
+credentials*.json
+*.safetensors
+*.bin
+*.tflite
+*.h5
+*.pb
+venv/
+env/
+evidence/
+local-evidence/
+local-models/
+outputs/
+runs/
+*.zip
+*.egg
+*.whl
+*.exe
+*.dll
+*.so
+*.so.*
+*.pak
+
+# Original handoff documents retained locally
+/AEGIS_Beginner_Quickstart.docx
+/AEGIS_Beginner_Quickstart.pdf
+/AEGIS_Implementation_Handbook.docx
+/AEGIS_Implementation_Handbook.pdf
+/team/*.docx
+/team/*.pdf
+
+# Generated model and experiment outputs
+/checkpoints/
+/results/
+tripinfo_*.xml
 .idea/
 *.swp
 *.swo

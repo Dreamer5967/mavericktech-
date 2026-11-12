@@ -14,10 +14,41 @@
   "max_model_action_slots": 4,
   "action_mapping_version": "v2_geometry_aligned",
   "per_junction_geometry": {
-    "J1": {"sumo_tls_id": "719", "actual_lanes": 6, "model_slots": 4, "green_phases": 3, "masked_actions": [3]},
-    "J2": {"sumo_tls_id": "23",  "actual_lanes": 6, "model_slots": 4, "green_phases": 3, "masked_actions": [3]},
-    "J3": {"sumo_tls_id": "189", "actual_lanes": 8, "model_slots": 4, "green_phases": 4, "masked_actions": []},
-    "J4": {"sumo_tls_id": "468", "actual_lanes": 4, "model_slots": 4, "green_phases": 2, "masked_actions": [2, 3]}
+    "J1": {
+      "sumo_tls_id": "719",
+      "actual_lanes": 6,
+      "model_slots": 4,
+      "green_phases": 3,
+      "masked_actions": [
+        3
+      ]
+    },
+    "J2": {
+      "sumo_tls_id": "23",
+      "actual_lanes": 6,
+      "model_slots": 4,
+      "green_phases": 3,
+      "masked_actions": [
+        3
+      ]
+    },
+    "J3": {
+      "sumo_tls_id": "189",
+      "actual_lanes": 8,
+      "model_slots": 4,
+      "green_phases": 4,
+      "masked_actions": []
+    },
+    "J4": {
+      "sumo_tls_id": "468",
+      "actual_lanes": 4,
+      "model_slots": 4,
+      "green_phases": 2,
+      "masked_actions": [
+        2,
+        3
+      ]
+    }
   },
   "p2_signal_inventory": {
     "cam_g1": "719",
@@ -25,9 +56,22 @@
     "cam_g4": "189",
     "cam_g5": "468"
   },
-  "train_seeds": [1, 2, 3, 4, 5],
-  "dev_seeds": [6, 7],
-  "held_out_seeds": [8, 9, 10],
+  "train_seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "dev_seeds": [
+    6,
+    7
+  ],
+  "held_out_seeds": [
+    8,
+    9,
+    10
+  ],
   "library_versions": {
     "torch": "2.15.0",
     "sumo_target": "1.20.0",
@@ -45,5 +89,6 @@
     "External checkpoint SHA256 verification after retrain",
     "P2 camera coverage validation for aggregated lane slots",
     "AEGIS_REQUIRE_P3_CHECKPOINT=1 artifact test must pass with verified checkpoint"
-  ]
+  ],
+  "deployment_status": "BLOCKED_RETRAIN_AND_CONTRACT_REVIEW_REQUIRED"
 }

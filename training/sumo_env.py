@@ -13,6 +13,8 @@ Action contract follows:     configs/action_mapping.json
 """
 
 import json
+import hashlib
+from services.control.contracts import dimensions, lane_groups, phase_mapping, permanent_mask
 import math
 import os
 import subprocess
@@ -78,6 +80,8 @@ class AEGISTrafficEnv:
             fault_seed:        RNG seed for fault injection (None = use episode seed)
             label:             TraCI connection label
         """
+        self._conn = None
+        self._sumo_process = None
         self.net_file = net_file
         self.route_file = route_file
         self.decision_interval = decision_interval
@@ -108,9 +112,14 @@ class AEGISTrafficEnv:
 
         self.junction_ids = [j["alias"] for j in j_list]
         self.tls_ids = [str(j["sumo_tls_id"]) for j in j_list]
-        self.num_phases = [j["num_phases"] for j in j_list]
-        self.max_phases = max(self.num_phases)
-        self.phase_names = [j["phase_names"] for j in j_list]
+        self.junction_configs = j_list
+        self.num_lanes, self.max_phases = dimensions(self.obs_config)
+        self.num_phases = [j.get("num_model_action_slots", j.get("num_phases", self.max_phases)) for j in j_list]
+        self.phase_maps = [phase_mapping(j) for j in j_list]
+        self.structural_masks = [permanent_mask(j, self.max_phases) for j in j_list]
+        self.lane_groups = [lane_groups(j, self.num_lanes) for j in j_list]
+        self.phase_names = [[str(self.phase_maps[i].get(k)) for k in range(self.max_phases)] for i in range(len(j_list))]
+        self._transition_queues = [[] for _ in j_list]
 
         # Phase transition parameters
         first_j = j_list[0] if j_list else {}
@@ -139,6 +148,7 @@ class AEGISTrafficEnv:
         self._conn = None
         self._sumo_process = None
         self._step_count = 0
+        self._switches_this_step = 0
         self._sim_time = 0.0
         self._current_phases = [0] * self.num_junctions
         self._phase_elapsed = [0.0] * self.num_junctions
@@ -158,45 +168,28 @@ class AEGISTrafficEnv:
 
     def _get_lane_ids_for_junction(self, junction_idx: int) -> list[str]:
         """Get controlled incoming lane IDs for a junction from SUMO."""
-        tls_id = self.tls_ids[junction_idx]
-        try:
-            links = traci.trafficlight.getControlledLinks(tls_id)
-            incoming_lanes = []
-            seen = set()
-            for link_group in links:
-                for link in link_group:
-                    lane = link[0]  # incoming lane
-                    if lane not in seen:
-                        incoming_lanes.append(lane)
-                        seen.add(lane)
-            return incoming_lanes[: self.num_lanes]
-        except traci.TraCIException:
-            # Fallback: generate placeholder lane IDs
-            return [f"{tls_id}_lane_{i}" for i in range(self.num_lanes)]
+        return [lane for group in self.lane_groups[junction_idx] for lane in group]
 
     def _get_queue_for_lane(self, lane_id: str) -> float:
         """Get the number of halting vehicles on a lane."""
-        try:
-            return float(traci.lane.getLastStepHaltingNumber(lane_id))
-        except traci.TraCIException:
-            return 0.0
+        return float(traci.lane.getLastStepHaltingNumber(lane_id))
 
     def _get_observation(self, junction_idx: int) -> np.ndarray:
         """
         Build the observation vector for a single junction.
         Applies fault injection (camera dropout) if configured.
         """
-        lane_ids = self._get_lane_ids_for_junction(junction_idx)
+        groups = self.lane_groups[junction_idx]
 
         # Raw queue observations
         raw_queues = np.array(
-            [self._get_queue_for_lane(lid) for lid in lane_ids], dtype=np.float32
+            [sum(self._get_queue_for_lane(lid) for lid in group) for group in groups], dtype=np.float32
         )
 
         # Fault injection: randomly drop camera observations
-        missing = np.zeros(self.num_lanes, dtype=bool)
+        missing = np.array([not group for group in groups], dtype=bool)
         if self.fault_rate > 0 and self._fault_rng is not None:
-            for i in range(len(lane_ids)):
+            for i in range(len(groups)):
                 if self._fault_rng.random() < self.fault_rate:
                     missing[i] = True
 
@@ -204,6 +197,10 @@ class AEGISTrafficEnv:
         observed_queues = np.copy(raw_queues)
         obs_ages = np.zeros(self.num_lanes, dtype=np.float32)
         for i in range(self.num_lanes):
+            if not groups[i]:
+                observed_queues[i] = 0.0
+                obs_ages[i] = 0.0
+                continue
             if missing[i]:
                 # Camera is down: use last known estimate
                 observed_queues[i] = self._lane_queues[junction_idx, i]
@@ -218,7 +215,8 @@ class AEGISTrafficEnv:
         self._obs_ages[junction_idx] = obs_ages
 
         # Normalize queues to [0, 1]
-        norm_queues = np.clip(observed_queues / self._lane_capacity, 0.0, 1.0)
+        capacities = np.array([max(1, len(group)) * self._lane_capacity for group in groups])
+        norm_queues = np.clip(observed_queues / capacities, 0.0, 1.0)
 
         # Current phase one-hot
         phase_onehot = np.zeros(self.max_phases, dtype=np.float32)
@@ -268,7 +266,7 @@ class AEGISTrafficEnv:
             # All phases available
             mask[:n_phases] = True
 
-        return mask
+        return np.logical_and(mask, self.structural_masks[junction_idx])
 
     # ──────────────────────── Reward ────────────────────────
 
@@ -282,7 +280,7 @@ class AEGISTrafficEnv:
         spillback_count = 0
         for j in range(self.num_junctions):
             for i in range(self.num_lanes):
-                q = self._lane_queues[j, i] / self._lane_capacity
+                q = self._lane_queues[j, i] / (self._lane_capacity * max(1, len(self.lane_groups[j][i])))
                 total_queue += q
                 if q > 0.8:
                     spillback_count += 1
@@ -307,6 +305,8 @@ class AEGISTrafficEnv:
         """
         Apply a green-phase action to a junction, enforcing safety transitions.
         """
+        if isinstance(action, bool) or not isinstance(action, (int, np.integer)) or not 0 <= action < self.max_phases or not self.structural_masks[junction_idx][action]:
+            raise ValueError("Action is permanently masked or out of range.")
         current = self._current_phases[junction_idx]
 
         if self._in_transition[junction_idx]:
@@ -322,9 +322,44 @@ class AEGISTrafficEnv:
             return
 
         # Start transition: current → yellow → all_red → target
+        cfg = self.junction_configs[junction_idx]
+        if cfg.get("transition_paths_reviewed") is not True:
+            raise RuntimeError("Reviewed SUMO transition paths are required.")
+        source_phase = self.phase_maps[junction_idx][int(current)]
+        target_phase = self.phase_maps[junction_idx][int(action)]
+        path = cfg.get("reviewed_transition_paths", {}).get(f"{source_phase}->{target_phase}")
+        if not path or len(path) < 3 or path[-1] != target_phase:
+            raise ValueError("No reviewed yellow/all-red/target phase path.")
+        runtime = json.loads((PROJECT_ROOT / "configs/runtime_mapping.json").read_text(encoding="utf-8"))
+        program = next(p for p in runtime["programs"] if p["tls_id"] == self.tls_ids[junction_idx])
+        stages = []
+        saw_yellow = saw_red = False
+        for raw_index in path[:-1]:
+            if isinstance(raw_index, bool) or not isinstance(raw_index, int) or not 0 <= raw_index < len(program["phases"]):
+                raise ValueError("Invalid clearance phase index.")
+            phase = program["phases"][raw_index]
+            state = phase["state"]
+            if any(c in state for c in "gG"):
+                raise ValueError("Intermediate green phases cannot be clearance stages.")
+            yellow = any(c in state for c in "yY")
+            red = all(c in "rR" for c in state)
+            if not yellow and not red:
+                raise ValueError("Invalid clearance state.")
+            if red and not saw_yellow:
+                raise ValueError("Yellow must precede all-red.")
+            if yellow and saw_red:
+                raise ValueError("All-red must be the final clearance stage.")
+            saw_yellow |= yellow
+            saw_red |= red
+            stages.append((raw_index, max(phase["duration_s"], self.yellow_s if yellow else self.all_red_s)))
+        if not saw_yellow or not saw_red:
+            raise ValueError("Both yellow and all-red stages are required.")
+        first, duration = stages.pop(0)
+        self._transition_queues[junction_idx] = stages
+        self._set_raw_sumo_phase(junction_idx, first, duration)
         self._in_transition[junction_idx] = True
         self._pending_phase[junction_idx] = action
-        self._transition_remaining[junction_idx] = self.yellow_s + self.all_red_s
+        self._transition_remaining[junction_idx] = duration
         self._switches_this_step += 1
 
     def _advance_transitions(self, dt: float):
@@ -332,7 +367,11 @@ class AEGISTrafficEnv:
         for j in range(self.num_junctions):
             if self._in_transition[j]:
                 self._transition_remaining[j] -= dt
-                if self._transition_remaining[j] <= 0:
+                if self._transition_remaining[j] <= 0 and self._transition_queues[j]:
+                    raw, duration = self._transition_queues[j].pop(0)
+                    self._set_raw_sumo_phase(j, raw, duration)
+                    self._transition_remaining[j] = duration
+                elif self._transition_remaining[j] <= 0:
                     # Transition complete: switch to target phase
                     self._current_phases[j] = self._pending_phase[j]
                     self._phase_elapsed[j] = 0.0
@@ -345,12 +384,13 @@ class AEGISTrafficEnv:
 
     def _set_sumo_phase(self, junction_idx: int, phase_idx: int):
         """Set the SUMO traffic light to a specific phase."""
-        tls_id = self.tls_ids[junction_idx]
-        try:
-            traci.trafficlight.setPhase(tls_id, phase_idx)
-        except traci.TraCIException as e:
-            # TLS ID might not match; log but don't crash
-            pass
+        raw = self.phase_maps[junction_idx].get(int(phase_idx))
+        if raw is None: raise ValueError("Masked model slot has no SUMO phase.")
+        self._set_raw_sumo_phase(junction_idx, raw, 3600.0)
+
+    def _set_raw_sumo_phase(self, junction_idx, raw_index, duration):
+        traci.trafficlight.setPhase(self.tls_ids[junction_idx], raw_index)
+        traci.trafficlight.setPhaseDuration(self.tls_ids[junction_idx], duration)
 
     # ──────────────────────── Episode Control ────────────────────────
 
@@ -361,6 +401,12 @@ class AEGISTrafficEnv:
         Returns:
             dict with keys per junction: 'obs', 'action_mask'
         """
+        if self.action_config.get("_training_contract_reviewed") is not True or any(
+                j.get("transition_paths_reviewed") is not True for j in self.junction_configs):
+            raise RuntimeError("Training contract/clearance paths are unreviewed; no SUMO process started.")
+        expected_network = self.action_config.get("_network_sha256")
+        if not expected_network or hashlib.sha256(Path(self.net_file).read_bytes()).hexdigest() != expected_network:
+            raise RuntimeError("Training network does not match the reviewed contract; no SUMO process started.")
         self.close()
 
         # Build SUMO command
@@ -395,6 +441,7 @@ class AEGISTrafficEnv:
                 s.bind(("", 0))
                 self.port = s.getsockname()[1]
 
+        (PROJECT_ROOT / "results").mkdir(parents=True, exist_ok=True)
         sumo_cmd = [
             sumo_bin_path,
             "-n", self.net_file,

@@ -1,0 +1,347 @@
+{
+  "map": "Carla/Maps/Town10HD_Opt",
+  "status": "OVERHEAD_COVERAGE_CANDIDATE",
+  "provenance": {
+    "reported_on": "2026-11-12",
+    "inspection_frame": 376218,
+    "inspection_sim_time_s": 3962.04114664963,
+    "source": "User-supplied read-only map inventory",
+    "coverage_verified": false,
+    "connected_topology_verified": false
+  },
+  "image_width": 1280,
+  "image_height": 1280,
+  "fov": 90,
+  "sensor_tick_s": 0.5,
+  "capture_timeout_s": 30,
+  "stale_after_sim_s": 2,
+  "confidence": 0.15,
+  "weights_path": "/root/yolov10n.pt",
+  "vehicle_classes": [
+    "car",
+    "truck",
+    "bus",
+    "motorcycle",
+    "bicycle"
+  ],
+  "cameras": [
+    {
+      "camera_id": "cam_g1",
+      "candidate_group": 1,
+      "opendrive_signal_ids": [
+        "960",
+        "961",
+        "962"
+      ],
+      "view_purpose": "Unreviewed oblique approach view for detector diagnosis; partial approach coverage only, no lane calibration.",
+      "transform": {
+        "x": -108.2704,
+        "y": 21.1897,
+        "z": 52.5254,
+        "pitch": -90,
+        "yaw": 40,
+        "roll": 0
+      },
+      "stop_positions_used_for_candidate": [
+        {
+          "light_actor_id": 9,
+          "road_id": 18,
+          "lane_id": 4,
+          "x": -83.33,
+          "y": 16.45,
+          "z": 0.0,
+          "yaw": 180.16
+        },
+        {
+          "light_actor_id": 9,
+          "road_id": 18,
+          "lane_id": 5,
+          "x": -83.33,
+          "y": 12.95,
+          "z": 0.0,
+          "yaw": 180.16
+        },
+        {
+          "light_actor_id": 18,
+          "road_id": 5,
+          "lane_id": -1,
+          "x": -107.3,
+          "y": 50.11,
+          "z": 0.0,
+          "yaw": -89.36
+        },
+        {
+          "light_actor_id": 18,
+          "road_id": 5,
+          "lane_id": -2,
+          "x": -103.8,
+          "y": 50.14,
+          "z": 0.0,
+          "yaw": -89.36
+        },
+        {
+          "light_actor_id": 20,
+          "road_id": 6,
+          "lane_id": 1,
+          "x": -110.15,
+          "y": -8.01,
+          "z": 0.0,
+          "yaw": 90.64
+        },
+        {
+          "light_actor_id": 20,
+          "road_id": 6,
+          "lane_id": 2,
+          "x": -113.65,
+          "y": -7.96,
+          "z": 0.0,
+          "yaw": 90.64
+        }
+      ],
+      "look_at_target": {
+        "x": -108.0,
+        "y": 19.0,
+        "z": 1.0
+      }
+    },
+    {
+      "camera_id": "cam_g3",
+      "candidate_group": 3,
+      "opendrive_signal_ids": [
+        "943",
+        "944",
+        "945"
+      ],
+      "view_purpose": "Unreviewed oblique approach view for detector diagnosis; partial approach coverage only, no lane calibration.",
+      "transform": {
+        "x": -46.5217,
+        "y": -59.5016,
+        "z": 44.6979,
+        "pitch": -90,
+        "yaw": 35,
+        "roll": 0
+      },
+      "stop_positions_used_for_candidate": [
+        {
+          "light_actor_id": 11,
+          "road_id": 7,
+          "lane_id": 1,
+          "x": -25.61,
+          "y": -64.76,
+          "z": 0.0,
+          "yaw": 180.6
+        },
+        {
+          "light_actor_id": 11,
+          "road_id": 7,
+          "lane_id": 2,
+          "x": -25.6,
+          "y": -68.26,
+          "z": 0.0,
+          "yaw": 180.6
+        },
+        {
+          "light_actor_id": 12,
+          "road_id": 22,
+          "lane_id": 1,
+          "x": -45.15,
+          "y": -42.46,
+          "z": 0.0,
+          "yaw": 270.43
+        },
+        {
+          "light_actor_id": 12,
+          "road_id": 22,
+          "lane_id": 2,
+          "x": -41.65,
+          "y": -42.46,
+          "z": 0.0,
+          "yaw": 270.43
+        },
+        {
+          "light_actor_id": 19,
+          "road_id": 6,
+          "lane_id": -1,
+          "x": -68.44,
+          "y": -61.71,
+          "z": 0.0,
+          "yaw": 0.6
+        },
+        {
+          "light_actor_id": 19,
+          "road_id": 6,
+          "lane_id": -2,
+          "x": -68.45,
+          "y": -58.21,
+          "z": 0.0,
+          "yaw": 0.6
+        }
+      ],
+      "look_at_target": {
+        "x": -12.0,
+        "y": -67.0,
+        "z": 1.0
+      }
+    },
+    {
+      "camera_id": "cam_g4",
+      "candidate_group": 4,
+      "opendrive_signal_ids": [
+        "950",
+        "952",
+        "951",
+        "949"
+      ],
+      "view_purpose": "Unreviewed oblique approach view for detector diagnosis; partial approach coverage only, no lane calibration.",
+      "transform": {
+        "x": -42.6895,
+        "y": 16.1944,
+        "z": 46.8358,
+        "pitch": -90,
+        "yaw": 35,
+        "roll": 0
+      },
+      "stop_positions_used_for_candidate": [
+        {
+          "light_actor_id": 15,
+          "road_id": 14,
+          "lane_id": -1,
+          "x": -45.17,
+          "y": 48.28,
+          "z": 0.0,
+          "yaw": -90.16
+        },
+        {
+          "light_actor_id": 15,
+          "road_id": 14,
+          "lane_id": -2,
+          "x": -41.67,
+          "y": 48.27,
+          "z": 0.0,
+          "yaw": -90.16
+        },
+        {
+          "light_actor_id": 16,
+          "road_id": 20,
+          "lane_id": 4,
+          "x": -23.91,
+          "y": 16.62,
+          "z": 0.0,
+          "yaw": 180.16
+        },
+        {
+          "light_actor_id": 16,
+          "road_id": 20,
+          "lane_id": 5,
+          "x": -23.91,
+          "y": 13.12,
+          "z": 0.0,
+          "yaw": 180.16
+        },
+        {
+          "light_actor_id": 17,
+          "road_id": 16,
+          "lane_id": 1,
+          "x": -48.83,
+          "y": -7.53,
+          "z": 0.0,
+          "yaw": 89.8
+        },
+        {
+          "light_actor_id": 17,
+          "road_id": 16,
+          "lane_id": 2,
+          "x": -52.33,
+          "y": -7.49,
+          "z": 0.0,
+          "yaw": 89.8
+        },
+        {
+          "light_actor_id": 23,
+          "road_id": 19,
+          "lane_id": -1,
+          "x": -70.09,
+          "y": 24.49,
+          "z": 0.0,
+          "yaw": 0.16
+        },
+        {
+          "light_actor_id": 23,
+          "road_id": 19,
+          "lane_id": -2,
+          "x": -70.09,
+          "y": 27.99,
+          "z": 0.0,
+          "yaw": 0.16
+        }
+      ],
+      "look_at_target": {
+        "x": -47.0,
+        "y": 24.0,
+        "z": 1.0
+      }
+    },
+    {
+      "camera_id": "cam_g5",
+      "candidate_group": 5,
+      "opendrive_signal_ids": [
+        "953",
+        "954"
+      ],
+      "view_purpose": "Unreviewed oblique approach view for detector diagnosis; partial approach coverage only, no lane calibration.",
+      "transform": {
+        "x": -25.3076,
+        "y": 109.2816,
+        "z": 35.6889,
+        "pitch": -90,
+        "yaw": 0,
+        "roll": 0
+      },
+      "stop_positions_used_for_candidate": [
+        {
+          "light_actor_id": 21,
+          "road_id": 13,
+          "lane_id": 1,
+          "x": -48.5,
+          "y": 108.09,
+          "z": 0.0,
+          "yaw": 89.84
+        },
+        {
+          "light_actor_id": 21,
+          "road_id": 13,
+          "lane_id": 2,
+          "x": -52.0,
+          "y": 108.09,
+          "z": 0.0,
+          "yaw": 89.84
+        },
+        {
+          "light_actor_id": 22,
+          "road_id": 4,
+          "lane_id": -1,
+          "x": -21.81,
+          "y": 133.58,
+          "z": 0.0,
+          "yaw": -179.65
+        },
+        {
+          "light_actor_id": 22,
+          "road_id": 4,
+          "lane_id": -2,
+          "x": -21.81,
+          "y": 130.08,
+          "z": 0.0,
+          "yaw": -179.65
+        }
+      ],
+      "look_at_target": {
+        "x": -8.0,
+        "y": 128.0,
+        "z": 1.0
+      }
+    }
+  ],
+  "inference_imgsz": 1280,
+  "tiled_inference": true
+}

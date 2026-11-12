@@ -15,105 +15,281 @@
       "alias": "J1",
       "camera_id": "cam_g1",
       "sumo_tls_id": "719",
-      "incoming_lane_ids": ["-5_3", "-5_4", "19_3", "19_4", "6_3", "6_4"],
+      "incoming_lane_ids": [
+        "-5_3",
+        "-5_4",
+        "19_3",
+        "19_4",
+        "6_3",
+        "6_4"
+      ],
       "num_incoming_lanes": 6,
       "num_green_phases": 3,
       "num_model_action_slots": 4,
       "policy_action_phase_mapping": {
-        "0": {"sumo_phase_index": 0, "state": "rrgggrrrrgr", "served_lanes": ["6_3", "6_4"],  "_label_pending_p2_review": "approx_EW_in"},
-        "1": {"sumo_phase_index": 3, "state": "ggrrrrrggrr", "served_lanes": ["19_3", "19_4"], "_label_pending_p2_review": "approx_NS_in"},
-        "2": {"sumo_phase_index": 6, "state": "rrrrrggrrrg", "served_lanes": ["-5_3", "-5_4"], "_label_pending_p2_review": "approx_SW_in"},
+        "0": {
+          "sumo_phase_index": 0,
+          "state": "rrgggrrrrgr",
+          "served_lanes": [
+            "6_3",
+            "6_4"
+          ],
+          "_label_pending_p2_review": "approx_EW_in"
+        },
+        "1": {
+          "sumo_phase_index": 3,
+          "state": "ggrrrrrggrr",
+          "served_lanes": [
+            "19_3",
+            "19_4"
+          ],
+          "_label_pending_p2_review": "approx_NS_in"
+        },
+        "2": {
+          "sumo_phase_index": 6,
+          "state": "rrrrrggrrrg",
+          "served_lanes": [
+            "-5_3",
+            "-5_4"
+          ],
+          "_label_pending_p2_review": "approx_SW_in"
+        },
         "3": null
       },
-      "action_mask_always_false": [3],
+      "action_mask_always_false": [
+        3
+      ],
       "_note": "Model trained with 4 action slots; slot 3 is permanently masked for J1. Joint P2/P3 review required before actuation.",
       "lane_slot_aggregation": {
-        "slot_0": ["-5_3", "-5_4"],
-        "slot_1": ["19_3", "19_4"],
-        "slot_2": ["6_3", "6_4"],
+        "slot_0": [
+          "-5_3",
+          "-5_4"
+        ],
+        "slot_1": [
+          "19_3",
+          "19_4"
+        ],
+        "slot_2": [
+          "6_3",
+          "6_4"
+        ],
         "slot_3": null,
         "_note": "6 actual lanes aggregated into 3 filled slots by approach direction. Slot 3 unused. Requires P2 camera coverage confirmation."
       },
       "min_green_s": 7,
       "yellow_s": 3,
       "all_red_s": 2,
-      "max_green_s": 60
+      "max_green_s": 60,
+      "lane_mapping_reviewed": false,
+      "phase_mapping_reviewed": false,
+      "transition_paths_reviewed": false
     },
     {
       "alias": "J2",
       "camera_id": "cam_g3",
       "sumo_tls_id": "23",
-      "incoming_lane_ids": ["-15_3", "-15_4", "-3_3", "-3_4", "-6_3", "-6_4"],
+      "incoming_lane_ids": [
+        "-15_3",
+        "-15_4",
+        "-3_3",
+        "-3_4",
+        "-6_3",
+        "-6_4"
+      ],
       "num_incoming_lanes": 6,
       "num_green_phases": 3,
       "num_model_action_slots": 4,
       "policy_action_phase_mapping": {
-        "0": {"sumo_phase_index": 0, "state": "rrrrrrgggg", "served_lanes": ["-15_3", "-15_4"], "_label_pending_p2_review": "approx_S_in"},
-        "1": {"sumo_phase_index": 3, "state": "gggrrrrrrr", "served_lanes": ["-6_3", "-6_4"],  "_label_pending_p2_review": "approx_E_in"},
-        "2": {"sumo_phase_index": 6, "state": "rrrgggrrrr", "served_lanes": ["-3_3", "-3_4"],  "_label_pending_p2_review": "approx_W_in"},
+        "0": {
+          "sumo_phase_index": 0,
+          "state": "rrrrrrgggg",
+          "served_lanes": [
+            "-15_3",
+            "-15_4"
+          ],
+          "_label_pending_p2_review": "approx_S_in"
+        },
+        "1": {
+          "sumo_phase_index": 3,
+          "state": "gggrrrrrrr",
+          "served_lanes": [
+            "-6_3",
+            "-6_4"
+          ],
+          "_label_pending_p2_review": "approx_E_in"
+        },
+        "2": {
+          "sumo_phase_index": 6,
+          "state": "rrrgggrrrr",
+          "served_lanes": [
+            "-3_3",
+            "-3_4"
+          ],
+          "_label_pending_p2_review": "approx_W_in"
+        },
         "3": null
       },
-      "action_mask_always_false": [3],
+      "action_mask_always_false": [
+        3
+      ],
       "_note": "Model trained with 4 action slots; slot 3 is permanently masked for J2. Joint P2/P3 review required before actuation.",
       "lane_slot_aggregation": {
-        "slot_0": ["-15_3", "-15_4"],
-        "slot_1": ["-3_3", "-3_4"],
-        "slot_2": ["-6_3", "-6_4"],
+        "slot_0": [
+          "-15_3",
+          "-15_4"
+        ],
+        "slot_1": [
+          "-3_3",
+          "-3_4"
+        ],
+        "slot_2": [
+          "-6_3",
+          "-6_4"
+        ],
         "slot_3": null,
         "_note": "6 actual lanes aggregated into 3 filled slots by approach direction. Slot 3 unused."
       },
       "min_green_s": 7,
       "yellow_s": 3,
       "all_red_s": 2,
-      "max_green_s": 60
+      "max_green_s": 60,
+      "lane_mapping_reviewed": false,
+      "phase_mapping_reviewed": false,
+      "transition_paths_reviewed": false
     },
     {
       "alias": "J3",
       "camera_id": "cam_g4",
       "sumo_tls_id": "189",
-      "incoming_lane_ids": ["-14_3", "-14_4", "-18_3", "-18_4", "-22_3", "-22_4", "20_3", "20_4"],
+      "incoming_lane_ids": [
+        "-14_3",
+        "-14_4",
+        "-18_3",
+        "-18_4",
+        "-22_3",
+        "-22_4",
+        "20_3",
+        "20_4"
+      ],
       "num_incoming_lanes": 8,
       "num_green_phases": 4,
       "num_model_action_slots": 4,
       "policy_action_phase_mapping": {
-        "0": {"sumo_phase_index": 0, "state": "rrrrrrggggrrrrrrrr", "served_lanes": ["20_3", "20_4"],   "_label_pending_p2_review": "approx_N_in"},
-        "1": {"sumo_phase_index": 3, "state": "rrrgggrrrrrrrrggrr", "served_lanes": ["-18_3", "-18_4"], "_label_pending_p2_review": "approx_W_in"},
-        "2": {"sumo_phase_index": 6, "state": "gggrrrrrrrrrrrrrgg", "served_lanes": ["-22_3", "-22_4"], "_label_pending_p2_review": "approx_SW_in"},
-        "3": {"sumo_phase_index": 9, "state": "rrrrrrrrrrggggrrrr", "served_lanes": ["-14_3", "-14_4"], "_label_pending_p2_review": "approx_SE_in"}
+        "0": {
+          "sumo_phase_index": 0,
+          "state": "rrrrrrggggrrrrrrrr",
+          "served_lanes": [
+            "20_3",
+            "20_4"
+          ],
+          "_label_pending_p2_review": "approx_N_in"
+        },
+        "1": {
+          "sumo_phase_index": 3,
+          "state": "rrrgggrrrrrrrrggrr",
+          "served_lanes": [
+            "-18_3",
+            "-18_4"
+          ],
+          "_label_pending_p2_review": "approx_W_in"
+        },
+        "2": {
+          "sumo_phase_index": 6,
+          "state": "gggrrrrrrrrrrrrrgg",
+          "served_lanes": [
+            "-22_3",
+            "-22_4"
+          ],
+          "_label_pending_p2_review": "approx_SW_in"
+        },
+        "3": {
+          "sumo_phase_index": 9,
+          "state": "rrrrrrrrrrggggrrrr",
+          "served_lanes": [
+            "-14_3",
+            "-14_4"
+          ],
+          "_label_pending_p2_review": "approx_SE_in"
+        }
       },
       "action_mask_always_false": [],
       "_note": "J3 has exactly 4 green phases matching 4 model action slots. Lane aggregation maps 8 lanes into 4 approach-pair slots. Full mask enabled. Joint P2 review still required.",
       "lane_slot_aggregation": {
-        "slot_0": ["20_3", "20_4"],
-        "slot_1": ["-18_3", "-18_4"],
-        "slot_2": ["-22_3", "-22_4"],
-        "slot_3": ["-14_3", "-14_4"],
+        "slot_0": [
+          "20_3",
+          "20_4"
+        ],
+        "slot_1": [
+          "-18_3",
+          "-18_4"
+        ],
+        "slot_2": [
+          "-22_3",
+          "-22_4"
+        ],
+        "slot_3": [
+          "-14_3",
+          "-14_4"
+        ],
         "_note": "8 lanes aggregated into 4 approach-pair slots by served_lanes in P2 green_phases. Best structural match."
       },
       "min_green_s": 7,
       "yellow_s": 3,
       "all_red_s": 2,
-      "max_green_s": 60
+      "max_green_s": 60,
+      "lane_mapping_reviewed": false,
+      "phase_mapping_reviewed": false,
+      "transition_paths_reviewed": false
     },
     {
       "alias": "J4",
       "camera_id": "cam_g5",
       "sumo_tls_id": "468",
-      "incoming_lane_ids": ["13_3", "13_4", "1_3", "1_4"],
+      "incoming_lane_ids": [
+        "13_3",
+        "13_4",
+        "1_3",
+        "1_4"
+      ],
       "num_incoming_lanes": 4,
       "num_green_phases": 2,
       "num_model_action_slots": 4,
       "policy_action_phase_mapping": {
-        "0": {"sumo_phase_index": 0, "state": "rrrggr", "served_lanes": ["13_3", "13_4"], "_label_pending_p2_review": "approx_E_in"},
-        "1": {"sumo_phase_index": 3, "state": "gggrrg", "served_lanes": ["1_3", "1_4"],   "_label_pending_p2_review": "approx_S_in"},
+        "0": {
+          "sumo_phase_index": 0,
+          "state": "rrrggr",
+          "served_lanes": [
+            "13_3",
+            "13_4"
+          ],
+          "_label_pending_p2_review": "approx_E_in"
+        },
+        "1": {
+          "sumo_phase_index": 3,
+          "state": "gggrrg",
+          "served_lanes": [
+            "1_3",
+            "1_4"
+          ],
+          "_label_pending_p2_review": "approx_S_in"
+        },
         "2": null,
         "3": null
       },
-      "action_mask_always_false": [2, 3],
+      "action_mask_always_false": [
+        2,
+        3
+      ],
       "_note": "Model trained with 4 action slots; slots 2 and 3 permanently masked for J4. Joint P2/P3 review required before actuation.",
       "lane_slot_aggregation": {
-        "slot_0": ["13_3", "13_4"],
-        "slot_1": ["1_3", "1_4"],
+        "slot_0": [
+          "13_3",
+          "13_4"
+        ],
+        "slot_1": [
+          "1_3",
+          "1_4"
+        ],
         "slot_2": null,
         "slot_3": null,
         "_note": "4 actual lanes in 2 approach pairs. 2 model slots unused."
@@ -121,7 +297,12 @@
       "min_green_s": 7,
       "yellow_s": 3,
       "all_red_s": 2,
-      "max_green_s": 60
+      "max_green_s": 60,
+      "lane_mapping_reviewed": false,
+      "phase_mapping_reviewed": false,
+      "transition_paths_reviewed": false
     }
-  ]
+  ],
+  "_training_contract_reviewed": false,
+  "_network_sha256": "3ef9501d4bb19f868f49395e39007876f834cbfe713f864a7ea8413f98115004"
 }

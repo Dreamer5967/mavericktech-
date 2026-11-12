@@ -11,7 +11,9 @@
       "actual_incoming_lanes": 6,
       "model_lane_slots": 4,
       "active_slots": 3,
-      "masked_slots": [3],
+      "masked_slots": [
+        3
+      ],
       "_note": "6 actual lanes aggregated into 3 approach-pair slots. Slot 3 unused/masked."
     },
     "J2": {
@@ -19,7 +21,9 @@
       "actual_incoming_lanes": 6,
       "model_lane_slots": 4,
       "active_slots": 3,
-      "masked_slots": [3],
+      "masked_slots": [
+        3
+      ],
       "_note": "6 actual lanes aggregated into 3 approach-pair slots. Slot 3 unused/masked."
     },
     "J3": {
@@ -35,7 +39,10 @@
       "actual_incoming_lanes": 4,
       "model_lane_slots": 4,
       "active_slots": 2,
-      "masked_slots": [2, 3],
+      "masked_slots": [
+        2,
+        3
+      ],
       "_note": "4 actual lanes in 2 approach pairs. Slots 2 and 3 unused/masked."
     }
   },
@@ -85,10 +92,17 @@
   "_obs_dim_breakdown": "4(queues)+4(masks)+4(ages)+4(phase_onehot)+1(elapsed)+4(neighbor_inflow)+4(junction_id_onehot)=25",
   "_metadata": {
     "schema_version": "2.0",
-    "description": "Frozen observation vector definition per junction for AEGIS MAPPO. Compatible with obs_dim=25 trained model.",
+    "description": "Candidate 25-dimensional aggregated-slot contract. Compatible shape does not imply old checkpoint compatibility.",
     "num_junctions": 4,
     "num_lanes_per_junction": 4,
     "max_model_lane_slots": 4,
     "decision_interval_s": 5
+  },
+  "slot_normalization": "sum of lane beliefs / (15 vehicles per physical lane * number of lanes in slot)",
+  "unused_slot_semantics": {
+    "queue_feature": 0,
+    "missing_mask": true,
+    "age_feature": 0,
+    "meaning": "structurally unused, not a measured empty lane"
   }
 }
