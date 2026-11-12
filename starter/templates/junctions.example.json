@@ -1,0 +1,39 @@
+{
+  "status": "UNMAPPED_TEMPLATE",
+  "map": "Town05",
+  "map_hash": null,
+  "junctions": [
+    {
+      "alias": "J1",
+      "sumo_tls_id": "REPLACE_AFTER_INVENTORY",
+      "lane_ids": [],
+      "camera_transform": null,
+      "reviewed_phase_paths": {},
+      "camera_roi_polygons": []
+    },
+    {
+      "alias": "J2",
+      "sumo_tls_id": "REPLACE_AFTER_INVENTORY",
+      "lane_ids": [],
+      "camera_transform": null,
+      "reviewed_phase_paths": {},
+      "camera_roi_polygons": []
+    },
+    {
+      "alias": "J3",
+      "sumo_tls_id": "REPLACE_AFTER_INVENTORY",
+      "lane_ids": [],
+      "camera_transform": null,
+      "reviewed_phase_paths": {},
+      "camera_roi_polygons": []
+    },
+    {
+      "alias": "J4",
+      "sumo_tls_id": "REPLACE_AFTER_INVENTORY",
+      "lane_ids": [],
+      "camera_transform": null,
+      "reviewed_phase_paths": {},
+      "camera_roi_polygons": []
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+services:
+  contract-lab:
+    build:
+      context: .
+      dockerfile: Dockerfile.mock
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      AEGIS_OPERATOR_TOKEN: "${AEGIS_OPERATOR_TOKEN:-local-demo-only}"

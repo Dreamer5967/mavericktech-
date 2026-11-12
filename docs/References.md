@@ -1,0 +1,218 @@
+# 30. References and source map
+
+The problem-statement entries identify requirements from the supplied brief. Numbered references identify external technical documentation or research. Architecture choices, timing targets, budgets, team assignments, and test protocols are proposed implementation decisions unless explicitly described as a documented behavior. Live offer prices and team performance require measurement.
+
+## [PS1] Code Spark 2026 problem brief, Smart Technologies PS1, PDF pages 15-16.
+
+User-provided PS_CodeSpark.pdf. Requirements: CARLA/SUMO/YOLOv10, trained cooperative MARL, faults/recovery, waiting-time/fuel comparisons and code.
+
+## [PS3] Code Spark 2026 problem brief, Smart Technologies PS3, PDF pages 16-17.
+
+User-provided PS_CodeSpark.pdf. Requirements: image-question routing, VQAv2/custom adversarial evaluation, model comparisons, Langfuse and Docker Compose.
+
+## [EVENT] Code Spark 2026 problem brief, PDF page 23 header.
+
+The education header labels a National Level 12-Hour Hackathon. Confirm any revised organizer schedule independently.
+
+## [R01] Vast.ai: Pricing
+
+Marketplace compute/storage/transfer and rental types.
+
+https://docs.vast.ai/guides/instances/pricing
+
+## [R02] Vast.ai: Managing Instances; Docker Execution Environment
+
+Lifecycle, stop/destroy distinctions, container environment and resource allocation.
+
+https://docs.vast.ai/guides/instances/manage-instances
+
+https://docs.vast.ai/guides/instances/docker-environment
+
+## [R03] Vast.ai: Finding & Renting Instances
+
+Offer cards, templates, resource/price selection.
+
+https://docs.vast.ai/guides/instances/choosing/find-and-rent
+
+## [R04] Vast.ai: Virtual Machines
+
+VM capabilities, template options, SSH preparation and constraints.
+
+https://docs.vast.ai/guides/instances/virtual-machines
+
+## [R05] CARLA 0.9.15: Quick start package installation
+
+Server package, client API, hardware and installation context.
+
+https://carla.readthedocs.io/en/0.9.15/start_quickstart/
+
+## [R06] Vast.ai: SSH Connection
+
+Key-based connection, forwarding, and access setup.
+
+https://docs.vast.ai/guides/instances/connect/ssh
+
+## [R07] CARLA 0.9.15: Rendering options
+
+Vulkan, Low quality, off-screen versus no-rendering.
+
+https://carla.readthedocs.io/en/0.9.15/adv_rendering_options/
+
+## [R08] PyPI: carla 0.9.15 release files
+
+Available platform/interpreter wheels, including CPython 3.10 Linux x86-64.
+
+https://pypi.org/project/carla/0.9.15/
+
+## [R09] NVIDIA Container Toolkit: Specialized Configurations
+
+GPU enumeration and graphics/compute driver capabilities.
+
+https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/docker-specialized.html
+
+## [R10] CARLA: 0.9.15 release / downloads
+
+Official release assets and version selection.
+
+https://github.com/carla-simulator/carla/releases/tag/0.9.15
+
+https://carla.readthedocs.io/en/0.9.15/download/
+
+## [R11] CARLA 0.9.15: CARLA in Docker
+
+Versioned server images and graphics-container context.
+
+https://carla.readthedocs.io/en/0.9.15/build_docker/
+
+## [R12] CARLA 0.9.15: SUMO co-simulation
+
+Provided maps, synchronization script and traffic-light manager.
+
+https://carla.readthedocs.io/en/0.9.15/adv_sumo/
+
+## [R13] SUMO: Installing
+
+Platform installation and binary-package choices.
+
+https://sumo.dlr.de/docs/Installing/index.html
+
+## [R14] SUMO: Traffic Lights Value Retrieval
+
+Signal IDs, controlled lanes, programs and phase state.
+
+https://sumo.dlr.de/docs/TraCI/Traffic_Lights_Value_Retrieval.html
+
+## [R15] CARLA 0.9.15: Synchrony and time-step
+
+Simulation/wall-clock distinction and single ticking client.
+
+https://carla.readthedocs.io/en/0.9.15/adv_synchrony_timestep/
+
+## [R16] THU-MIG: YOLOv10 official repository
+
+Model installation, checkpoints and inference interface.
+
+https://github.com/THU-MIG/yolov10
+
+## [R17] MAPPO: official on-policy implementation
+
+Reference training implementation; no assumed Town05 policy checkpoint.
+
+https://github.com/marlbenchmark/on-policy
+
+## [R18] SUMO-RL: official project repository
+
+Traffic-signal reinforcement-learning environments and interfaces.
+
+https://github.com/LucasAlegre/sumo-rl
+
+## [R19] SUMO: SaveAndLoad
+
+State save/load and random-state options.
+
+https://sumo.dlr.de/docs/Simulation/SaveAndLoad.html
+
+## [R20] Hugging Face Transformers: ViLT
+
+Image-plus-question inference and VQA checkpoint usage.
+
+https://huggingface.co/docs/transformers/model_doc/vilt
+
+## [R21] VQA: Evaluation
+
+Official answer format, normalization and multi-annotator evaluation.
+
+https://visualqa.org/evaluation.html
+
+## [R22] Langfuse: Get Started with Tracing
+
+Project credentials, SDK instrumentation and trace flushing.
+
+https://langfuse.com/docs/observability/get-started
+
+## [R23] Visual Studio Code: Remote Development using SSH
+
+Remote editor workflow and environment separation.
+
+https://code.visualstudio.com/docs/remote/ssh
+
+## [R24] Git: git-worktree documentation
+
+Independent working trees for separate branches.
+
+https://git-scm.com/docs/git-worktree
+
+## [R25] Athalye, Carlini and Wagner (2018): Obfuscated Gradients
+
+Research warning about misleading adversarial-defense evaluations.
+
+https://proceedings.mlr.press/v80/athalye18a.html
+
+## [R26] SUMO: TripInfo
+
+Waiting-time/trip completion output and emissions totals.
+
+https://sumo.dlr.de/docs/Simulation/Output/TripInfo.html
+
+## [R27] SUMO: EmissionOutput
+
+Fuel rate units, version 1.14.0 unit change and volumetric option.
+
+https://sumo.dlr.de/docs/Simulation/Output/EmissionOutput.html
+
+## [R28] Docker: Install Docker Engine on Ubuntu
+
+Use only on an appropriate full host/VM; distinguish from an existing container.
+
+https://docs.docker.com/engine/install/ubuntu/
+
+## [R29] Google AI Studio: Models and API getting started
+
+Current endpoint availability and separately managed API account.
+
+https://aistudio.google.com/docs/models
+
+https://aistudio.google.com/docs/get-started
+
+## [R30] Vite: Getting Started
+
+React/TypeScript application scaffolding and runtime requirements.
+
+https://vite.dev/guide/
+
+## [R31] Python, Node.js and Git official downloads
+
+Choose compatible maintained application tools; isolate legacy simulation dependencies.
+
+https://www.python.org/downloads/
+
+https://nodejs.org/en/download
+
+https://git-scm.com/downloads
+
+## [R32] SUMO: Interfacing TraCI from Python
+
+Python simulation control and separate connections.
+
+https://sumo.dlr.de/docs/TraCI/Interfacing_TraCI_from_Python.html
+

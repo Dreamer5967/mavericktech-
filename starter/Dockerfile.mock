@@ -1,0 +1,6 @@
+FROM python:3.11-slim
+WORKDIR /app
+COPY aegis_helpers /app/aegis_helpers
+COPY web /app/web
+# Host networking is not needed. This mock is intentionally local-only.
+CMD ["python", "-m", "aegis_helpers.mock_server", "--host", "0.0.0.0", "--port", "8000"]
