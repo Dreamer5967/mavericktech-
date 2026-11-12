@@ -12,6 +12,8 @@ from services.control.contracts import permanent_mask
 from services.control.estimator import MissingStateEstimator
 from p2.controller_gate import actor_vectors
 
+BOUNDED_CAMERA_FRESHNESS_S=5.0
+
 
 class BoundedPolicyAdapter:
  def __init__(self,checkpoint,sha256,output,execute=False):
@@ -74,7 +76,7 @@ class BoundedPolicyAdapter:
    if not state['green']: reject('not_green_phase',jid);continue
    if state['elapsed_green_s']<j['min_green_s']: reject('minimum_green',jid);continue
    if proposal['expected_phases'][jid]!=state['raw_phase']: reject('phase_changed',jid);continue
-   if source['status']!='fresh' or source['time'] is None or not 0<=now-source['time']<=2: reject('camera_stale',jid);continue
+   if source['status']!='fresh' or source['time'] is None or not 0<=now-source['time']<=BOUNDED_CAMERA_FRESHNESS_S: reject('camera_stale',jid);continue
    if proposal['revision']<=self.last_revision.get((proposal['run_id'],jid),-1): reject('duplicate_revision',jid);continue
    self.last_revision[(proposal['run_id'],jid)]=proposal['revision']
    if target==state['raw_phase']: reject('target_equals_current',jid);continue
@@ -127,6 +129,7 @@ class BoundedPolicyAdapter:
   self.output.mkdir(parents=True,exist_ok=True)
   (self.output/'policy_events.jsonl').write_text(''.join(json.dumps(e)+'\n' for e in self.events),encoding='utf-8')
   summary={'mode':'BOUNDED_POLICY_TEST' if self.execute else 'READ_ONLY_POLICY_TEST','computed_proposals':self.proposals,
-   'transitions_started':self.applied,'rejections':self.rejections,'errors':self.errors,'automatic_deployment_enabled':False}
+   'transitions_started':self.applied,'camera_freshness_window_s':BOUNDED_CAMERA_FRESHNESS_S,
+   'rejections':self.rejections,'errors':self.errors,'automatic_deployment_enabled':False}
   (self.output/'policy_summary.json').write_text(json.dumps(summary,indent=2),encoding='utf-8')
   return summary
