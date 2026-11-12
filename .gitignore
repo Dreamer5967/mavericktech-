@@ -45,6 +45,12 @@ evaluation/baseline_v1/
 *.bin
 checkpoints/
 
+# Node / Web
+node_modules/
+dist/
+.vite/
+.eslintcache
+
 # IDE / Editors
 .vscode/
 .idea/

@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background-color: #ffffff;
+  color: #0f172a;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ===== CRISP LIGHT DOTTED GRID ===== */
+.bg-dotted-grid {
+  background-image: radial-gradient(#cbd5e1 1.25px, transparent 1.25px);
+  background-size: 20px 20px;
+}
+
+.bg-dotted-grid-dense {
+  background-image: radial-gradient(#94a3b8 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* Fine technical line grid */
+.bg-tech-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(226, 232, 240, 0.7) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(226, 232, 240, 0.7) 1px, transparent 1px);
+}
+
+/* ===== 3D FLOATING OBJECTS UTILITIES & ANIMATIONS ===== */
+.perspective-1000 {
+  perspective: 1000px;
+}
+.perspective-1200 {
+  perspective: 1200px;
+}
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+@keyframes float-3d-slow {
+  0%, 100% {
+    transform: translateY(0px) rotateX(15deg) rotateY(-20deg) rotateZ(2deg);
+  }
+  50% {
+    transform: translateY(-16px) rotateX(10deg) rotateY(-15deg) rotateZ(-1deg);
+  }
+}
+
+@keyframes float-3d-reverse {
+  0%, 100% {
+    transform: translateY(0px) rotateX(-12deg) rotateY(22deg) rotateZ(-3deg);
+  }
+  50% {
+    transform: translateY(14px) rotateX(-7deg) rotateY(16deg) rotateZ(2deg);
+  }
+}
+
+@keyframes float-3d-lens {
+  0%, 100% {
+    transform: translateY(0px) rotateX(24deg) rotateY(-18deg) rotateZ(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotateX(18deg) rotateY(-26deg) rotateZ(8deg);
+  }
+}
+
+@keyframes float-3d-gantry {
+  0%, 100% {
+    transform: translateY(0px) rotateX(10deg) rotateY(-12deg);
+  }
+  50% {
+    transform: translateY(-10px) rotateX(6deg) rotateY(-8deg);
+  }
+}
+
+.animate-float-3d {
+  animation: float-3d-slow 7s ease-in-out infinite;
+}
+
+.animate-float-3d-reverse {
+  animation: float-3d-reverse 8.5s ease-in-out infinite;
+}
+
+.animate-float-3d-lens {
+  animation: float-3d-lens 6s ease-in-out infinite;
+}
+
+.animate-float-3d-gantry {
+  animation: float-3d-gantry 9s ease-in-out infinite;
+}
+
+/* ===== CUSTOM MINIMAL SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #f97316;
+}
+
+/* ===== TECHNICAL PANELS ===== */
+.card-panel {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.card-panel-hover:hover {
+  border-color: #f97316;
+  box-shadow: 0 8px 24px -4px rgba(249, 115, 22, 0.12), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
+  transform: translateY(-2px);
+}
+
+/* ===== BRAND ORANGE GRADIENT TEXT ===== */
+.text-orange-gradient {
+  background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===== SELECTION & FOCUS ===== */
+::selection {
+  background: #fed7aa;
+  color: #9a3412;
+}
+
+:focus-visible {
+  outline: 2px solid #f97316;
+  outline-offset: 2px;
+}
