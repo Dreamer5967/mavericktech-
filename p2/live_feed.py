@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
+import os
 from pathlib import Path
 import re
 import signal
@@ -109,6 +110,15 @@ class FeedStore:
                             for camera_id,signals in self.signal_templates.items()}
         self.active_faults=[]
         self.previews={}
+        self.fault_override=None
+
+    def request_fault(self,camera_id,duration_s):
+        if camera_id not in self.camera_ids: raise ValueError('Unknown camera.')
+        if not 0 < duration_s <= 15: raise ValueError('Fault duration must be 1-15 seconds.')
+        with self.lock:
+            self.fault_override={'camera_id':camera_id,'expires_monotonic':time.monotonic()+duration_s}
+            self.active_faults=[camera_id]
+            return {'camera_id':camera_id,'duration_s':duration_s}
 
     def cache_frame(self,camera_id,token,jpeg):
         self.frames[token]=(camera_id,jpeg)
@@ -196,7 +206,7 @@ class FeedStore:
             return entry[1] if entry else None
 
 
-def make_handler(store, allowed_origin=None):
+def make_handler(store, allowed_origin=None, fault_token=None):
     class Handler(BaseHTTPRequestHandler):
         def log_message(self,*args):
             pass
@@ -243,10 +253,22 @@ def make_handler(store, allowed_origin=None):
                 length=int(self.headers.get('Content-Length','0'))
             except ValueError:
                 length=0
+            body=b''
             if 0<length<=4096:
                 self.connection.settimeout(2)
-                self.rfile.read(length)
-            self.reply({'error':'read_only_feed'},status=405)
+                body=self.rfile.read(length)
+            path=urlparse(self.path).path
+            if path!='/api/v1/faults':
+                self.reply({'error':'read_only_feed'},status=405); return
+            auth=self.headers.get('Authorization','')
+            if not fault_token or auth!='Bearer '+fault_token:
+                self.reply({'error':'unauthorized'},status=401); return
+            try:
+                payload=json.loads(body or b'{}')
+                result=store.request_fault(str(payload.get('camera_id','')),float(payload.get('duration_s',0)))
+                self.reply({'ok':True,'active_fault':result})
+            except (ValueError,TypeError) as exc:
+                self.reply({'error':'invalid_request','detail':str(exc)},status=400)
 
     return Handler
 
@@ -276,7 +298,7 @@ def run(config, duration, port, output_root, allowed_origin, clock_mode='standal
              for camera in config['cameras']}
     store=FeedStore([c['camera_id'] for c in config['cameras']],run_id,config['stale_after_sim_s'],
                     lane_templates=templates,signal_templates=signals)
-    server=ThreadingHTTPServer(('127.0.0.1',port),make_handler(store,allowed_origin))
+    server=ThreadingHTTPServer(('127.0.0.1',port),make_handler(store,allowed_origin,os.environ.get('AEGIS_FAULT_TOKEN')))
     server.daemon_threads=True
     http_thread=threading.Thread(target=server.serve_forever,daemon=True)
     http_thread.start()
@@ -343,7 +365,13 @@ def run(config, duration, port, output_root, allowed_origin, clock_mode='standal
                 batch=[]
                 elapsed=duration-(deadline-time.monotonic())
                 dropping=[fault['camera_id']] if fault and fault['start_s']<=elapsed<fault['start_s']+fault['duration_s'] else []
-                with store.lock:store.active_faults=dropping
+                with store.lock:
+                    override=store.fault_override
+                    if override and time.monotonic() < override['expires_monotonic']:
+                        dropping.append(override['camera_id'])
+                    elif override:
+                        store.fault_override=None
+                    store.active_faults=sorted(set(dropping))
                 store.publish_signal_states(read_signal_states(world,config['cameras']))
                 for camera in config['cameras']:
                     camera_id=camera['camera_id']
