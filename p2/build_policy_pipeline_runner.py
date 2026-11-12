@@ -77,6 +77,8 @@ output.mkdir(parents=True,exist_ok=False)
 sys.argv=['p2.validate_pipeline','--execute','--seconds','{args.seconds}','--config',str(root/'camera_config.json'),'--lane-regions',str(root/'lane_regions.json'),'--scenario',{remote_scenario!r},'--output-root',str(output),'--policy-checkpoint',str(checkpoint),'--policy-sha256','{sha}']+({['--enable-policy']!r} if {args.enable_policy!r} else [])
 try:runpy.run_module('p2.validate_pipeline',run_name='__main__')
 finally:
+ for path in output.rglob('policy_summary.json'):
+  print('AEGIS_POLICY_SUMMARY '+path.read_text(encoding='utf-8'),flush=True)
  buffer=io.BytesIO()
  with tarfile.open(fileobj=buffer,mode='w:gz') as archive:
   for path in output.rglob('*'):
