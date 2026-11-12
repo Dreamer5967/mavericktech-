@@ -1,0 +1,33 @@
+{
+  "status": "TRAINED_FROZEN",
+  "algorithm": "MAPPO",
+  "checkpoint_path": "checkpoints/mappo_cpu_best.pt",
+  "checkpoint_sha256": "9013238fe6b3a6f87c6bb646e3b98bedf1fa83277f9603075a0ded54aee14903",
+  "network_hash": "Town05_sha256_e4b1",
+  "observation_schema": "1.0",
+  "action_mapping_hash": "4_junctions_4_phases",
+  "train_seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "dev_seeds": [
+    6,
+    7
+  ],
+  "held_out_seeds": [
+    8,
+    9,
+    10
+  ],
+  "training_steps": 10000,
+  "library_versions": {
+    "torch": "2.15.0",
+    "sumo": "1.28.0",
+    "gymnasium": "1.4.0"
+  },
+  "actor_truth_access": false,
+  "critic_truth_access_training_only": true
+}

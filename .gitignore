@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Environments
+.venv/
+.venv*/
+venv/
+ENV/
+env/
+
+# Mac OS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Archives, Logs, Tripinfo
+*.zip
+*.tar.gz
+*.log
+tripinfo_*.xml
+
+# Handbooks, Team Kit Documents & Internal Plans
+*.pdf
+*.docx
+START_HERE.md
+TEST_STATUS.md
+P3_Implementation_Plan.md
+team/
+starter/
+docs/
+assets/
+presentation/
+
+# Baseline snapshots & temp
+results/baseline_v1/
+evaluation/baseline_v1/
+
+# IDE / Editors
+.vscode/
+.idea/
+*.swp
+*.swo

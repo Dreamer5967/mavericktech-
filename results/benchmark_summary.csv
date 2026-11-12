@@ -1,0 +1,15 @@
+,,waiting_mean_s,waiting_mean_s,completed_trips,stopped_vehicle_s,fuel_total
+,,mean,std,mean,mean,mean
+controller,failure_rate,,,,,
+fixed_time,0.0,228.36,7.86,2142.0,391435.5,185653020.27
+fixed_time,0.1,228.36,7.86,2142.0,391435.5,185653020.27
+fixed_time,0.2,228.36,7.86,2142.0,391435.5,185653020.27
+fixed_time,0.4,228.36,7.86,2142.0,391435.5,185653020.27
+mappo_no_recovery,0.0,405.74,4.24,2142.0,695324.6,318604507.63
+mappo_no_recovery,0.1,393.47,5.25,2142.0,674328.4,309418688.2
+mappo_no_recovery,0.2,365.44,7.92,2142.0,626341.87,288424580.5
+mappo_no_recovery,0.4,291.69,6.61,2142.0,499905.47,233108653.1
+mappo_with_recovery,0.0,73.16,4.75,2142.0,125446.17,69282694.9
+mappo_with_recovery,0.1,73.72,3.92,2141.0,126345.77,69676273.17
+mappo_with_recovery,0.2,75.2,9.51,2143.0,129284.03,70961763.53
+mappo_with_recovery,0.4,73.9,2.42,2124.67,125583.0,69342554.5

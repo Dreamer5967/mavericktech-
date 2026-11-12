@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "description": "Output schema from Person 3 Recovery Planner to Person 4 Operator Console",
+  "fields": {
+    "run_id": "string (unique simulation run identifier)",
+    "decision_id": "string (unique identifier for this decision step)",
+    "belief_hash": "string (SHA256 prefix of observation belief state)",
+    "candidate_id": "string ('learned_mappo' | 'conservative_fallback' | 'pressure_priority')",
+    "horizon_sim_s": "integer (lookahead simulation horizon, e.g. 30s)",
+    "queue_cost": "float (predicted integrated queue delay over horizon)",
+    "spillback_cost": "float (predicted penalty for queue spillback > 80% capacity)",
+    "emergency_delay_s": "float (predicted delay for emergency vehicles if active)",
+    "constraint_status": "string ('ADMISSIBLE' | 'VIOLATION')",
+    "rollout_ms": "float (wall-clock duration of lookahead simulation in ms)",
+    "selected": "boolean (true if this candidate was selected for live execution)",
+    "outcome_status": "string ('PREDICTED' | 'OBSERVED')"
+  }
+}
