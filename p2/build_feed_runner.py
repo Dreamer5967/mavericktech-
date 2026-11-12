@@ -14,11 +14,18 @@ def main():
     parser.add_argument('--out',type=Path,required=True)
     parser.add_argument('--duration',type=int,default=600)
     parser.add_argument('--lane-regions',type=Path)
+    parser.add_argument('--drop-camera',help='Optional bounded camera-drop fault for a live demo.')
+    parser.add_argument('--drop-after',type=float,default=10)
+    parser.add_argument('--drop-for',type=float,default=8)
     args=parser.parse_args()
     if not 10<=args.duration<=3600:
         parser.error('Duration must be 10–3600 seconds.')
     config=args.config.read_bytes()
     validate_config(json.loads(config))
+    camera_ids={camera['camera_id'] for camera in json.loads(config)['cameras']}
+    if args.drop_camera and (args.drop_camera not in camera_ids or not 0<=args.drop_after<=args.duration or
+                             not 0<args.drop_for<=args.duration-args.drop_after):
+        parser.error('Fault camera and bounded timing must fit this run.')
     root=Path(__file__).resolve().parent.parent
     names=('p2/__init__.py','p2/capture_four.py','p2/live_feed.py','p2/lane_counts.py','p2/tiled_detector.py')
     sources={name:(root/name).read_text(encoding='utf-8') for name in names}
@@ -28,11 +35,15 @@ def main():
     encoded=base64.b64encode(config).decode()
     region_bootstrap=''
     region_args=''
+    fault_args=''
     if args.lane_regions:
         regions=args.lane_regions.read_text(encoding='utf-8')
         validate_regions(json.loads(regions),json.loads(config))
         region_bootstrap="(root/'lane_regions.json').write_text("+repr(regions)+",encoding='utf-8')\n"
         region_args=",'--lane-regions',str(root/'lane_regions.json')"
+    if args.drop_camera:
+        fault_args=(",'--drop-camera',"+repr(args.drop_camera)+",'--drop-after',"+
+                    repr(str(args.drop_after))+",'--drop-for',"+repr(str(args.drop_for)))
     bootstrap=f'''import base64,json,runpy,sys,uuid
 from pathlib import Path
 root=Path('/workspace/aegis/runtime')/('p2-feed-source-'+uuid.uuid4().hex)
@@ -44,7 +55,7 @@ for name,text in sources.items():
  path.parent.mkdir(parents=True,exist_ok=True)
  path.write_text(text,encoding='utf-8')
 sys.path.insert(0,str(root))
-{region_bootstrap}sys.argv=['p2.live_feed','--execute','--config-base64','{encoded}','--duration','{args.duration}','--port','8765'{region_args}]
+{region_bootstrap}sys.argv=['p2.live_feed','--execute','--config-base64','{encoded}','--duration','{args.duration}','--port','8765'{region_args}{fault_args}]
 runpy.run_module('p2.live_feed',run_name='__main__')
 '''
     script='#!/usr/bin/env bash\nset -eu\n'
