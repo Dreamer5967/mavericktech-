@@ -25,6 +25,7 @@ class BoundedPolicyAdapter:
   self.lock=threading.Lock();self.context=None;self.stop=threading.Event();self.thread=None
   self.phase_seen={};self.green_seen={};self.pending={};self.last_revision={};self.events=[];self.errors=[]
   self.proposals=0;self.applied=0;self.run_id=None
+  self.rejections={}
   # Independently verify every source-green clearance triple before clock ownership.
   for j in self.config['junctions']:
    phases=self.programs[j['sumo_tls_id']]['phases']
@@ -61,15 +62,22 @@ class BoundedPolicyAdapter:
   try:proposal=self.inbox.get_nowait()
   except queue.Empty:return
   if not self.execute:return
-  if now>proposal['expires_at_sim_s']:return
+  def reject(reason,jid='*'):
+   key=jid+':'+reason
+   self.rejections[key]=self.rejections.get(key,0)+1
+  if now>proposal['expires_at_sim_s']:
+   reject('expired');return
   for j in self.config['junctions']:
    jid=j['alias'];target=proposal['proposed'].get(jid);source=proposal['camera_sources'][jid];state=context[jid]
-   if target is None or jid in self.pending or not state['green'] or state['elapsed_green_s']<j['min_green_s']:continue
-   if proposal['expected_phases'][jid]!=state['raw_phase']:continue
-   if source['status']!='fresh' or source['time'] is None or not 0<=now-source['time']<=2:continue
-   if proposal['revision']<=self.last_revision.get((proposal['run_id'],jid),-1):continue
+   if target is None: reject('no_target',jid);continue
+   if jid in self.pending: reject('clearance_pending',jid);continue
+   if not state['green']: reject('not_green_phase',jid);continue
+   if state['elapsed_green_s']<j['min_green_s']: reject('minimum_green',jid);continue
+   if proposal['expected_phases'][jid]!=state['raw_phase']: reject('phase_changed',jid);continue
+   if source['status']!='fresh' or source['time'] is None or not 0<=now-source['time']<=2: reject('camera_stale',jid);continue
+   if proposal['revision']<=self.last_revision.get((proposal['run_id'],jid),-1): reject('duplicate_revision',jid);continue
    self.last_revision[(proposal['run_id'],jid)]=proposal['revision']
-   if target==state['raw_phase']:continue
+   if target==state['raw_phase']: reject('target_equals_current',jid);continue
    phases=self.programs[j['sumo_tls_id']]['phases'];current=state['raw_phase']
    # Public green phase to reviewed yellow/all-red to selected target. No direct green jump.
    yellow_duration=max(j['yellow_s'],phases[current+1]['duration_s'])
@@ -119,6 +127,6 @@ class BoundedPolicyAdapter:
   self.output.mkdir(parents=True,exist_ok=True)
   (self.output/'policy_events.jsonl').write_text(''.join(json.dumps(e)+'\n' for e in self.events),encoding='utf-8')
   summary={'mode':'BOUNDED_POLICY_TEST' if self.execute else 'READ_ONLY_POLICY_TEST','computed_proposals':self.proposals,
-   'transitions_started':self.applied,'errors':self.errors,'automatic_deployment_enabled':False}
+   'transitions_started':self.applied,'rejections':self.rejections,'errors':self.errors,'automatic_deployment_enabled':False}
   (self.output/'policy_summary.json').write_text(json.dumps(summary,indent=2),encoding='utf-8')
   return summary
