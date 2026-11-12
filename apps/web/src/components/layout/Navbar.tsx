@@ -15,7 +15,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'intersections', label: 'Intersections', available: true },
     { id: 'cameras', label: 'Cameras', available: true },
     { id: 'incidents', label: 'Incidents', available: true },
-    { id: 'assistant', label: 'AI Assistant', available: false, tag: 'P4-04' },
+    { id: 'assistant', label: 'AI Assistant', available: true },
     { id: 'experiments', label: 'Experiments', available: false, tag: 'P4-06' },
   ];
 

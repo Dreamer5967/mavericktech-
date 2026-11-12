@@ -54,3 +54,48 @@ export interface IncidentLogEntry {
   state_revision?: number;
   message?: string;
 }
+
+// ---------------------------------------------------------------------------
+// P4-04: AI Assistant / VQA types
+// ---------------------------------------------------------------------------
+
+export interface QuestionRequest {
+  question: string;
+  junction_id?: JunctionId | null;
+  session_id?: string;
+}
+
+export interface VQARequest {
+  image_b64?: string;
+  question: string;
+  junction_id?: JunctionId | null;
+  session_id?: string;
+}
+
+export interface QuestionResponse {
+  session_id: string;
+  question: string;
+  answer: string;
+  /** 'snapshot' = answered from structured data; 'vqa_model' = ViLT; 'gemini' = Google Gemini; 'degraded' = service unavailable */
+  source: 'snapshot' | 'vqa_model' | 'gemini' | 'degraded';
+  junction_id?: string | null;
+  data_quality?: string;
+  model?: string | null;
+  status: string;
+  latency_ms?: number;
+  timestamp: string;
+  references?: string[];
+}
+
+export type ChatMessageRole = 'user' | 'assistant';
+
+export interface ChatMessage {
+  id: string;
+  role: ChatMessageRole;
+  content: string;
+  timestamp: string;
+  source?: QuestionResponse['source'];
+  junction_id?: string | null;
+  status?: string;
+  data_quality?: string;
+}

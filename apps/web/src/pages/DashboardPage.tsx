@@ -9,6 +9,7 @@ import { JunctionGrid } from '../components/junctions/JunctionGrid';
 import { CameraViewer } from '../components/camera/CameraViewer';
 import { IncidentControlPanel } from '../components/incidents/IncidentControlPanel';
 import { IncidentHistoryLog } from '../components/incidents/IncidentHistoryLog';
+import { AiAssistantSection } from '../components/assistant/AiAssistantSection';
 import { JunctionId } from '../types/api';
 
 export const DashboardPage: React.FC = () => {
@@ -52,6 +53,8 @@ export const DashboardPage: React.FC = () => {
       document.getElementById('cameras-section')?.scrollIntoView({ behavior: 'smooth' });
     } else if (tabId === 'incidents') {
       document.getElementById('incidents-section')?.scrollIntoView({ behavior: 'smooth' });
+    } else if (tabId === 'assistant') {
+      document.getElementById('assistant-section')?.scrollIntoView({ behavior: 'smooth' });
     } else if (tabId === 'overview') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -117,6 +120,11 @@ export const DashboardPage: React.FC = () => {
             logs={incidentLogs}
             onClear={clearLogs}
           />
+        </div>
+
+        {/* AI Assistant Section — P4-04 */}
+        <div id="assistant-section">
+          <AiAssistantSection />
         </div>
 
         {/* Data Contract Inspection Drawer (Clean Industrial Collapsible) */}

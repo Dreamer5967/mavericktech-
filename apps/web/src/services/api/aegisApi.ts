@@ -1,4 +1,12 @@
-import { FaultRequestPayload, HealthResponse, ResetRequestPayload, SnapshotResponse } from '../../types/api';
+import {
+  FaultRequestPayload,
+  HealthResponse,
+  QuestionRequest,
+  QuestionResponse,
+  ResetRequestPayload,
+  SnapshotResponse,
+  VQARequest,
+} from '../../types/api';
 
 export class ApiError extends Error {
   status: number;
@@ -28,10 +36,13 @@ async function parseApiError(response: Response, defaultMessage: string): Promis
           errorMsg = 'Invalid request: Check parameters and junction identifier (400)';
           break;
         case 'body_too_large':
-          errorMsg = 'Payload too large: Request exceeded 4KB limit (413)';
+          errorMsg = 'Payload too large: Request exceeded size limit (413)';
           break;
         case 'not_found':
           errorMsg = 'Endpoint not found (404)';
+          break;
+        case 'backend_unavailable':
+          errorMsg = 'AI service cannot reach the backend (503)';
           break;
         default:
           errorMsg = `Server error: ${errorBody.error} (${response.status})`;
@@ -44,11 +55,13 @@ async function parseApiError(response: Response, defaultMessage: string): Promis
   return new ApiError(errorMsg, response.status, errorCode);
 }
 
+// ---------------------------------------------------------------------------
+// Existing endpoints (P4-01 / P4-02 / P4-03)
+// ---------------------------------------------------------------------------
+
 export async function fetchHealth(): Promise<HealthResponse> {
   const response = await fetch('/health', {
-    headers: {
-      Accept: 'application/json',
-    },
+    headers: { Accept: 'application/json' },
   });
 
   if (!response.ok) {
@@ -60,9 +73,7 @@ export async function fetchHealth(): Promise<HealthResponse> {
 
 export async function fetchSnapshot(): Promise<SnapshotResponse> {
   const response = await fetch('/api/v1/snapshot', {
-    headers: {
-      Accept: 'application/json',
-    },
+    headers: { Accept: 'application/json' },
   });
 
   if (!response.ok) {
@@ -80,8 +91,8 @@ export async function postFault(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${operatorToken}`,
-      'Accept': 'application/json',
+      Authorization: `Bearer ${operatorToken}`,
+      Accept: 'application/json',
     },
     body: JSON.stringify(payload),
   });
@@ -101,14 +112,53 @@ export async function postReset(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${operatorToken}`,
-      'Accept': 'application/json',
+      Authorization: `Bearer ${operatorToken}`,
+      Accept: 'application/json',
     },
     body: JSON.stringify(payload || {}),
   });
 
   if (!response.ok) {
     throw await parseApiError(response, 'Scenario reset rejected');
+  }
+
+  return response.json();
+}
+
+// ---------------------------------------------------------------------------
+// P4-04: AI Assistant / VQA endpoints
+// Read-only — no operator token required (question role).
+// ---------------------------------------------------------------------------
+
+export async function postQuestion(payload: QuestionRequest): Promise<QuestionResponse> {
+  const response = await fetch('/api/v1/questions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw await parseApiError(response, 'Question request failed');
+  }
+
+  return response.json();
+}
+
+export async function postVQAQuestion(payload: VQARequest): Promise<QuestionResponse> {
+  const response = await fetch('/api/v1/questions/vqa', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw await parseApiError(response, 'VQA request failed');
   }
 
   return response.json();
