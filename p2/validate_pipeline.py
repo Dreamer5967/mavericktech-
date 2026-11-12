@@ -68,12 +68,14 @@ def run(args):
                 if time.monotonic()>deadline:
                     raise RuntimeError('Camera warm-up/readiness exceeded the bounded startup wait.')
                 time.sleep(0.2)
-            bridge=subprocess.Popen([sys.executable,'-B','-u','-m','p2.bridge_validation','--execute',
+            bridge_args=[sys.executable,'-B','-u','-m','p2.bridge_validation','--execute',
                 '--scenario',str(args.scenario.resolve()),'--config',str(args.config.resolve()),
                 '--output',str(output/'bridge'),'--seconds',str(args.seconds)]+(
                 ['--policy-checkpoint',str(args.policy_checkpoint.resolve()),'--policy-sha256',args.policy_sha256]
-                if args.policy_checkpoint else []),
-                *( ['--enable-policy'] if args.enable_policy else []),
+                if args.policy_checkpoint else [])
+            if args.enable_policy:
+                bridge_args.append('--enable-policy')
+            bridge=subprocess.Popen(bridge_args,
                 stdout=bridge_log,stderr=subprocess.STDOUT,env=environment)
             started=time.monotonic()
             while bridge.poll() is None:
