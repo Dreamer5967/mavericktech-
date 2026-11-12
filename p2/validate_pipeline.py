@@ -154,8 +154,8 @@ def main():
     parser.add_argument('--output-root',type=Path,default=Path('/workspace/aegis/evidence/pipeline-validation'))
     parser.add_argument('--execute',action='store_true')
     args=parser.parse_args()
-    if not 1<=args.seconds<=30 or not 1024<=args.port<=65535:
-        parser.error('Use at most 30 seconds and a nonprivileged port.')
+    if not 1<=args.seconds<=120 or not 1024<=args.port<=65535:
+        parser.error('Use at most 120 seconds and a nonprivileged port.')
     if (args.policy_checkpoint is None)!=(args.policy_sha256 is None):
         parser.error('Use --policy-checkpoint and --policy-sha256 together.')
     if args.enable_policy and args.policy_checkpoint is None:
