@@ -12,7 +12,7 @@ not establish live-policy, application or presentation acceptance.
 | Owner | Verified progress | Remaining work |
 |---|---|---|
 | P1 / Amal | Security contribution merged; presentation/checklist drafts reviewed | [#4: Final deck, compliance evidence, actual costs, backup and rehearsal](https://github.com/Dreamer5967/mavericktech-/issues/4) |
-| P2 | Combined fixed-time CARLA/SUMO/camera smoke passed; physical lane inventory mapped | [#6: Camera coverage, lane observations, action/fault hooks and runtime acceptance](https://github.com/Dreamer5967/mavericktech-/issues/6) |
+| P2 | Combined fixed-time smoke passed; 24 lane regions in frame; 22 ROI counts and camera-dropout recovery tested | [#6: Two occluded lanes, queue validation, action hooks and remaining runtime acceptance](https://github.com/Dreamer5967/mavericktech-/issues/6) |
 | P3 / Shivanshu | Policy, estimator and planner source integrated and unit-tested | [#5: BLOCKED - checkpoint/network compatibility, lane/action mappings and measured control evaluation](https://github.com/Dreamer5967/mavericktech-/issues/5) |
 | P4 | Dashboard foundation on its branch; security helpers available | [#7: Live frames, operator API, VQA, tracing, deployment and speech](https://github.com/Dreamer5967/mavericktech-/issues/7) |
 

@@ -42,8 +42,8 @@ def validate_config(config):
             value = camera['transform'][key]
             if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
                 raise ValueError('Camera transforms must contain finite numbers.')
-    if config['image_width'] != 960 or config['image_height'] != 540:
-        raise ValueError('This bounded smoke test uses 960x540 images.')
+    if (config['image_width'], config['image_height']) not in ((960, 540), (1280, 1280)):
+        raise ValueError('Use the bounded 960x540 or 1280x1280 camera profile.')
     for key, low, high in (('fov', 60, 110), ('sensor_tick_s', 0.1, 1.0),
                            ('capture_timeout_s', 1, 45), ('stale_after_sim_s', 0, 60),
                            ('confidence', 0.01, 1.0)):
@@ -55,6 +55,10 @@ def validate_config(config):
     size = config.get('inference_imgsz', 640)
     if isinstance(size, bool) or not isinstance(size, int) or size not in (640, 960, 1280):
         raise ValueError('inference_imgsz must be 640, 960 or 1280.')
+    if not isinstance(config.get('tiled_inference',False),bool):
+        raise ValueError('tiled_inference must be boolean.')
+    if config.get('tiled_inference') and (config['image_width'],config['image_height'])!=(1280,1280):
+        raise ValueError('Tiled inference requires 1280x1280 cameras.')
     return config
 
 
@@ -170,6 +174,10 @@ def sha256_file(path):
 
 def infer_frame(model, bgr, cv2, config, device=0):
     start = time.monotonic()
+    if config.get('tiled_inference'):
+        from p2.tiled_detector import infer_tiled
+        detections=infer_tiled(model,bgr,config,device)
+        return detections,annotate(bgr,cv2,detections),(time.monotonic()-start)*1000
     result = model.predict(source=bgr, device=device, conf=config['confidence'],
                            imgsz=config.get('inference_imgsz', 640), save=False, verbose=False)[0]
     boxes = result.boxes
@@ -185,6 +193,10 @@ def infer_frame(model, bgr, cv2, config, device=0):
         detections.append({'class_id': int(class_id), 'class_name': result.names[int(class_id)],
                            'confidence': float(confidence), 'xyxy_pixels': xyxy})
     elapsed_ms = (time.monotonic() - start) * 1000
+    return detections,annotate(bgr,cv2,detections),elapsed_ms
+
+
+def annotate(bgr,cv2,detections):
     annotated = bgr.copy()
     for detection in detections:
         x1, y1, x2, y2 = [int(x) for x in detection['xyxy_pixels']]
@@ -192,7 +204,7 @@ def infer_frame(model, bgr, cv2, config, device=0):
         label = f"{detection['class_name']} {detection['confidence']:.2f}"
         cv2.putText(annotated, label, (x1, max(15, y1 - 5)), cv2.FONT_HERSHEY_SIMPLEX,
                     0.5, (0, 220, 0), 1, cv2.LINE_AA)
-    return detections, annotated, elapsed_ms
+    return annotated
 
 
 def load_warmed_model(weights, config, run_dir):

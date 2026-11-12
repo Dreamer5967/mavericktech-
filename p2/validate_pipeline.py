@@ -90,8 +90,8 @@ def run(args):
                         with urlopen(f'http://127.0.0.1:{args.port}'+camera['frame_url'],timeout=3) as response:
                             jpeg=response.read()
                         decoded=cv2.imdecode(np.frombuffer(jpeg,dtype=np.uint8),cv2.IMREAD_COLOR)
-                        if decoded is None or decoded.shape[:2]!=(540,960):
-                            raise RuntimeError('Camera API did not return a valid 960x540 JPEG.')
+                        if decoded is None or decoded.shape[:2]!=(config['image_height'],config['image_width']):
+                            raise RuntimeError('Camera API JPEG dimensions differ from the configured profile.')
                         image_path=output/(camera['camera_id']+'.jpg')
                         image_path.write_bytes(jpeg)
                         previews[camera['camera_id']]={'file':image_path.name,'sha256':hashlib.sha256(jpeg).hexdigest(),

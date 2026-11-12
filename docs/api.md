@@ -12,8 +12,8 @@ question and reset routes.
 | `GET /api/v1/events` | Recent observation event history |
 
 POST requests are rejected. Frame references expire as the cache advances; fetch
-the latest snapshot rather than reuse old URLs. Use actual image dimensions
-(currently 960x540), not dashboard placeholders.
+the latest snapshot rather than reuse old URLs. Use the configured image
+dimensions: 960x540 for the oblique profile or 1280x1280 for the coverage profile.
 
 The live schema is `aegis.p2.live-feed.v1-draft`; the offline replay schema is
 `aegis.p2.camera-observations.v1-draft`. Exact fields are in `p2/live_feed.py` and
@@ -24,7 +24,15 @@ references. Simulation and wall-clock age are distinct. Saved observations are
 
 Usable whole-image vehicle counts are nullable: stale, missing or failed data
 must remain null. Whole-image counts do not establish lane occupancy or queues.
-Lane counts and queue estimates remain null; `ready_for_live_policy` is false.
+With the validated coverage profile and matching `--lane-regions`, `lane_counts`
+maps SUMO lane IDs to detected vehicle occupancy in reviewed ROIs. The 22 usable
+regions can publish counts; two tree-occluded regions stay null. Stale, failed or
+dropped camera data masks all its usable lane counts to null without changing
+the original frame/source timestamps. `lane_count_semantics` identifies this as
+`detected_vehicle_roi_occupancy`; it is not a stopped-queue measurement. Other
+profiles retain null lane counts. `queue_estimate` remains null and
+`ready_for_live_policy` is false. `active_faults` identifies deliberately dropped
+camera IDs during a bounded CLI fault test.
 Never pass evaluator ground truth into policy observations.
 
 When control is integrated, keep proposal, scheduled action and actual execution

@@ -1,5 +1,18 @@
 # Lane calibration and policy mapping
 
+The current **coverage profile** is `p2/camera_sites.coverage.json` with
+`configs/lane_regions.coverage.json`. Its 1280x1280 overhead views put all 24
+lane corridors in frame. Rotated-tile inference detects vehicles that the
+single-pass overhead detector missed. Visual review and a controlled stationary
+target test support **22 ROI occupancy counters**; lanes `20_3` and `20_4` remain
+null because of tree canopy. Every lane contained one known test vehicle;
+postprocessing suppressed nested rotated-box duplicates. This small controlled
+test does not establish moving-traffic accuracy, dense-queue performance or queue
+length estimation. All test vehicles and cameras were cleaned up.
+
+The following inventory/projection table describes the older **oblique profile**.
+It remains available as a lower-cost preview, without complete lane counts.
+
 The 12 November 2026 inventory read the existing CARLA map and static SUMO bundle.
 It did not tick, restart, load a map, create actors or install packages. The live
 OpenDRIVE hash matched the converted bundle. The actual network SHA256 is
@@ -20,10 +33,10 @@ network centerline. Height uses the CARLA stop-point ground plane.
 | cam_g4 / J3 | 189 | 8 | 0, 3, 6, 9 | 4 |
 | cam_g5 / J4 | 468 | 4 | 0, 3 | 2 |
 
-Projected area is not proof of usable coverage. Overlay inspection found edge
+Projected area is not proof of usable coverage. Oblique overlay inspection found edge
 clipping at cam_g1 and small/distant lane regions at cam_g4. Even the clearer
 cam_g3/cam_g5 regions do not cover their whole junctions. Occlusion and detector
-accuracy remain unvalidated; count publishing stays disabled. Whole-image
+accuracy were not validated for this older profile; its count publishing stays disabled. Whole-image
 vehicle counts must not be substituted for lane counts or stopped queues.
 
 ## P3 compatibility

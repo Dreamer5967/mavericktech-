@@ -106,6 +106,7 @@ def build(network, manifest, geometry, cameras, policy):
                 'opendrive_lane_id': source['lane_id'], 'mapping_verified': True,
                 'stop_to_centerline_error_m': round(gap, 4), 'upstream_region_m': round(length, 2),
                 'width_m': stop['width_m'], 'polygon_pixels': polygon,
+                'ground_polygon_world': ground,
                 'projected_area_pixels': round(area(polygon), 2),
                 'geometrically_visible': area(polygon) >= 100,
                 'coverage_reviewed': False, 'occlusion_reviewed': False, 'usable_for_counts': False})
