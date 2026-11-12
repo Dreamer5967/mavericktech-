@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "description": "Observation vector layout per junction for AEGIS live inference & training.",
+  "num_junctions": 4,
+  "num_lanes_per_junction": 4,
+  "decision_interval_s": 5,
+  "_metadata": {
+    "schema_version": "1.0",
+    "description": "Frozen observation vector definition per junction for the AEGIS traffic control project.",
+    "num_junctions": 4,
+    "num_lanes_per_junction": 4,
+    "decision_interval_s": 5
+  },
+  "observation_fields": {
+    "lane_queues": {
+      "type": "array",
+      "items": "float",
+      "length": 4,
+      "description": "Normalized queue length per inbound lane (0.0 = empty, 1.0 = at capacity)."
+    },
+    "missing_masks": {
+      "type": "array",
+      "items": "bool",
+      "length": 4,
+      "description": "True if the camera/sensor is down for that lane; the agent must impute or act conservatively."
+    },
+    "observation_ages_s": {
+      "type": "array",
+      "items": "float",
+      "length": 4,
+      "description": "Seconds since the last valid observation was received for each lane."
+    },
+    "current_phase_onehot": {
+      "type": "array",
+      "items": "int",
+      "length": 4,
+      "description": "One-hot encoding of the current green phase (exactly one element is 1)."
+    },
+    "elapsed_phase_s": {
+      "type": "float",
+      "description": "Seconds elapsed in the current green phase."
+    },
+    "neighbor_inflow": {
+      "type": "array",
+      "items": "float",
+      "length": 4,
+      "description": "Estimated inflow rate from each neighboring junction (vehicles per decision interval)."
+    },
+    "junction_id_onehot": {
+      "type": "array",
+      "items": "int",
+      "length": 4,
+      "description": "One-hot encoding identifying which junction this observation belongs to (J1–J4)."
+    }
+  }
+}

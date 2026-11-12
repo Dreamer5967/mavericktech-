@@ -1,0 +1,57 @@
+{
+  "status": "CANDIDATE_NOT_INSTALLED_OR_COSIM_VALIDATED",
+  "target_python": "3.10",
+  "target_platform": "Linux x86_64 / Ubuntu 20.04",
+  "scope": "Add matched SUMO executable/tools and lxml to existing venv-sim; do not replace CARLA or resolve unrelated dependencies.",
+  "live_clock_permission": false,
+  "map_change_permission": false,
+  "packages": [
+    {
+      "name": "eclipse-sumo",
+      "version": "1.20.0",
+      "filename": "eclipse_sumo-1.20.0-py2.py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "3b773c757289b01fd51a835560e4c77afb74a26d1225250cad4a23302f9ef010",
+      "url": "https://files.pythonhosted.org/packages/e3/ee/682239223889815aa48a3d21e35e9038dedc878cd2656376806e06e7f345/eclipse_sumo-1.20.0-py2.py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "size_bytes": 72355063,
+      "requires_dist": null
+    },
+    {
+      "name": "traci",
+      "version": "1.20.0",
+      "filename": "traci-1.20.0-py3-none-any.whl",
+      "sha256": "afcff11ff1551a8727a2ab64a208f9baee0721e9774aad70143500093ec66e92",
+      "url": "https://files.pythonhosted.org/packages/f3/06/5bbecb035b5ccdaee9770dc6fe0cfe7777f5a498ccf9566b6dac1e7f2736/traci-1.20.0-py3-none-any.whl",
+      "size_bytes": 125449,
+      "requires_dist": [
+        "sumolib>=1.20.0"
+      ]
+    },
+    {
+      "name": "sumolib",
+      "version": "1.20.0",
+      "filename": "sumolib-1.20.0-py3-none-any.whl",
+      "sha256": "0331c68a3ca571b395fb7311cb91058462c6b1cbb4be056e38b4188510057a45",
+      "url": "https://files.pythonhosted.org/packages/97/ff/bbc1b38a4b99ebfb9f965442dfe3a7742bbd67d95197a2e1b36072442d33/sumolib-1.20.0-py3-none-any.whl",
+      "size_bytes": 150075,
+      "requires_dist": [
+        "matplotlib; extra == \"visualization\""
+      ]
+    },
+    {
+      "name": "lxml",
+      "version": "5.3.0",
+      "filename": "lxml-5.3.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "sha256": "41ce1f1e2c7755abfc7e759dc34d7d05fd221723ff822947132dc934d122fe22",
+      "url": "https://files.pythonhosted.org/packages/43/af/dd3f58cc7d946da6ae42909629a2b1d5dd2d1b583334d4af9396697d6863/lxml-5.3.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+      "size_bytes": 5012462,
+      "requires_dist": [
+        "cssselect>=0.7; extra == \"cssselect\"",
+        "html5lib; extra == \"html5\"",
+        "lxml-html-clean; extra == \"html-clean\"",
+        "BeautifulSoup4; extra == \"htmlsoup\"",
+        "Cython>=3.0.11; extra == \"source\""
+      ]
+    }
+  ],
+  "total_wheel_download_bytes": 77643049
+}

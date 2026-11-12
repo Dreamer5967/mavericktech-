@@ -1,0 +1,8 @@
+# AEGIS Phase 3 — Python dependencies
+eclipse-sumo
+traci
+sumolib
+torch
+numpy
+pandas
+gymnasium

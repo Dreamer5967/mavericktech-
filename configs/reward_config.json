@@ -1,0 +1,17 @@
+{
+  "_description": "Reward function weight configuration for the AEGIS multi-junction RL agent.",
+  "reward_weights": {
+    "queue_weight": {
+      "value": 1.0,
+      "description": "Negative normalized network queue length. Primary signal driving the agent to minimize overall congestion across all lanes."
+    },
+    "spillback_weight": {
+      "value": 0.5,
+      "description": "Penalty applied when any lane exceeds 80% of its capacity, discouraging upstream spillback and gridlock propagation."
+    },
+    "switch_weight": {
+      "value": 0.1,
+      "description": "Penalty for each phase switch to discourage rapid cycling and ensure minimum green time is respected."
+    }
+  }
+}
