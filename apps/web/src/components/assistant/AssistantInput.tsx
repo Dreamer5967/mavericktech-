@@ -41,18 +41,18 @@ export const AssistantInput: React.FC<AssistantInputProps> = ({ onSubmit, disabl
   const isOverLimit = remaining < 0;
 
   return (
-    <div className="border-t border-[#E5E5E5] pt-3 space-y-2">
+    <div className="border-t border-white/10 pt-3 space-y-2">
       {/* Junction filter */}
       <div className="flex items-center gap-2">
-        <label className="text-xs text-[#737373] whitespace-nowrap">Focus on:</label>
+        <label className="text-xs text-white/50 font-mono whitespace-nowrap">Focus on:</label>
         <select
           value={junctionId}
           onChange={(e) => setJunctionId(e.target.value as JunctionId | '')}
           disabled={disabled}
-          className="text-xs border border-[#E5E5E5] rounded px-2 py-1 bg-white text-[#262626] focus:outline-none focus:ring-1 focus:ring-[#171717] disabled:opacity-50"
+          className="text-xs font-mono border border-white/15 rounded px-2.5 py-1 bg-[#080D10] text-white focus:outline-none focus:border-[#45C982] focus:ring-1 focus:ring-[#45C982] disabled:opacity-50"
         >
           {JUNCTION_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
+            <option key={opt.value} value={opt.value} className="bg-[#111A1D] text-white">
               {opt.label}
             </option>
           ))}
@@ -70,17 +70,15 @@ export const AssistantInput: React.FC<AssistantInputProps> = ({ onSubmit, disabl
             disabled={disabled}
             rows={2}
             placeholder="Ask about traffic conditions, camera status, signal phases…"
-            className={`w-full text-sm border rounded px-3 py-2 resize-none focus:outline-none focus:ring-1 focus:ring-[#171717] transition-colors disabled:opacity-50 ${
-              isOverLimit
-                ? 'border-[#C0392B] bg-[#FFF5F5]'
-                : 'border-[#E5E5E5] bg-white text-[#262626]'
-            }`}
+            className={`w-full text-xs font-mono border rounded px-3 py-2 resize-none focus:outline-none focus:ring-1 focus:ring-[#45C982] focus:border-[#45C982] transition-colors disabled:opacity-50 ${isOverLimit
+                ? 'border-red-500 bg-red-500/10 text-white'
+                : 'border-white/15 bg-[#080D10] text-white placeholder-white/30'
+              }`}
           />
           {/* Character counter */}
           <span
-            className={`absolute bottom-1.5 right-2 text-[10px] font-mono ${
-              isOverLimit ? 'text-[#C0392B]' : remaining < 50 ? 'text-[#B7791F]' : 'text-[#A3A3A3]'
-            }`}
+            className={`absolute bottom-1.5 right-2 text-[10px] font-mono ${isOverLimit ? 'text-red-400' : remaining < 50 ? 'text-[#E9A23B]' : 'text-white/30'
+              }`}
           >
             {remaining}
           </span>
@@ -89,17 +87,16 @@ export const AssistantInput: React.FC<AssistantInputProps> = ({ onSubmit, disabl
         <button
           onClick={handleSubmit}
           disabled={disabled || !question.trim() || isOverLimit}
-          className="self-end px-3 py-2 rounded border border-[#171717] bg-[#171717] text-white text-xs font-medium hover:bg-[#262626] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
+          className="self-end px-3.5 py-2.5 rounded bg-[#45C982] text-[#080D10] font-mono text-xs font-bold hover:bg-[#3db874] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1.5 cursor-pointer shadow-sm shadow-[#45C982]/20"
         >
           <Send className="w-3.5 h-3.5" />
-          Ask
+          <span>Ask</span>
         </button>
       </div>
 
-      <p className="text-[10px] text-[#A3A3A3]">
-        Press Enter to send · Shift+Enter for new line · Answers sourced from live snapshot data only
+      <p className="text-[10px] font-mono text-white/30">
+        Press Enter to send · Shift+Enter for newline · Real-time snapshot evaluation only
       </p>
     </div>
   );
 };
-

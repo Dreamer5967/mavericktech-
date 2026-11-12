@@ -14,7 +14,7 @@ export const ReadinessPanel: React.FC<ReadinessPanelProps> = ({
     {
       label: 'Backend Status',
       value: connectionStatus === 'CONNECTED' ? 'Operational' : connectionStatus,
-      highlight: connectionStatus === 'CONNECTED' ? 'text-[#23865A]' : 'text-[#C0392B]',
+      highlight: connectionStatus === 'CONNECTED' ? 'text-[#45C982]' : 'text-red-400',
     },
     {
       label: 'Operating Mode',
@@ -30,6 +30,7 @@ export const ReadinessPanel: React.FC<ReadinessPanelProps> = ({
       label: 'State Revision',
       value: snapshot?.state_revision !== undefined ? `#${snapshot.state_revision}` : '—',
       mono: true,
+      highlight: 'text-[#45C982]',
     },
     {
       label: 'Run Identifier',
@@ -43,17 +44,17 @@ export const ReadinessPanel: React.FC<ReadinessPanelProps> = ({
   ];
 
   return (
-    <section className="bg-[#F5F5F5] border border-[#E5E5E5] rounded p-4">
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 divide-y sm:divide-y-0 sm:divide-x divide-[#E5E5E5]">
+    <section className="bg-[#111A1D] border border-white/10 rounded-lg p-4 shadow-sm">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 divide-y sm:divide-y-0 sm:divide-x divide-white/10">
         {items.map((item, idx) => (
           <div key={item.label} className={`flex flex-col justify-center ${idx > 0 ? 'sm:pl-4 pt-2 sm:pt-0' : ''}`}>
-            <span className="text-xs text-[#737373] font-normal">{item.label}</span>
-            <div className="flex items-baseline gap-1 mt-0.5">
-              <span className={`text-sm font-semibold tracking-tight ${item.highlight || 'text-[#171717]'} ${item.mono ? 'font-mono' : ''}`}>
+            <span className="text-[11px] font-mono uppercase tracking-wider text-white/50">{item.label}</span>
+            <div className="flex items-baseline gap-1 mt-1">
+              <span className={`text-sm font-semibold tracking-tight ${item.highlight || 'text-white'} ${item.mono ? 'font-mono' : ''}`}>
                 {item.value}
               </span>
               {item.meta && (
-                <span className="text-[11px] text-[#737373] font-mono">({item.meta})</span>
+                <span className="text-[10px] text-white/40 font-mono">({item.meta})</span>
               )}
             </div>
           </div>

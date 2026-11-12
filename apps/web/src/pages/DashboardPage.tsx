@@ -10,6 +10,7 @@ import { CameraViewer } from '../components/camera/CameraViewer';
 import { IncidentControlPanel } from '../components/incidents/IncidentControlPanel';
 import { IncidentHistoryLog } from '../components/incidents/IncidentHistoryLog';
 import { AiAssistantSection } from '../components/assistant/AiAssistantSection';
+import { LiveDigitalTwinCommandBanner } from '../components/dashboard/LiveDigitalTwinCommandBanner';
 import { JunctionId } from '../types/api';
 
 export const DashboardPage: React.FC = () => {
@@ -67,9 +68,12 @@ export const DashboardPage: React.FC = () => {
   const isStale = connectionStatus === 'STALE';
 
   return (
-    <div className="min-h-screen bg-white text-[#171717] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#080D10] text-white selection:bg-[#45C982] selection:text-[#080D10] flex flex-col font-sans">
       {/* Top Navigation */}
       <Navbar activeTab={activeTab} onTabChange={handleTabChange} />
+
+      {/* Live Digital Twin Command Canopy — Real-time Arterial Co-Simulation */}
+      <LiveDigitalTwinCommandBanner snapshot={snapshot} />
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
@@ -127,42 +131,42 @@ export const DashboardPage: React.FC = () => {
           <AiAssistantSection />
         </div>
 
-        {/* Data Contract Inspection Drawer (Clean Industrial Collapsible) */}
-        <section className="bg-white border border-[#E5E5E5] rounded overflow-hidden">
+        {/* Data Contract Inspection Drawer */}
+        <section className="bg-[#111A1D] border border-white/10 rounded-lg overflow-hidden shadow-sm">
           <button
             onClick={() => setShowRawJson(!showRawJson)}
-            className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-[#F5F5F5] transition-colors"
+            className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-white/[0.03] transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-2">
-              <Terminal className="w-4 h-4 text-[#737373]" />
-              <span className="text-xs font-semibold text-[#171717]">
+              <Terminal className="w-4 h-4 text-[#45C982]" />
+              <span className="text-xs font-mono font-semibold text-white">
                 Snapshot Payload Verification
               </span>
-              <span className="text-xs text-[#737373]">
+              <span className="text-xs font-mono text-white/40">
                 ({snapshot?.junctions?.length ?? 0} intersections · rev #{snapshot?.state_revision ?? 0})
               </span>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-[#737373]">
+            <div className="flex items-center gap-1.5 text-xs font-mono text-white/50">
               <span>{showRawJson ? 'Collapse' : 'Inspect'}</span>
               {showRawJson ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
             </div>
           </button>
 
           {showRawJson && (
-            <div className="border-t border-[#E5E5E5] p-4 bg-[#FAFAFA]">
+            <div className="border-t border-white/10 p-4 bg-[#080D10]">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-[#737373] font-mono">
+                <span className="text-xs text-[#45C982] font-mono">
                   GET /api/v1/snapshot
                 </span>
                 <button
                   onClick={handleCopyJson}
-                  className="flex items-center gap-1 px-2.5 py-1 rounded border border-[#E5E5E5] bg-white hover:bg-[#F5F5F5] text-xs text-[#262626] transition-colors"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded border border-white/15 bg-white/5 hover:bg-white/10 text-xs font-mono text-white transition-colors cursor-pointer"
                 >
-                  {copied ? <Check className="w-3 h-3 text-[#23865A]" /> : <Copy className="w-3 h-3" />}
+                  {copied ? <Check className="w-3 h-3 text-[#45C982]" /> : <Copy className="w-3 h-3" />}
                   <span>{copied ? 'Copied' : 'Copy'}</span>
                 </button>
               </div>
-              <pre className="p-3 rounded border border-[#E5E5E5] bg-white font-mono text-xs text-[#262626] overflow-x-auto max-h-80 leading-relaxed">
+              <pre className="p-3.5 rounded border border-white/10 bg-[#080D10] font-mono text-xs text-white/80 overflow-x-auto max-h-80 leading-relaxed">
                 {snapshot ? JSON.stringify(snapshot, null, 2) : '// No snapshot data available.'}
               </pre>
             </div>
@@ -171,7 +175,7 @@ export const DashboardPage: React.FC = () => {
       </main>
 
       {/* Industrial Operations Footer */}
-      <footer className="border-t border-[#E5E5E5] bg-[#F5F5F5] py-3 px-4 sm:px-6 text-xs text-[#737373]">
+      <footer className="border-t border-white/10 bg-[#080D10] py-4 px-4 sm:px-6 text-xs font-mono text-white/40">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>AEGIS Traffic Management System &bull; Operator Console</span>
           <span>Target Service: http://127.0.0.1:8000</span>

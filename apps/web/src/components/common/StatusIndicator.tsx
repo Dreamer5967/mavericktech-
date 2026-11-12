@@ -12,30 +12,30 @@ export const StatusIndicator: React.FC<StatusIndicatorProps> = ({
 }) => {
   const config = {
     CONNECTED: {
-      dot: 'bg-[#23865A]',
+      dot: 'bg-[#45C982] shadow-[0_0_8px_#45C982]',
       text: 'Connected',
-      textColor: 'text-[#23865A]',
-      bg: 'bg-[#EAF4EE]',
-      border: 'border-[#D1E8DA]',
+      textColor: 'text-[#45C982]',
+      bg: 'bg-[#45C982]/10',
+      border: 'border-[#45C982]/25',
     },
     STALE: {
-      dot: 'bg-[#B7791F]',
+      dot: 'bg-[#E9A23B] shadow-[0_0_8px_#E9A23B]',
       text: 'Stale',
-      textColor: 'text-[#B7791F]',
-      bg: 'bg-[#FFFBEB]',
-      border: 'border-[#FDE68A]',
+      textColor: 'text-[#E9A23B]',
+      bg: 'bg-[#E9A23B]/10',
+      border: 'border-[#E9A23B]/25',
     },
     DISCONNECTED: {
-      dot: 'bg-[#C0392B]',
+      dot: 'bg-red-500 shadow-[0_0_8px_#ef4444]',
       text: 'Disconnected',
-      textColor: 'text-[#C0392B]',
-      bg: 'bg-[#FDF2F2]',
-      border: 'border-[#FECACA]',
+      textColor: 'text-red-400',
+      bg: 'bg-red-500/10',
+      border: 'border-red-500/25',
     },
   }[status];
 
   return (
-    <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded border text-xs font-medium ${config.bg} ${config.border}`}>
+    <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded border text-xs font-mono font-medium ${config.bg} ${config.border}`}>
       <span className={`w-1.5 h-1.5 rounded-full ${config.dot}`} />
       {showText && <span className={config.textColor}>{config.text}</span>}
     </div>

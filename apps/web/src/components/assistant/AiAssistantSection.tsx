@@ -22,37 +22,37 @@ export const AiAssistantSection: React.FC = () => {
   } = useAiAssistant();
 
   return (
-    <section className="bg-white border border-[#E5E5E5] rounded overflow-hidden">
+    <section className="bg-[#111A1D] border border-white/10 rounded-lg overflow-hidden shadow-sm">
       {/* Section header */}
-      <div className="px-4 py-3 border-b border-[#E5E5E5] flex items-center justify-between">
+      <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Bot className="w-4 h-4 text-[#737373]" />
-          <span className="text-xs font-semibold text-[#171717]">AI Assistant</span>
-          <span className="text-xs text-[#737373]">· read-only informational</span>
+          <Bot className="w-4 h-4 text-[#45C982]" />
+          <span className="text-xs font-display font-semibold text-white">AI Assistant</span>
+          <span className="text-xs font-mono text-white/40">· read-only informational</span>
         </div>
 
         <div className="flex items-center gap-2">
           {/* Mode toggle */}
-          <div className="flex border border-[#E5E5E5] rounded overflow-hidden text-xs">
+          <div className="flex border border-white/15 rounded-md overflow-hidden text-xs font-mono">
             <button
               onClick={() => setMode('chat')}
-              className={`px-2.5 py-1 flex items-center gap-1 transition-colors ${mode === 'chat'
-                  ? 'bg-[#171717] text-white'
-                  : 'bg-white text-[#737373] hover:bg-[#F5F5F5]'
+              className={`px-3 py-1 flex items-center gap-1.5 transition-colors cursor-pointer ${mode === 'chat'
+                  ? 'bg-[#45C982] text-[#080D10] font-bold'
+                  : 'bg-[#080D10] text-white/60 hover:text-white'
                 }`}
             >
               <MessageSquare className="w-3 h-3" />
-              Text Q&amp;A
+              <span>Text Q&amp;A</span>
             </button>
             <button
               onClick={() => setMode('vqa')}
-              className={`px-2.5 py-1 flex items-center gap-1 transition-colors border-l border-[#E5E5E5] ${mode === 'vqa'
-                  ? 'bg-[#171717] text-white'
-                  : 'bg-white text-[#737373] hover:bg-[#F5F5F5]'
+              className={`px-3 py-1 flex items-center gap-1.5 transition-colors border-l border-white/15 cursor-pointer ${mode === 'vqa'
+                  ? 'bg-[#45C982] text-[#080D10] font-bold'
+                  : 'bg-[#080D10] text-white/60 hover:text-white'
                 }`}
             >
               <Eye className="w-3 h-3" />
-              Visual Q&amp;A
+              <span>Visual Q&amp;A</span>
             </button>
           </div>
 
@@ -62,7 +62,7 @@ export const AiAssistantSection: React.FC = () => {
               onClick={clearHistory}
               disabled={isPending}
               title="Clear chat history"
-              className="p-1 rounded text-[#737373] hover:text-[#C0392B] hover:bg-[#F5F5F5] transition-colors disabled:opacity-40"
+              className="p-1 rounded text-white/40 hover:text-red-400 hover:bg-white/5 transition-colors disabled:opacity-40 cursor-pointer"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </button>
@@ -70,7 +70,7 @@ export const AiAssistantSection: React.FC = () => {
         </div>
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="p-4 sm:p-5 space-y-4">
         {mode === 'chat' ? (
           <>
             {/* Chat message thread */}
@@ -86,7 +86,7 @@ export const AiAssistantSection: React.FC = () => {
           <>
             {/* VQA messages from same chatHistory */}
             {chatHistory.some((m) => m.source === 'vqa_model' || m.source === 'gemini' || m.content.startsWith('[Camera')) && (
-              <div className="mb-2">
+              <div className="mb-4">
                 <AssistantChat
                   messages={chatHistory.filter(
                     (m) =>
@@ -100,22 +100,14 @@ export const AiAssistantSection: React.FC = () => {
               </div>
             )}
 
-            {/* VQA input panel */}
+            {/* VQA input controls */}
             <VQAPanel
-              onSubmitVQA={(b64, q, jid) => submitVQA(b64, q, jid as JunctionId | null)}
+              onSubmitVQA={(imgB64, q, jid) => submitVQA(imgB64, q, jid)}
               isPending={isVQAPending}
             />
           </>
         )}
-
-        {/* Role boundary notice */}
-        <p className="text-[10px] text-[#A3A3A3] border-t border-[#E5E5E5] pt-2">
-          The AI Assistant is read-only and has no access to control endpoints.
-          It cannot inject faults or trigger resets.
-          Answers are sourced from live snapshot data only — no fabrication.
-        </p>
       </div>
     </section>
   );
 };
-
