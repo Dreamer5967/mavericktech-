@@ -17,7 +17,8 @@ SOURCE_FILES=(
     'p2/tiled_detector.py','p2/controller_gate.py','p2/bridge_validation.py',
     'p2/validate_pipeline.py','services/control/contracts.py',
     'services/control/estimator.py','services/control/inference_entrypoint.py',
-    'services/control/live_proposals.py','services/planner/coordinator.py',
+    'services/control/live_proposals.py','services/planner/candidates.py',
+    'services/planner/coordinator.py','services/planner/rollout_worker.py',
     'training/__init__.py','training/mappo/__init__.py','training/mappo/actor.py',
 )
 
@@ -51,6 +52,7 @@ def main():
     encoded_files=base64.b64encode(json.dumps(files).encode()).decode()
     encoded_model=base64.b64encode(args.checkpoint.read_bytes()).decode()
     sha=digest(args.checkpoint)
+    remote_scenario=str(args.scenario).replace('\\','/')
     bootstrap=f'''import base64,hashlib,io,json,runpy,sys,tarfile,uuid
 from pathlib import Path
 root=Path('/workspace/aegis/runtime')/('p2-policy-diagnostics-'+uuid.uuid4().hex)
@@ -61,7 +63,7 @@ for name,text in files.items():
 for name in ('action_mapping.json','observation_schema.json','runtime_mapping.json'):
  target=root/'configs'/name;target.parent.mkdir(parents=True,exist_ok=True);target.write_text(files[name],encoding='utf-8')
 model_dir=Path('/workspace/aegis/models');model_dir.mkdir(parents=True,exist_ok=True)
-checkpoint=model_dir/'mappo-'+ '{sha}' +'.pt'
+checkpoint=model_dir/('mappo-'+'{sha}'+'.pt')
 if not checkpoint.exists():checkpoint.write_bytes(base64.b64decode('{encoded_model}'))
 if hashlib.sha256(checkpoint.read_bytes()).hexdigest()!='{sha}':raise RuntimeError('External checkpoint hash mismatch.')
 provenance={json.dumps(provenance)}
@@ -70,7 +72,7 @@ sys.path.insert(0,str(root))
 output=Path('/workspace/aegis/evidence/pipeline-validation')/root.name
 output.mkdir(parents=True,exist_ok=False)
 (output/'source_provenance.json').write_text(json.dumps(provenance,indent=2),encoding='utf-8')
-sys.argv=['p2.validate_pipeline','--execute','--seconds','{args.seconds}','--config',str(root/'camera_config.json'),'--lane-regions',str(root/'lane_regions.json'),'--scenario',{str(args.scenario)!r},'--output-root',str(output),'--policy-checkpoint',str(checkpoint),'--policy-sha256','{sha}']
+sys.argv=['p2.validate_pipeline','--execute','--seconds','{args.seconds}','--config',str(root/'camera_config.json'),'--lane-regions',str(root/'lane_regions.json'),'--scenario',{remote_scenario!r},'--output-root',str(output),'--policy-checkpoint',str(checkpoint),'--policy-sha256','{sha}']
 try:runpy.run_module('p2.validate_pipeline',run_name='__main__')
 finally:
  buffer=io.BytesIO()
