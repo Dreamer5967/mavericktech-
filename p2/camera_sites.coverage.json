@@ -344,6 +344,6 @@
   ],
   "inference_imgsz": 1280,
   "tiled_inference": true,
-  "independent_preview_hz": 2,
+  "independent_preview_hz": 5,
   "preview_width": 640
 }

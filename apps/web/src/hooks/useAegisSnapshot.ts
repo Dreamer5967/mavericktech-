@@ -4,7 +4,7 @@ import { fetchSnapshot } from '../services/api/aegisApi';
 import { ConnectionStatus, SnapshotResponse } from '../types/api';
 
 const STALE_THRESHOLD_MS = 7000;
-const POLLING_INTERVAL_MS = 3000;
+const POLLING_INTERVAL_MS = 500;
 
 export function useAegisSnapshot() {
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('DISCONNECTED');
@@ -16,7 +16,7 @@ export function useAegisSnapshot() {
     refetchInterval: POLLING_INTERVAL_MS,
     refetchIntervalInBackground: true,
     retry: 1,
-    staleTime: 2500,
+    staleTime: 250,
   });
 
   const { data, dataUpdatedAt, isError, isSuccess } = query;
