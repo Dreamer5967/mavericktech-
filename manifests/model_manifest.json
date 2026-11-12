@@ -1,13 +1,11 @@
 {
-  "status": "GEOMETRY_ALIGNED_RETRAIN_REQUIRED",
-  "_status_note": "Existing checkpoints trained against 4-lane/4-phase synthetic abstraction. Incompatible with actual Town10HD_Opt SUMO geometry (6/6/8/4 lanes, 3/3/4/2 green phases). Must retrain after lane_slot_aggregation and policy_action_phase_mapping are jointly reviewed and approved by P2.",
-  "algorithm": "MAPPO_v2",
+  "status": "TRAINED_SUMO_OFFLINE_CAMERA_UNVALIDATED",
+  "algorithm": "MAPPO",
   "map": "Town10HD_Opt",
   "network_sha256": "3ef9501d4bb19f868f49395e39007876f834cbfe713f864a7ea8413f98115004",
   "_network_sha256_source": "P2 verified from actual CARLA OpenDRIVE hash on 12 November 2026 (see docs/lane_mapping.md and configs/runtime_mapping.json on main branch commit 36d8e1e)",
-  "checkpoint_path": "checkpoints/mappo_cpu_best.pt",
-  "checkpoint_sha256": "UNVERIFIED_INCOMPATIBLE_DO_NOT_DEPLOY",
-  "_checkpoint_note": "Existing .pt files were trained against synthetic 4-lane/4-phase geometry. SHA256 not externally verified. Must not be deployed against live SUMO. New checkpoint required after contract freeze and retraining.",
+  "checkpoint_path": "EXTERNAL: set AEGIS_P3_CHECKPOINT to mappo_town10_offline.pt",
+  "checkpoint_sha256": "a2fe49078d26f84e396093e833392a969857bae6f6231978d8b3b5ce0cf3b9ee",
   "observation_schema_version": "2.0",
   "obs_dim_per_junction": 25,
   "max_model_lane_slots": 4,
@@ -68,27 +66,46 @@
     7
   ],
   "held_out_seeds": [
-    8,
-    9,
-    10
+    18,
+    19,
+    20
   ],
   "library_versions": {
-    "torch": "2.15.0",
-    "sumo_target": "1.20.0",
-    "gymnasium": "1.4.0"
+    "torch": "2.12.0+cpu",
+    "sumo": "1.20.0",
+    "sumo_target": "1.20.0"
   },
   "actor_truth_access": false,
   "critic_truth_access_training_only": true,
-  "data_mode": "SYNTHETIC_PRE_COSIM_EVALUATION",
+  "data_mode": "REAL_SUMO_ROI_SENSOR_MODEL_WITH_SYNTHETIC_DROPOUT",
   "actuation_permitted": false,
-  "policy_action_semantics_reviewed": false,
-  "_blockers_outstanding": [
-    "Joint P2/P3 review of lane_slot_aggregation mapping per junction",
-    "Joint P2/P3 review and confirmation of policy_action_phase_mapping labels",
-    "Retrain checkpoint against geometry-aligned observation/action contract",
-    "External checkpoint SHA256 verification after retrain",
-    "P2 camera coverage validation for aggregated lane slots",
-    "AEGIS_REQUIRE_P3_CHECKPOINT=1 artifact test must pass with verified checkpoint"
+  "policy_action_semantics_reviewed": true,
+  "deployment_status": "BLOCKED_CAMERA_DOMAIN_AND_LIVE_CONTROL_VALIDATION",
+  "routes_sha256": "8a9d8c66e0e373219b7bbfeedf6a9d2a9afb737c53ea82a5f99ea23d4d348214",
+  "action_mapping_sha256": "63bfee33ca400be1bed01330cd5432508df6c8e4a3e503201bb592de1de4cf13",
+  "observation_schema_sha256": "8ef1ef4a894bf889241a4fdd109e459f267dc20266ee9f1bf656a6d3c833d96d",
+  "test_seeds": [
+    18,
+    19,
+    20
   ],
-  "deployment_status": "BLOCKED_RETRAIN_AND_CONTRACT_REVIEW_REQUIRED"
+  "episodes": 100,
+  "source_sha256": {
+    "training/town10_environment.py": "c9aa942005d2442e33706228efc6549259f5be4e39ea18028ad4fbc07ed43a7c",
+    "training/train_town10.py": "52db752c5b8c70136fb6a1ab6ece02ca31673b1afb177870037152ff52a857cc"
+  },
+  "environment_decisions": 4800,
+  "gradient_parameters_changed": true,
+  "torch_version": "2.12.0+cpu",
+  "observation_source": "SUMO_ROI_OCCUPANCY_WITH_SYNTHETIC_CAMERA_DROPOUT",
+  "limitations": [
+    "Not a live camera-domain validation.",
+    "Training budget is limited; no improvement is assumed.",
+    "Recovery evaluation is separate."
+  ],
+  "blockers_outstanding": [
+    "Live camera-domain policy validation",
+    "Bounded guarded live execution acceptance",
+    "No demonstrated traffic improvement; report matched results without selecting on held-out seeds"
+  ]
 }

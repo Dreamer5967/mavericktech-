@@ -105,11 +105,16 @@ class P2IntegrationVerificationTests(unittest.TestCase):
             f"  Manifest:  {net_hash}\n"
             f"  P2 actual: {P2_NETWORK_SHA256}"
         )
-        # Checkpoint must be marked incompatible pending retrain
         ckpt_sha = self.manifest.get("checkpoint_sha256", "")
-        self.assertIn("UNVERIFIED", ckpt_sha.upper(),
-                      "checkpoint_sha256 must be marked UNVERIFIED until retrain + external verification")
-        self.assertEqual(self.manifest["data_mode"], "SYNTHETIC_PRE_COSIM_EVALUATION")
+        if self.manifest.get("status") == "TRAINED_SUMO_OFFLINE_CAMERA_UNVALIDATED":
+            self.assertRegex(ckpt_sha, r"^[0-9a-f]{64}$",
+                             "retrained external checkpoint must have a verified SHA256")
+            self.assertEqual(self.manifest["data_mode"], "REAL_SUMO_ROI_SENSOR_MODEL_WITH_SYNTHETIC_DROPOUT")
+            self.assertTrue(self.manifest.get("deployment_status", "").startswith("BLOCKED_"))
+        else:
+            self.assertIn("UNVERIFIED", ckpt_sha.upper(),
+                          "checkpoint_sha256 must be marked UNVERIFIED until retrain + external verification")
+            self.assertEqual(self.manifest["data_mode"], "SYNTHETIC_PRE_COSIM_EVALUATION")
         self.assertFalse(self.manifest.get("actuation_permitted", True),
                          "actuation_permitted must be False until P2/P3 joint review is complete")
         print(f"[PASS] 3. Manifest network SHA256 matches P2 actual: {net_hash[:16]}...")

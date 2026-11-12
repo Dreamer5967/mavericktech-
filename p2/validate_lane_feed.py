@@ -48,7 +48,9 @@ def run(config_path,regions_path,output_root):
                         if camera['status']!='fresh':continue
                         with urlopen('http://127.0.0.1:8765'+camera['frame_url'],timeout=3) as response:jpeg=response.read()
                         image=cv2.imdecode(np.frombuffer(jpeg,dtype=np.uint8),cv2.IMREAD_COLOR)
-                        if image is None or image.shape[:2]!=(1280,1280):raise RuntimeError('Invalid square JPEG.')
+                        width=config.get('preview_width',config['image_width'])
+                        height=round(config['image_height']*width/config['image_width'])
+                        if image is None or image.shape[:2]!=(height,width):raise RuntimeError('Invalid preview JPEG dimensions.')
                         (output/(camera['camera_id']+'.jpg')).write_bytes(jpeg)
                     next_preview=time.monotonic()-started+5
                 time.sleep(.25)

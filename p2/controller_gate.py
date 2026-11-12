@@ -43,7 +43,10 @@ def audit_controller(action_mapping, observation_schema, model_manifest, checkpo
             actual={i for i,p in enumerate(program['phases']) if any(c in p['state'] for c in 'gG') and not any(c in p['state'] for c in 'yY')}
             indices={i for i in mapping.values() if i is not None}
             if actual!=indices:blockers.append(alias+':green_phase_inventory_mismatch')
-    if model_manifest.get('status')!='TRAINED_FROZEN':blockers.append('compatible_retraining_required')
+    if model_manifest.get('status') not in ('TRAINED_FROZEN','TRAINED_SUMO_OFFLINE_CAMERA_UNVALIDATED'):
+        blockers.append('compatible_retraining_required')
+    elif model_manifest.get('status')=='TRAINED_SUMO_OFFLINE_CAMERA_UNVALIDATED':
+        blockers.append('camera_domain_policy_validation_required')
     if checkpoint is None or not Path(checkpoint).is_file():blockers.append('verified_external_checkpoint_required')
     elif hashlib.sha256(Path(checkpoint).read_bytes()).hexdigest()!=model_manifest.get('checkpoint_sha256'):
         blockers.append('checkpoint_hash_mismatch')

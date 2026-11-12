@@ -51,8 +51,9 @@ def run(args):
     error=None
     try:
         with (output/'feed.log').open('x',encoding='utf-8') as feed_log, (output/'bridge.log').open('x',encoding='utf-8') as bridge_log:
+            lane_args=['--lane-regions',str(args.lane_regions.resolve())] if getattr(args,'lane_regions',None) else []
             feed=subprocess.Popen([sys.executable,'-B','-u','-m','p2.live_feed','--execute','--config',str(args.config.resolve()),
-                 '--duration','120','--port',str(args.port),'--clock-mode','observer','--output-root',str(output/'frames')],
+                 '--duration','120','--port',str(args.port),'--clock-mode','observer','--output-root',str(output/'frames')]+lane_args,
                  stdout=feed_log,stderr=subprocess.STDOUT,env=environment)
             deadline=time.monotonic()+45
             while True:
@@ -90,13 +91,16 @@ def run(args):
                         with urlopen(f'http://127.0.0.1:{args.port}'+camera['frame_url'],timeout=3) as response:
                             jpeg=response.read()
                         decoded=cv2.imdecode(np.frombuffer(jpeg,dtype=np.uint8),cv2.IMREAD_COLOR)
-                        if decoded is None or decoded.shape[:2]!=(config['image_height'],config['image_width']):
+                        width=config.get('preview_width',config['image_width']);height=round(config['image_height']*width/config['image_width'])
+                        if decoded is None or decoded.shape[:2]!=(height,width):
                             raise RuntimeError('Camera API JPEG dimensions differ from the configured profile.')
                         image_path=output/(camera['camera_id']+'.jpg')
                         image_path.write_bytes(jpeg)
                         previews[camera['camera_id']]={'file':image_path.name,'sha256':hashlib.sha256(jpeg).hexdigest(),
-                            'frame_id':camera['frame_id'],'source_sim_time_s':camera['source_sim_time_s'],
-                            'received_at_utc':camera['received_at_utc']}
+                            'frame_id':camera.get('preview_source_frame_id',camera['frame_id']),
+                            'source_sim_time_s':camera.get('preview_source_sim_time_s',camera['source_sim_time_s']),
+                            'received_at_utc':camera.get('preview_received_at_utc',camera['received_at_utc']),
+                            'count_source_frame_id':camera['frame_id']}
                 time.sleep(0.5)
             if bridge.returncode!=0:
                 raise RuntimeError('Bridge verification failed; inspect bridge/summary.json and bridge.log.')
@@ -133,6 +137,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--scenario',type=Path,required=True)
     parser.add_argument('--config',type=Path,required=True)
+    parser.add_argument('--lane-regions',type=Path)
     parser.add_argument('--seconds',type=float,default=30)
     parser.add_argument('--port',type=int,default=8765)
     parser.add_argument('--output-root',type=Path,default=Path('/workspace/aegis/evidence/pipeline-validation'))

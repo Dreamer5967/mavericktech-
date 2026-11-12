@@ -59,6 +59,11 @@ def validate_config(config):
         raise ValueError('tiled_inference must be boolean.')
     if config.get('tiled_inference') and (config['image_width'],config['image_height'])!=(1280,1280):
         raise ValueError('Tiled inference requires 1280x1280 cameras.')
+    preview_hz=config.get('independent_preview_hz',0)
+    if isinstance(preview_hz,bool) or not isinstance(preview_hz,(int,float)) or not math.isfinite(preview_hz) or not 0<=preview_hz<=5:
+        raise ValueError('Preview rate must be bounded to 0-5 updates per second.')
+    if config.get('preview_width',config['image_width']) not in (640,960,1280):
+        raise ValueError('Preview width must use a bounded profile.')
     return config
 
 

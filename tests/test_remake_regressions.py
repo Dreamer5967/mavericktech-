@@ -50,7 +50,7 @@ class InferenceRegressionTests(unittest.TestCase):
         result=audit_controller(read('configs/action_mapping.json'),read('configs/observation_schema.json'),
             read('manifests/model_manifest.json'),runtime_map=read('configs/runtime_mapping.json'))
         self.assertFalse(result['ready_for_live_policy'])
-        self.assertIn('compatible_retraining_required',result['blockers'])
+        self.assertIn('camera_domain_policy_validation_required',result['blockers'])
         self.assertNotIn('runtime_network_hash_mismatch',result['blockers'])
         self.assertFalse(any('inventory_mismatch' in b for b in result['blockers']))
 

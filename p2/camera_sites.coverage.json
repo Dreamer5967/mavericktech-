@@ -343,5 +343,7 @@
     }
   ],
   "inference_imgsz": 1280,
-  "tiled_inference": true
+  "tiled_inference": true,
+  "independent_preview_hz": 2,
+  "preview_width": 640
 }

@@ -51,6 +51,22 @@ class LaneCountTests(unittest.TestCase):
         self.assertEqual(result['lane_counts'],{'a':None,'b':None})
         self.assertEqual(result['source_sim_time_s'],10)
 
+    def test_new_preview_keeps_its_timestamp_separate_from_old_counts(self):
+        store=FeedStore(['cam_g1'],'test',lane_templates={'cam_g1':['a']})
+        received='2026-11-12T00:00:00+00:00'
+        store.publish([('cam_g1',{'frame_id':1,'source_sim_time_s':10,'received_at_utc':received,
+            'error':None,'lane_counts':{'a':1}},b'annotated')],10)
+        store.publish_preview('cam_g1',{'frame_id':2,'source_sim_time_s':13,
+            'received_at_utc':'2026-11-12T00:00:03+00:00','width':640,'height':640},b'preview',13.1)
+        result=store.snapshot(now=datetime.fromisoformat(received).timestamp()+3.2)['cameras'][0]
+        self.assertEqual(result['frame_id'],1)
+        self.assertEqual(result['source_sim_time_s'],10)
+        self.assertEqual(result['preview_source_frame_id'],2)
+        self.assertEqual(result['preview_source_sim_time_s'],13)
+        self.assertFalse(result['preview_stale'])
+        self.assertEqual(result['lane_counts'],{'a':None})
+        self.assertFalse(result['preview_annotated'])
+
 
 class TileGeometryTests(unittest.TestCase):
     def test_rotation_inverses(self):

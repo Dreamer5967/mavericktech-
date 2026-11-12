@@ -39,7 +39,7 @@ article{background:#1b283c;border:1px solid #334155;border-radius:12px;padding:1
 img{width:100%;aspect-ratio:16/9;object-fit:contain;background:#080f1a}.meta{color:#b8c7d9;line-height:1.7}
 .warn{color:#fbbf24}button{padding:8px}small{color:#b8c7d9}</style></head><body>
 <h1>AEGIS · camera feed</h1><p id="status">Connecting…</p>
-<p class="warn">Whole-image detections · lane counts and queues are uncalibrated. Parked cars may be counted.</p>
+<p class="warn">Counts cover reviewed lane regions. Occluded or stale counts are unavailable. Vehicle occupancy is not queue length.</p>
 <div class="grid" id="grid"></div><p><small>Read-only P2 integration preview. P4 owns the application frontend.</small></p>
 <script>
 const cards=new Map();let active=true;
@@ -51,9 +51,9 @@ card.lastChild.className='meta';document.getElementById('grid').append(card);car
 const img=card.querySelector('img');if(c.frame_url&&img.dataset.frame!==c.preview_frame_id&&img.dataset.loading!=='yes'){
 const token=c.preview_frame_id;img.dataset.loading='yes';img.onload=()=>{img.dataset.frame=token;img.dataset.loading='no'};
 img.onerror=()=>{img.dataset.loading='no'};img.src=c.frame_url}
-card.lastChild.textContent=c.status+' · vehicles: '+(c.observed_vehicle_count??'unavailable')+' · frame '+(c.frame_id??'—')+
+card.lastChild.textContent=c.status+' · whole-frame vehicles: '+(c.observed_vehicle_count??'unavailable')+' · lane occupancy: '+JSON.stringify(c.lane_counts??{})+' · count frame '+(c.frame_id??'—')+
 ' · sim age '+(c.age_sim_s==null?'unknown':c.age_sim_s.toFixed(2)+'s')+' · wall age '+(c.wall_age_s==null?'unknown':c.wall_age_s.toFixed(2)+'s')+
-' · captured '+(c.received_at_utc??'waiting');card.className=c.status==='fresh'?'':'warn'}
+' · preview age '+(c.preview_age_sim_s==null?'unknown':c.preview_age_sim_s.toFixed(2)+'s')+' · captured '+(c.received_at_utc??'waiting');card.className=c.status==='fresh'?'':'warn'}
 }catch(e){document.getElementById('status').textContent='OFFLINE · feed unavailable';for(const card of cards.values())card.lastChild.textContent='OFFLINE · last image is historical'}
 if(active)setTimeout(poll,500)}poll();</script></body></html>'''
 
@@ -75,6 +75,19 @@ class FeedStore:
         self.error=None
         self.lane_templates=lane_templates or {}
         self.active_faults=[]
+        self.previews={}
+
+    def cache_frame(self,camera_id,token,jpeg):
+        self.frames[token]=(camera_id,jpeg)
+        tokens=[key for key,value in self.frames.items() if value[0]==camera_id]
+        for expired in tokens[:-self.max_frames_per_camera]:self.frames.pop(expired)
+
+    def publish_preview(self,camera_id,row,jpeg,sim_time):
+        with self.lock:
+            token=self.run_id+'_'+camera_id+'_preview_'+str(row['frame_id'])
+            self.cache_frame(camera_id,token,jpeg)
+            self.previews[camera_id]={**row,'preview_frame_id':token,'frame_url':'/api/v1/frames/'+token}
+            self.sim_time=max(sim_time,self.sim_time) if self.sim_time is not None else sim_time
 
     def publish(self, rows, sim_time):
         with self.lock:
@@ -82,12 +95,9 @@ class FeedStore:
                 token=self.run_id+'_'+camera_id+'_'+str(row['frame_id'])
                 row=copy.deepcopy(row)
                 row.update(preview_frame_id=token,frame_url='/api/v1/frames/'+token)
-                self.frames[token]=(camera_id,jpeg)
-                tokens=[key for key,value in self.frames.items() if value[0]==camera_id]
-                for expired in tokens[:-self.max_frames_per_camera]:
-                    self.frames.pop(expired)
+                self.cache_frame(camera_id,token,jpeg)
                 self.rows[camera_id]=row
-            self.sim_time=sim_time
+            self.sim_time=max(sim_time,self.sim_time) if self.sim_time is not None else sim_time
             self.revision+=1
             self.phase='RUNNING'
             self.events.append({'state_revision':self.revision,'published_at_utc':utc_now()})
@@ -110,6 +120,10 @@ class FeedStore:
                 missing=not row
                 status=('missing' if missing else 'detector_error' if row.get('error') else
                         'stopped' if self.phase not in ('RUNNING','STARTING') else 'stale' if stale else 'fresh')
+                preview=self.previews.get(camera_id,row)
+                preview_wall=now-datetime.fromisoformat(preview['received_at_utc']).timestamp() if preview.get('received_at_utc') else None
+                preview_time=preview.get('source_sim_time_s')
+                preview_age=self.sim_time-preview_time if self.sim_time is not None and preview_time is not None and self.sim_time>=preview_time else None
                 cameras.append({'camera_id':camera_id,'frame_id':row.get('frame_id'),
                     'source_sim_time_s':captured,'received_at_utc':row.get('received_at_utc'),
                     'age_sim_s':age,'wall_age_s':max(0,wall) if wall is not None else None,
@@ -120,7 +134,15 @@ class FeedStore:
                         {lane:None for lane in self.lane_templates[camera_id]}) if camera_id in self.lane_templates else None,
                     'lane_count_semantics':'detected_vehicle_roi_occupancy' if camera_id in self.lane_templates else None,
                     'queue_estimate':None,
-                    'preview_frame_id':row.get('preview_frame_id'),'frame_url':row.get('frame_url'),
+                    'preview_frame_id':preview.get('preview_frame_id'),'frame_url':preview.get('frame_url'),
+                    'preview_source_frame_id':preview.get('frame_id'),
+                    'preview_source_sim_time_s':preview.get('source_sim_time_s'),
+                    'preview_received_at_utc':preview.get('received_at_utc'),
+                    'preview_width':preview.get('width'),'preview_height':preview.get('height'),
+                    'preview_annotated':camera_id not in self.previews,
+                    'preview_wall_age_s':preview_wall,
+                    'preview_age_sim_s':preview_age,
+                    'preview_stale':preview_wall is None or preview_wall<0 or preview_wall>self.threshold or preview_age is None or preview_age>self.threshold or self.phase not in ('STARTING','RUNNING'),
                     'inference_call_wall_ms':row.get('inference_call_wall_ms'),'error':row.get('error')})
             return {'schema_version':'aegis.p2.live-feed.v1-draft','mode':'LIVE' if self.phase=='RUNNING' else self.phase,
                     'run_id':self.run_id,'state_revision':self.revision,'phase':self.phase,
@@ -226,6 +248,8 @@ def run(config, duration, port, output_root, allowed_origin, clock_mode='standal
     owned=[]
     cleanup=[]
     failure=None
+    preview_thread=None
+    preview_errors=[]
     def callback(camera_id):
         def receive(image):
             with buffer_lock:
@@ -233,6 +257,27 @@ def run(config, duration, port, output_root, allowed_origin, clock_mode='standal
         return receive
     print('LIVE_FEED_OUTPUT',output,flush=True)
     print('LIVE_FEED_URL http://127.0.0.1:'+str(port),flush=True)
+    def publish_previews():
+        processed_preview={}
+        try:
+            while not stop.is_set():
+                started=time.monotonic()
+                with buffer_lock:samples=dict(latest)
+                with store.lock:dropped=set(store.active_faults)
+                for camera_id,(image,received) in samples.items():
+                    if camera_id in dropped or processed_preview.get(camera_id)==image.frame:continue
+                    bgr=np.frombuffer(image.raw_data,dtype=np.uint8).reshape(image.height,image.width,4)[:,:,:3]
+                    width=config.get('preview_width',640);height=round(image.height*width/image.width)
+                    small=cv2.resize(bgr,(width,height),interpolation=cv2.INTER_AREA)
+                    ok,encoded=cv2.imencode('.jpg',small,[cv2.IMWRITE_JPEG_QUALITY,70])
+                    if not ok:raise RuntimeError('Independent preview JPEG encoding failed.')
+                    store.publish_preview(camera_id,{'frame_id':image.frame,'source_sim_time_s':image.timestamp,
+                        'received_at_utc':received,'width':width,'height':height},encoded.tobytes(),
+                        world.get_snapshot().timestamp.elapsed_seconds)
+                    processed_preview[camera_id]=image.frame
+                stop.wait(max(0,1/config['independent_preview_hz']-(time.monotonic()-started)))
+        except Exception as exc:
+            preview_errors.append(type(exc).__name__+': '+str(exc));stop.set()
     try:
         model,timings=load_warmed_model(Path(config['weights_path']),config,output)
         for camera in config['cameras']:
@@ -247,6 +292,8 @@ def run(config, duration, port, output_root, allowed_origin, clock_mode='standal
             owned.append(sensor)
             sensor.listen(callback(camera['camera_id']))
         deadline=time.monotonic()+duration
+        if config.get('independent_preview_hz'):
+            preview_thread=threading.Thread(target=publish_previews,daemon=True);preview_thread.start()
         with (output/'observations.jsonl').open('x',encoding='utf-8') as log:
             while not stop.is_set() and time.monotonic()<deadline:
                 started=time.monotonic()
@@ -296,6 +343,10 @@ def run(config, duration, port, output_root, allowed_origin, clock_mode='standal
         print('LIVE_FEED_ERROR',failure,flush=True)
     finally:
         stop.set()
+        if preview_thread:
+            preview_thread.join(timeout=10)
+            if preview_thread.is_alive():preview_errors.append('Preview thread did not stop within its deadline.')
+        if preview_errors and failure is None:failure='; '.join(preview_errors)
         store.set_phase('FAILED' if failure else 'STOPPED',failure)
         for sensor in reversed(owned):
             try:
