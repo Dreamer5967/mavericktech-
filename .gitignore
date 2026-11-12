@@ -1,16 +1,75 @@
-# Python
+# Secrets / connection credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+id_ed25519*
+id_rsa*
+id_ecdsa*
+id_dsa*
+*.ppk
+*.p12
+*.pfx
+aegis_p2*
+secrets/
+*.token
+credentials*.json
+
+# Python, Node and generated models
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-.Python
-env/
-venv/
+.pytest_cache/
 .venv/
+.venv*/
+venv-*/
+venv/
+env/
+node_modules/
+*.pt
+*.pth
+*.onnx
+*.engine
+*.ckpt
+*.safetensors
+*.bin
+*.tflite
+*.h5
+*.pb
+*.weights
+*.bag
+
+# CARLA, downloaded content and raw evidence
+CarlaUE4/
+carla/
+downloads/
+*.tar.gz
+*.tar
+raw_frames/
+evidence/raw/
+*.log
+local-evidence/
+local-models/
+outputs/
+runs/
+results_raw/
+temp/
+tmp/
+tripinfo_*.xml
+
+# Local OS/editor artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Builds and packaging
 build/
 develop-eggs/
 dist/
-downloads/
 eggs/
 .eggs/
 lib/
@@ -22,30 +81,19 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+*.whl
+*.exe
+*.dll
+*.so
+*.so.*
+*.pak
 
-# Secrets & Local Environment
-.env
-.env.local
-*.pem
-*.key
-id_rsa*
-*.token
-
-# OS / Editor artifacts
-.DS_Store
-Thumbs.db
-*.swp
-*.swo
-.vscode/
-.idea/
-
-# Large Model Weights and Temporary Simulation Caches
-*.pt
-*.pth
-*.onnx
-*.weights
-*.bag
-*.h5
-results_raw/
-temp/
-tmp/
+# Retain handoff docs outside repo
+/AEGIS_Beginner_Quickstart.docx
+/AEGIS_Beginner_Quickstart.pdf
+/AEGIS_Implementation_Handbook.docx
+/AEGIS_Implementation_Handbook.pdf
+/team/*.docx
+/team/*.pdf
+/checkpoints/
+/results/

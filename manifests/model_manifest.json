@@ -1,0 +1,46 @@
+{
+  "status": "TRAINED_FROZEN",
+  "algorithm": "MAPPO_v2",
+  "map": "Town10HD_Opt",
+  "checkpoint_path": "checkpoints/mappo_cpu_best.pt",
+  "checkpoint_sha256": "9013238fe6b3a6f87c6bb646e3b98bedf1fa83277f9603075a0ded54aee14903",
+  "network_hash": "cd2be280cae08ead56921061706951fb9b0c95e550eeea36eea1f94cc0042769",
+  "observation_schema_version": "1.0",
+  "action_mapping_hash": "4_junctions_4_phases_p2_inventory",
+  "p2_signal_inventory": {
+    "cam_g1": "719",
+    "cam_g3": "23",
+    "cam_g4": "189",
+    "cam_g5": "468"
+  },
+  "train_seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "dev_seeds": [
+    6,
+    7
+  ],
+  "held_out_seeds": [
+    8,
+    9,
+    10
+  ],
+  "training_steps": 10000,
+  "library_versions": {
+    "torch": "2.15.0",
+    "sumo_target": "1.20.0",
+    "sumo_local_compatible": "1.28.0",
+    "gymnasium": "1.4.0"
+  },
+  "actor_truth_access": false,
+  "critic_truth_access_training_only": true,
+  "data_mode": "SYNTHETIC_PRE_COSIM_EVALUATION",
+  "deployment_status": "BLOCKED_PENDING_CHECKPOINT_AND_MAP_VERIFICATION",
+  "checkpoint_verification": "EXTERNAL_ARTIFACT_NOT_VERIFIED",
+  "lane_mapping_verified": false,
+  "signal_phase_mapping_verified": false
+}
