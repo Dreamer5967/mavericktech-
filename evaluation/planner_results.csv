@@ -1,0 +1,1 @@
+run_id,decision_id,belief_hash,candidate_id,horizon_sim_s,queue_cost,spillback_cost,emergency_delay_s,constraint_status,rollout_ms,selected,outcome_status

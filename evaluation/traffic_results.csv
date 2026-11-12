@@ -1,0 +1,1 @@
+run_id,controller,map_hash,checkpoint_hash,demand_seed,fault_seed,failure_rate,warmup_sim_s,horizon_sim_s,completed_trips,remaining_vehicles,waiting_mean_s,stopped_vehicle_s,fuel_total,fuel_unit,teleports,status

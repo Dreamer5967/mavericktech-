@@ -1,0 +1,66 @@
+# Secrets / connection credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+id_ed25519*
+aegis_p2*
+secrets/
+
+# Python, Node and generated models
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.venv*/
+venv-*/
+node_modules/
+*.pt
+*.pth
+*.onnx
+*.engine
+*.ckpt
+
+# CARLA, downloaded content and raw evidence
+CarlaUE4/
+carla/
+downloads/
+*.tar.gz
+*.tar
+raw_frames/
+evidence/raw/
+*.log
+
+# Local OS/editor artifacts
+.DS_Store
+.vscode/settings.json
+
+# Additional private keys, credentials, model formats and generated evidence
+id_rsa*
+id_ecdsa*
+id_dsa*
+*.ppk
+*.p12
+*.pfx
+credentials*.json
+*.safetensors
+*.bin
+*.tflite
+*.h5
+*.pb
+venv/
+env/
+evidence/
+local-evidence/
+local-models/
+outputs/
+runs/
+*.zip
+*.egg
+*.whl
+*.exe
+*.dll
+*.so
+*.so.*
+*.pak
