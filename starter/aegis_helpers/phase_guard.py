@@ -41,7 +41,8 @@ class SafetyPhaseGuard:
         self.minimum_green_s = minimum_green_s
         self.maximum_green_s = maximum_green_s
         self.max_age_s = max_age_s
-        self.approved_transitions = approved_transitions or DEFAULT_APPROVED_TRANSITIONS
+        self.approved_transitions = (DEFAULT_APPROVED_TRANSITIONS if approved_transitions is None
+                                     else approved_transitions)
 
     def check_request(self, r: TransitionRequest) -> tuple[bool, str]:
         """Validates transition request timing, revision, and legality."""
