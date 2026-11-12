@@ -1,158 +1,104 @@
-# Person 1 (P1) Task Sheet: Quality, Compliance, Evidence & Presentation
+# P1 Task Sheet: My Working Files & Deliverables
 
-**Project**: AEGIS — Fault-Tolerant Traffic Control & Secure Multimodal Assistance  
-**Competition**: Code Spark 2026 (Smart Technologies PS1 & PS3)  
-**Role Owner**: Person 1 (P1)  
-**Operating Environment**: Windows (PowerShell, Python 3.13, Git, Microsoft PowerPoint)  
+**Role**: P1 (Quality, Compliance, Evidence & Presentation)  
+**Environment**: Windows (PowerShell, Python, PowerPoint)  
 
 ---
 
-## 1. Executive Summary & Core Mandate
+## 1. My Working Files (What I Own)
 
-As **P1**, you are the **System Quality, Compliance, Budget, and Presentation Lead**. 
+I am responsible only for the following files in this project:
 
-Your objective is to make AEGIS understandable, testable, and presentation-ready without owning heavy simulation or model training code. You do not train MAPPO or run CARLA locally; instead, you ensure the team hits every requirement in the brief, safeguards the $5.00 cloud budget, verifies data contracts, and authors the winning 6-slide pitch deck for judging.
-
-> [!NOTE]
-> **No MacBook Required**: All P1 tasks run natively on Windows using Python, standard markdown/CSV tools, and Microsoft PowerPoint.
-
----
-
-## 2. P1 Owned Files & Artifacts
-
-All files listed below are owned and maintained by P1:
-
-| Artifact / File Path | Purpose | Ticket | Status |
-| :--- | :--- | :---: | :---: |
-| [`P1_TASKS.md`](file:///c:/Users/amalh/Downloads/code%20spark/P1_TASKS.md) | Master P1 Task Specification & Roadmap | All | Active |
-| [`submission_checklist.md`](file:///c:/Users/amalh/Downloads/code%20spark/submission_checklist.md) | PS1 & PS3 Master Deliverable & Compliance Matrix | P1-01 | Complete |
-| [`manifests/cost_log.csv`](file:///c:/Users/amalh/Downloads/code%20spark/manifests/cost_log.csv) | $5.00 Cloud Budget Audit & Spending Checkpoints | P1-02 | Complete |
-| [`tests/phase_cases.md`](file:///c:/Users/amalh/Downloads/code%20spark/tests/phase_cases.md) | 12 Safety Phase Guard Edge Cases (Handoff to P3) | P1-03 | Complete |
-| [`presentation/evidence_index.md`](file:///c:/Users/amalh/Downloads/code%20spark/presentation/evidence_index.md) | Standardized Evidence Registry & Screenshot Protocols | P1-05 | Complete |
-| [`presentation/slides.md`](file:///c:/Users/amalh/Downloads/code%20spark/presentation/slides.md) | The 6-Slide Master Pitch Deck with Speaker Cues | Core | Complete |
-| [`evaluation/`](file:///c:/Users/amalh/Downloads/code%20spark/evaluation/) | Blank Benchmark Result Tables (Traffic, VQA, Attacks) | P1-04 | Audited |
+```
+├── P1_TASKS.md                        <-- This task guide
+├── submission_checklist.md            <-- Deliverables & compliance tracker
+├── manifests/
+│   └── cost_log.csv                   <-- $5.00 cloud spending log
+├── tests/
+│   └── phase_cases.md                 <-- 12 safety edge cases for the traffic light manager
+├── presentation/
+│   ├── slides.md                      <-- 6-slide pitch deck & script cues
+│   └── evidence_index.md              <-- Registry for screenshots, videos & benchmark logs
+└── evaluation/                        <-- Empty result tables to audit
+    ├── traffic_results.csv
+    ├── vqa_routes.csv
+    ├── adversarial_vqa.csv
+    └── prompt_injection.csv
+```
 
 ---
 
-## 3. Detailed P1 Tickets & Implementation Breakdown
+## 2. File-by-File Breakdown & Actions
 
-### Ticket P1-01: PS1/PS3 Compliance Matrix
-- **File**: [`submission_checklist.md`](file:///c:/Users/amalh/Downloads/code%20spark/submission_checklist.md)
-- **Objective**: Track every single requirement of Smart Technologies PS1 and PS3 across teammates:
-  - `REQ-01`: CARLA 0.9.15 + SUMO in Town05 (Owner: P2)
-  - `REQ-02`: YOLOv10 roadside cameras & vehicle counting (Owner: P2)
-  - `REQ-03`: Cooperative MAPPO across 4+ intersections (Owner: P3)
-  - `REQ-04`: Camera fault injection & uncertainty interval recovery (Owner: P2 + P3)
-  - `REQ-05`: Safety Phase Guard (Owner: P3, based on P1's `tests/phase_cases.md`)
-  - `REQ-06`: Quantitative traffic evaluation (waiting time, queue, fuel) (Owner: P3)
-  - `REQ-07`: Multi-model VQA dynamic routing (Owner: P4)
-  - `REQ-08`: Adversarial FGSM vision testing (Owner: P2 + P4)
-  - `REQ-09`: Prompt injection defense & privilege boundary (Owner: P4)
-  - `REQ-10`: Docker Compose reproducible packaging (Owner: P2 + P4)
-  - `REQ-11`: 6-Slide Master Presentation Deck (Owner: P1)
-  - `REQ-12`: Cloud budget tracking under $5.00 (Owner: P1)
-- **Rule**: Never mark an item "Verified" unless an actual artifact file exists.
+### 1. `submission_checklist.md` (Compliance Matrix)
+* **What it is**: Tracks the 12 required competition deliverables across the team.
+* **My Action**:
+  - Keep each requirement mapped to its owner (P2 for CARLA/SUMO/YOLO, P3 for MAPPO/Estimator, P4 for Dashboard/VQA, P1 for PPT/Budget).
+  - Verify that no deliverable is marked done until an actual code or result file is produced.
 
 ---
 
-### Ticket P1-02: Cloud Budget & Cost Tracking
-- **File**: [`manifests/cost_log.csv`](file:///c:/Users/amalh/Downloads/code%20spark/manifests/cost_log.csv)
-- **Objective**: Prevent the team from getting disqualified due to account suspension or mid-demo shutdown.
-- **Budget Envelopes**:
-  - Total credit: **$5.00**
-  - Emergency reserve: **$1.00** (strictly untouched)
-  - Transfer/storage allowance: **$0.50**
-  - Available compute: **$3.50** (max ~11.6 hours at $0.30/hr)
-- **Verification Command** (Run from `starter/`):
+### 2. `manifests/cost_log.csv` (Budget Tracker)
+* **What it is**: Audits the $5.00 cloud spend on Vast.ai.
+* **My Action**:
+  - Log hourly checkpoints of compute rate, storage, and balance with P2.
+  - Enforce our strict rule: Keep an untouched **$1.00 reserve** so the system doesn't shut down before judging.
+* **Local Check Command**:
   ```powershell
   python -m aegis_helpers.budget --credit 5.0 --compute 0.30 --storage 0.02 --transfer 0.50 --reserve 1.0
   ```
-- **Action**: Check Vast.ai balance with P2 hourly and log entries in `cost_log.csv`.
 
 ---
 
-### Ticket P1-03: Safety Phase Guard Edge Cases (Technical Contribution)
-- **File**: [`tests/phase_cases.md`](file:///c:/Users/amalh/Downloads/code%20spark/tests/phase_cases.md)
-- **Objective**: Author test boundary conditions for P3's phase manager before signals can change in the live simulator.
-- **Key Edge Cases Defined**:
-  1. *Minimum Green*: Rejects transitions if elapsed green < 10.0s (`minimum_green`).
-  2. *Stale Revision*: Rejects proposals based on outdated world ticks (`stale_revision`).
-  3. *Stale Observation*: Rejects proposals when camera age > 2.0s (`stale_state`).
-  4. *Missing Sensor Fallback*: Emits `observed_count: null` and enforces `[lower_queue, upper_queue]`. Never treats missing raw data as 0.
-  5. *Clearance Sequence*: Enforces `YELLOW` and `ALL_RED` transition stages between conflicting movements.
+### 3. `tests/phase_cases.md` (Safety Phase Guard Edge Cases)
+* **What it is**: 12 critical test edge cases for the traffic signal controller.
+* **My Action**:
+  - Hand this specification off to P3 to implement in the phase manager.
+  - Ensures lights cannot change before 10s of green, cannot skip yellow/all-red clearance, and cannot treat dropped cameras as zero cars.
 
 ---
 
-### Ticket P1-04: Blank Benchmark Result Audit
-- **Directory**: [`evaluation/`](file:///c:/Users/amalh/Downloads/code%20spark/evaluation/)
-- **Objective**: Ensure all result tables remain completely blank until measured:
-  - [`traffic_results.csv`](file:///c:/Users/amalh/Downloads/code%20spark/evaluation/traffic_results.csv): Waiting time, stopped delay, fuel.
-  - [`vqa_routes.csv`](file:///c:/Users/amalh/Downloads/code%20spark/evaluation/vqa_routes.csv): Routing latency and accuracy.
-  - [`adversarial_vqa.csv`](file:///c:/Users/amalh/Downloads/code%20spark/evaluation/adversarial_vqa.csv): Clean vs. FGSM scores.
-  - [`prompt_injection.csv`](file:///c:/Users/amalh/Downloads/code%20spark/evaluation/prompt_injection.csv): Unauthorized actuation rejection rate.
-- **Rule**: If a model fails to beat the baseline, report the honest numbers. Transparent engineering scores higher than fake perfection.
+### 4. `presentation/slides.md` (6-Slide Master Presentation Deck)
+* **What it is**: The exact content for our 5-minute pitch deck.
+* **My Action**:
+  - **Slide 1**: The Problem (camera failures causing traffic gridlock).
+  - **Slide 2**: System Architecture & Privilege Boundary (VQA cannot change lights).
+  - **Slide 3**: Live Demo Handoff (judge drops a camera, system recovers).
+  - **Slide 4**: Traffic Results (waiting time & fuel improvements).
+  - **Slide 5**: VQA & Security Evidence (dynamic model routing & prompt injection defense).
+  - **Slide 6**: Scope & Limitations (honest engineering boundaries).
+  - Convert this outline into our final PowerPoint presentation (`.pptx`).
 
 ---
 
-### Ticket P1-05: Evidence Standards & Media Registry
-- **File**: [`presentation/evidence_index.md`](file:///c:/Users/amalh/Downloads/code%20spark/presentation/evidence_index.md)
-- **Naming Rule**: `run_<RUN_ID>_j<JUNCTION_ID>_<CONDITION>_<TIMESTAMP>.png`
-- **Labeling Rule**: Tag every visual asset as **MOCK**, **REPLAY**, or **LIVE**.
-- **Contingency**: Save one full backup screen recording of the recovery demo locally on your laptop in case cloud networking lags during judging.
+### 5. `presentation/evidence_index.md` (Evidence & Media Registry)
+* **What it is**: Naming and storage rules for all presentation visuals.
+* **My Action**:
+  - Enforce naming format: `run_<ID>_j<JUNCTION>_<CONDITION>_<TIMESTAMP>.png`.
+  - Mark every visual on slides as **MOCK**, **REPLAY**, or **LIVE**.
+  - Keep a local backup recording of the recovery demo on my laptop for judging.
 
 ---
 
-## 4. Main Deliverable: 6-Slide Pitch Structure (5-Minute Presentation)
-
-Detailed in [`presentation/slides.md`](file:///c:/Users/amalh/Downloads/code%20spark/presentation/slides.md) and synchronized with P4's speech script in [`presentation/Stage_Script_and_Storyboard.md`](file:///c:/Users/amalh/Downloads/code%20spark/presentation/Stage_Script_and_Storyboard.md):
-
-```
-+-----------------------------------------------------------------------------------------+
-| SLIDE 1: THE PROBLEM                                                                    |
-| "A camera going dark should never make a controller believe the road is empty."         |
-| Focus: Real-world perception failure & PS1 + PS3 fusion.                                |
-+-----------------------------------------------------------------------------------------+
-| SLIDE 2: ARCHITECTURE & AUTHORITY BOUNDARIES                                            |
-| "Three isolated planes. Single live clock coordinator. Zero actuation rights for VQA."   |
-| Visual: assets/architecture.png                                                         |
-+-----------------------------------------------------------------------------------------+
-| SLIDE 3: INTERACTIVE LIVE DEMO TRANSITION                                               |
-| "Judge, please choose any intersection camera to drop."                                 |
-| Visual: assets/dashboard.png (J2 count turns null, uncertainty interval activates)      |
-+-----------------------------------------------------------------------------------------+
-| SLIDE 4: TRAFFIC EVIDENCE & MARL BENCHMARKS                                             |
-| "Under sensor blackout, unrecovered policies cascade into gridlock. AEGIS saves delay." |
-| Visual: Matched waiting time & fuel consumption curves from evaluation/traffic_results  |
-+-----------------------------------------------------------------------------------------+
-| SLIDE 5: PS3 VQA ROUTING & PROMPT INJECTION DEFENSE                                     |
-| "Dynamic model routing slashes latency; visual prompt injections 100% defended."       |
-| Visual: Routing latency table & prompt injection rejection audit                        |
-+-----------------------------------------------------------------------------------------+
-| SLIDE 6: SCOPE, LIMITATIONS & ROAD AHEAD                                                |
-| "Transparent engineering: what ran live, what was simulated, and what remains future."  |
-| Focus: Honest research boundaries within 12 hours and $5 budget.                        |
-+-----------------------------------------------------------------------------------------+
-```
+### 6. `evaluation/*.csv` (Audit Result Tables)
+* **What it is**: Benchmark tables for traffic, routing, and attack tests.
+* **My Action**:
+  - Keep tables clean and blank until real test runs finish.
+  - Prevent any fake or placeholder numbers from reaching the slides.
 
 ---
 
-## 5. Timeline & Milestones for P1
+## 3. How to Push My Files to GitHub
 
-- **Hours 0–2 (Gate 1)**: Initialize checklist, cost log, phase edge cases, and slide skeleton.
-- **Hours 2–5 (Gate 2)**: Build architecture slides, align with P4 on speech cues, verify P2's first CARLA frame.
-- **Hours 5–8 (Gate 3)**: Collect live UI screenshots, verify naming convention, audit cloud spending checkpoints.
-- **Hours 8–10 (Gate 4)**: Receive real benchmark numbers from P3 and P4; insert into slides.
-- **Hours 10–12 (Gate 5)**: Full rehearsal with P4, export final `.pptx` and `.pdf`, verify local backup recording.
-
----
-
-## 6. How to Push This Task File to GitHub
-
-From your terminal, run:
+From the project root (`c:\Users\amalh\Downloads\code spark`):
 
 ```powershell
-cd "c:\Users\amalh\Downloads\code spark"
-git add P1_TASKS.md
-git commit -m "docs(p1): add master P1 task sheet and deliverables roadmap"
+# 1. Stage only my working files
+git add P1_TASKS.md submission_checklist.md manifests/ tests/ presentation/ evaluation/
+
+# 2. Commit my files
+git commit -m "docs(p1): update P1 working files and deliverables"
+
+# 3. Push to GitHub
 git push -u origin main
 ```
