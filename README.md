@@ -45,6 +45,7 @@ Random test fixtures do not count as trained-policy verification.
 - [Existing cloud runtime and validation status](docs/runtime.md)
 - [Observation and policy integration boundaries](docs/api.md)
 - [Security module scope](docs/security.md)
+- [Lane calibration and policy mapping status](docs/lane_mapping.md)
 
 P3 source is integrated; live learned control remains blocked by external
 checkpoint verification, lane calibration and actual map-specific phase mapping.

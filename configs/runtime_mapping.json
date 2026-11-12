@@ -1,0 +1,608 @@
+{
+  "schema_version": "aegis.runtime-mapping.v1",
+  "map": "Carla/Maps/Town10HD_Opt",
+  "network_sha256": "3ef9501d4bb19f868f49395e39007876f834cbfe713f864a7ea8413f98115004",
+  "programs": [
+    {
+      "tls_id": "719",
+      "program_id": "0",
+      "opendrive_signal_ids": [
+        "960",
+        "961",
+        "962"
+      ],
+      "phases": [
+        {
+          "duration_s": 42.0,
+          "state": "rrgggrrrrgr"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rryyyrrrryr"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rrrrrrrrrrr"
+        },
+        {
+          "duration_s": 42.0,
+          "state": "ggrrrrrggrr"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "yyrrrrryyrr"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rrrrrrrrrrr"
+        },
+        {
+          "duration_s": 42.0,
+          "state": "rrrrrggrrrg"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rrrrryyrrry"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rrrrrrrrrrr"
+        }
+      ],
+      "controlled_links": [
+        {
+          "link_index": 0,
+          "from_lane_id": "19_3",
+          "to_lane_id": "-6_3"
+        },
+        {
+          "link_index": 1,
+          "from_lane_id": "19_3",
+          "to_lane_id": "-6_4"
+        },
+        {
+          "link_index": 2,
+          "from_lane_id": "6_4",
+          "to_lane_id": "-18_3"
+        },
+        {
+          "link_index": 3,
+          "from_lane_id": "6_4",
+          "to_lane_id": "5_4"
+        },
+        {
+          "link_index": 4,
+          "from_lane_id": "6_4",
+          "to_lane_id": "-18_4"
+        },
+        {
+          "link_index": 5,
+          "from_lane_id": "-5_4",
+          "to_lane_id": "-6_4"
+        },
+        {
+          "link_index": 6,
+          "from_lane_id": "-5_4",
+          "to_lane_id": "-18_4"
+        },
+        {
+          "link_index": 7,
+          "from_lane_id": "19_4",
+          "to_lane_id": "5_3"
+        },
+        {
+          "link_index": 8,
+          "from_lane_id": "19_4",
+          "to_lane_id": "5_4"
+        },
+        {
+          "link_index": 9,
+          "from_lane_id": "6_3",
+          "to_lane_id": "5_3"
+        },
+        {
+          "link_index": 10,
+          "from_lane_id": "-5_3",
+          "to_lane_id": "-18_3"
+        }
+      ]
+    },
+    {
+      "tls_id": "23",
+      "program_id": "0",
+      "opendrive_signal_ids": [
+        "943",
+        "944",
+        "945"
+      ],
+      "phases": [
+        {
+          "duration_s": 42.0,
+          "state": "rrrrrrgggg"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rrrrrryyyy"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rrrrrrrrrr"
+        },
+        {
+          "duration_s": 42.0,
+          "state": "gggrrrrrrr"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "yyyrrrrrrr"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rrrrrrrrrr"
+        },
+        {
+          "duration_s": 42.0,
+          "state": "rrrgggrrrr"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rrryyyrrrr"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rrrrrrrrrr"
+        }
+      ],
+      "controlled_links": [
+        {
+          "link_index": 0,
+          "from_lane_id": "-6_3",
+          "to_lane_id": "-7_3"
+        },
+        {
+          "link_index": 1,
+          "from_lane_id": "-6_3",
+          "to_lane_id": "-22_3"
+        },
+        {
+          "link_index": 2,
+          "from_lane_id": "-6_4",
+          "to_lane_id": "-7_4"
+        },
+        {
+          "link_index": 3,
+          "from_lane_id": "-3_3",
+          "to_lane_id": "6_3"
+        },
+        {
+          "link_index": 4,
+          "from_lane_id": "-3_4",
+          "to_lane_id": "-22_4"
+        },
+        {
+          "link_index": 5,
+          "from_lane_id": "-3_4",
+          "to_lane_id": "6_4"
+        },
+        {
+          "link_index": 6,
+          "from_lane_id": "-15_3",
+          "to_lane_id": "-7_3"
+        },
+        {
+          "link_index": 7,
+          "from_lane_id": "-15_3",
+          "to_lane_id": "-7_4"
+        },
+        {
+          "link_index": 8,
+          "from_lane_id": "-15_4",
+          "to_lane_id": "6_3"
+        },
+        {
+          "link_index": 9,
+          "from_lane_id": "-15_4",
+          "to_lane_id": "6_4"
+        }
+      ]
+    },
+    {
+      "tls_id": "189",
+      "program_id": "0",
+      "opendrive_signal_ids": [
+        "949",
+        "950",
+        "951",
+        "952"
+      ],
+      "phases": [
+        {
+          "duration_s": 42.0,
+          "state": "rrrrrrggggrrrrrrrr"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rrrrrryyyyrrrrrrrr"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rrrrrrrrrrrrrrrrrr"
+        },
+        {
+          "duration_s": 42.0,
+          "state": "rrrgggrrrrrrrrggrr"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rrryyyrrrrrrrryyrr"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rrrrrrrrrrrrrrrrrr"
+        },
+        {
+          "duration_s": 42.0,
+          "state": "gggrrrrrrrrrrrrrgg"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "yyyrrrrrrrrrrrrryy"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rrrrrrrrrrrrrrrrrr"
+        },
+        {
+          "duration_s": 42.0,
+          "state": "rrrrrrrrrrggggrrrr"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rrrrrrrrrryyyyrrrr"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rrrrrrrrrrrrrrrrrr"
+        }
+      ],
+      "controlled_links": [
+        {
+          "link_index": 0,
+          "from_lane_id": "-22_4",
+          "to_lane_id": "-20_3"
+        },
+        {
+          "link_index": 1,
+          "from_lane_id": "-22_4",
+          "to_lane_id": "-20_4"
+        },
+        {
+          "link_index": 2,
+          "from_lane_id": "-22_4",
+          "to_lane_id": "14_4"
+        },
+        {
+          "link_index": 3,
+          "from_lane_id": "-18_4",
+          "to_lane_id": "-15_3"
+        },
+        {
+          "link_index": 4,
+          "from_lane_id": "-18_4",
+          "to_lane_id": "-15_4"
+        },
+        {
+          "link_index": 5,
+          "from_lane_id": "-18_4",
+          "to_lane_id": "-20_4"
+        },
+        {
+          "link_index": 6,
+          "from_lane_id": "20_3",
+          "to_lane_id": "19_3"
+        },
+        {
+          "link_index": 7,
+          "from_lane_id": "20_3",
+          "to_lane_id": "-15_3"
+        },
+        {
+          "link_index": 8,
+          "from_lane_id": "20_4",
+          "to_lane_id": "19_4"
+        },
+        {
+          "link_index": 9,
+          "from_lane_id": "20_4",
+          "to_lane_id": "14_4"
+        },
+        {
+          "link_index": 10,
+          "from_lane_id": "-14_4",
+          "to_lane_id": "19_4"
+        },
+        {
+          "link_index": 11,
+          "from_lane_id": "-14_4",
+          "to_lane_id": "-15_4"
+        },
+        {
+          "link_index": 12,
+          "from_lane_id": "-14_3",
+          "to_lane_id": "-20_3"
+        },
+        {
+          "link_index": 13,
+          "from_lane_id": "-14_3",
+          "to_lane_id": "-15_3"
+        },
+        {
+          "link_index": 14,
+          "from_lane_id": "-18_3",
+          "to_lane_id": "-20_3"
+        },
+        {
+          "link_index": 15,
+          "from_lane_id": "-18_3",
+          "to_lane_id": "14_3"
+        },
+        {
+          "link_index": 16,
+          "from_lane_id": "-22_3",
+          "to_lane_id": "19_3"
+        },
+        {
+          "link_index": 17,
+          "from_lane_id": "-22_3",
+          "to_lane_id": "14_3"
+        }
+      ]
+    },
+    {
+      "tls_id": "468",
+      "program_id": "0",
+      "opendrive_signal_ids": [
+        "953",
+        "954"
+      ],
+      "phases": [
+        {
+          "duration_s": 42.0,
+          "state": "rrrggr"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rrryyr"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rrrrrr"
+        },
+        {
+          "duration_s": 42.0,
+          "state": "gggrrg"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "yyyrry"
+        },
+        {
+          "duration_s": 3.0,
+          "state": "rrrrrr"
+        }
+      ],
+      "controlled_links": [
+        {
+          "link_index": 0,
+          "from_lane_id": "1_3",
+          "to_lane_id": "-13_4"
+        },
+        {
+          "link_index": 1,
+          "from_lane_id": "1_3",
+          "to_lane_id": "-5_3"
+        },
+        {
+          "link_index": 2,
+          "from_lane_id": "1_3",
+          "to_lane_id": "-13_3"
+        },
+        {
+          "link_index": 3,
+          "from_lane_id": "13_3",
+          "to_lane_id": "-5_3"
+        },
+        {
+          "link_index": 4,
+          "from_lane_id": "13_4",
+          "to_lane_id": "-5_4"
+        },
+        {
+          "link_index": 5,
+          "from_lane_id": "1_4",
+          "to_lane_id": "-5_4"
+        }
+      ]
+    }
+  ],
+  "policy_action_semantics_reviewed": false,
+  "actuation_permitted": false,
+  "junctions": [
+    {
+      "alias": "J1",
+      "camera_id": "cam_g1",
+      "sumo_tls_id": "719",
+      "incoming_lane_ids": [
+        "-5_3",
+        "-5_4",
+        "19_3",
+        "19_4",
+        "6_3",
+        "6_4"
+      ],
+      "green_phases": [
+        {
+          "sumo_phase_index": 0,
+          "state": "rrgggrrrrgr",
+          "served_lane_ids": [
+            "6_3",
+            "6_4"
+          ]
+        },
+        {
+          "sumo_phase_index": 3,
+          "state": "ggrrrrrggrr",
+          "served_lane_ids": [
+            "19_3",
+            "19_4"
+          ]
+        },
+        {
+          "sumo_phase_index": 6,
+          "state": "rrrrrggrrrg",
+          "served_lane_ids": [
+            "-5_3",
+            "-5_4"
+          ]
+        }
+      ],
+      "model_lane_slots": 4,
+      "model_action_slots": 4,
+      "policy_lane_slot_mapping": null,
+      "policy_action_phase_mapping": null,
+      "ready_for_live_policy": false
+    },
+    {
+      "alias": "J2",
+      "camera_id": "cam_g3",
+      "sumo_tls_id": "23",
+      "incoming_lane_ids": [
+        "-15_3",
+        "-15_4",
+        "-3_3",
+        "-3_4",
+        "-6_3",
+        "-6_4"
+      ],
+      "green_phases": [
+        {
+          "sumo_phase_index": 0,
+          "state": "rrrrrrgggg",
+          "served_lane_ids": [
+            "-15_3",
+            "-15_4"
+          ]
+        },
+        {
+          "sumo_phase_index": 3,
+          "state": "gggrrrrrrr",
+          "served_lane_ids": [
+            "-6_3",
+            "-6_4"
+          ]
+        },
+        {
+          "sumo_phase_index": 6,
+          "state": "rrrgggrrrr",
+          "served_lane_ids": [
+            "-3_3",
+            "-3_4"
+          ]
+        }
+      ],
+      "model_lane_slots": 4,
+      "model_action_slots": 4,
+      "policy_lane_slot_mapping": null,
+      "policy_action_phase_mapping": null,
+      "ready_for_live_policy": false
+    },
+    {
+      "alias": "J3",
+      "camera_id": "cam_g4",
+      "sumo_tls_id": "189",
+      "incoming_lane_ids": [
+        "-14_3",
+        "-14_4",
+        "-18_3",
+        "-18_4",
+        "-22_3",
+        "-22_4",
+        "20_3",
+        "20_4"
+      ],
+      "green_phases": [
+        {
+          "sumo_phase_index": 0,
+          "state": "rrrrrrggggrrrrrrrr",
+          "served_lane_ids": [
+            "20_3",
+            "20_4"
+          ]
+        },
+        {
+          "sumo_phase_index": 3,
+          "state": "rrrgggrrrrrrrrggrr",
+          "served_lane_ids": [
+            "-18_3",
+            "-18_4"
+          ]
+        },
+        {
+          "sumo_phase_index": 6,
+          "state": "gggrrrrrrrrrrrrrgg",
+          "served_lane_ids": [
+            "-22_3",
+            "-22_4"
+          ]
+        },
+        {
+          "sumo_phase_index": 9,
+          "state": "rrrrrrrrrrggggrrrr",
+          "served_lane_ids": [
+            "-14_3",
+            "-14_4"
+          ]
+        }
+      ],
+      "model_lane_slots": 4,
+      "model_action_slots": 4,
+      "policy_lane_slot_mapping": null,
+      "policy_action_phase_mapping": null,
+      "ready_for_live_policy": false
+    },
+    {
+      "alias": "J4",
+      "camera_id": "cam_g5",
+      "sumo_tls_id": "468",
+      "incoming_lane_ids": [
+        "13_3",
+        "13_4",
+        "1_3",
+        "1_4"
+      ],
+      "green_phases": [
+        {
+          "sumo_phase_index": 0,
+          "state": "rrrggr",
+          "served_lane_ids": [
+            "13_3",
+            "13_4"
+          ]
+        },
+        {
+          "sumo_phase_index": 3,
+          "state": "gggrrg",
+          "served_lane_ids": [
+            "1_3",
+            "1_4"
+          ]
+        }
+      ],
+      "model_lane_slots": 4,
+      "model_action_slots": 4,
+      "policy_lane_slot_mapping": null,
+      "policy_action_phase_mapping": null,
+      "ready_for_live_policy": false
+    }
+  ]
+}

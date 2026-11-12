@@ -1,0 +1,1443 @@
+{
+  "schema_version": "aegis.lane-regions.v1",
+  "map": "Carla/Maps/Town10HD_Opt",
+  "network_sha256": "3ef9501d4bb19f868f49395e39007876f834cbfe713f864a7ea8413f98115004",
+  "xodr_sha256": "5d883b799f634030af92be1e9d79d107845540ba04338e8c60e095be1aef7be7",
+  "camera_config_sha256": "d8586591925967e7dbaf493b3616893365c92f8693b8bd6b9221f24db1cf96a7",
+  "status": "GEOMETRY_VALIDATED_COVERAGE_UNREVIEWED",
+  "can_publish_lane_counts": false,
+  "limitations": [
+    "Ground plane uses the CARLA stop-point height.",
+    "Polygon projection does not establish visibility through occluders.",
+    "ROI vehicle occupancy is not stopped-queue length."
+  ],
+  "cameras": [
+    {
+      "camera_id": "cam_g1",
+      "junction_id": "J1",
+      "sumo_tls_id": "719",
+      "regions": [
+        {
+          "lane_id": "19_4",
+          "opendrive_road_id": 18,
+          "opendrive_lane_id": 4,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0074,
+          "upstream_region_m": 16.53,
+          "width_m": 3.5,
+          "polygon_pixels": [],
+          "projected_area_pixels": 0,
+          "geometrically_visible": false,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "19_3",
+          "opendrive_road_id": 18,
+          "opendrive_lane_id": 5,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0074,
+          "upstream_region_m": 16.54,
+          "width_m": 3.5,
+          "polygon_pixels": [],
+          "projected_area_pixels": 0,
+          "geometrically_visible": false,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "-5_4",
+          "opendrive_road_id": 5,
+          "opendrive_lane_id": -1,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0005,
+          "upstream_region_m": 25.0,
+          "width_m": 3.5,
+          "polygon_pixels": [
+            [
+              0.0,
+              270.62
+            ],
+            [
+              27.09,
+              262.95
+            ],
+            [
+              14.14,
+              262.41
+            ],
+            [
+              1.29,
+              261.88
+            ],
+            [
+              0.0,
+              261.82
+            ]
+          ],
+          "projected_area_pixels": 119.15,
+          "geometrically_visible": true,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "-5_3",
+          "opendrive_road_id": 5,
+          "opendrive_lane_id": -2,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0008,
+          "upstream_region_m": 25.0,
+          "width_m": 3.5,
+          "polygon_pixels": [],
+          "projected_area_pixels": 0,
+          "geometrically_visible": false,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "6_4",
+          "opendrive_road_id": 6,
+          "opendrive_lane_id": 1,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0071,
+          "upstream_region_m": 25.0,
+          "width_m": 3.5,
+          "polygon_pixels": [
+            [
+              959.0,
+              284.98
+            ],
+            [
+              957.24,
+              284.91
+            ],
+            [
+              938.69,
+              284.2
+            ],
+            [
+              959.0,
+              293.7
+            ]
+          ],
+          "projected_area_pixels": 88.58,
+          "geometrically_visible": false,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "6_3",
+          "opendrive_road_id": 6,
+          "opendrive_lane_id": 2,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0056,
+          "upstream_region_m": 25.0,
+          "width_m": 3.5,
+          "polygon_pixels": [
+            [
+              959.0,
+              270.57
+            ],
+            [
+              953.74,
+              270.38
+            ],
+            [
+              936.72,
+              269.79
+            ],
+            [
+              919.89,
+              269.2
+            ],
+            [
+              903.14,
+              268.6
+            ],
+            [
+              935.95,
+              284.08
+            ],
+            [
+              954.6,
+              284.81
+            ],
+            [
+              959.0,
+              284.98
+            ]
+          ],
+          "projected_area_pixels": 565.93,
+          "geometrically_visible": true,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        }
+      ]
+    },
+    {
+      "camera_id": "cam_g3",
+      "junction_id": "J2",
+      "sumo_tls_id": "23",
+      "regions": [
+        {
+          "lane_id": "-3_4",
+          "opendrive_road_id": 7,
+          "opendrive_lane_id": 1,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0056,
+          "upstream_region_m": 25.0,
+          "width_m": 3.5,
+          "polygon_pixels": [
+            [
+              503.76,
+              256.25
+            ],
+            [
+              502.57,
+              258.16
+            ],
+            [
+              501.47,
+              260.14
+            ],
+            [
+              500.34,
+              262.18
+            ],
+            [
+              499.1,
+              264.3
+            ],
+            [
+              497.92,
+              266.52
+            ],
+            [
+              496.64,
+              268.82
+            ],
+            [
+              495.3,
+              271.22
+            ],
+            [
+              493.91,
+              273.72
+            ],
+            [
+              492.45,
+              276.34
+            ],
+            [
+              490.92,
+              279.08
+            ],
+            [
+              489.33,
+              281.94
+            ],
+            [
+              487.66,
+              284.94
+            ],
+            [
+              485.9,
+              288.09
+            ],
+            [
+              484.06,
+              291.4
+            ],
+            [
+              482.12,
+              294.87
+            ],
+            [
+              480.08,
+              298.53
+            ],
+            [
+              477.93,
+              302.39
+            ],
+            [
+              475.66,
+              306.47
+            ],
+            [
+              473.26,
+              310.78
+            ],
+            [
+              470.71,
+              315.34
+            ],
+            [
+              468.02,
+              320.19
+            ],
+            [
+              465.15,
+              325.33
+            ],
+            [
+              462.09,
+              330.82
+            ],
+            [
+              458.83,
+              336.67
+            ],
+            [
+              455.35,
+              342.92
+            ],
+            [
+              526.99,
+              346.05
+            ],
+            [
+              528.09,
+              339.59
+            ],
+            [
+              529.12,
+              333.55
+            ],
+            [
+              530.08,
+              327.9
+            ],
+            [
+              530.98,
+              322.59
+            ],
+            [
+              531.83,
+              317.61
+            ],
+            [
+              532.63,
+              312.92
+            ],
+            [
+              533.38,
+              308.49
+            ],
+            [
+              534.09,
+              304.3
+            ],
+            [
+              534.76,
+              300.34
+            ],
+            [
+              535.4,
+              296.59
+            ],
+            [
+              536.01,
+              293.03
+            ],
+            [
+              536.59,
+              289.64
+            ],
+            [
+              537.13,
+              286.42
+            ],
+            [
+              537.66,
+              283.35
+            ],
+            [
+              538.15,
+              280.42
+            ],
+            [
+              538.63,
+              277.62
+            ],
+            [
+              539.08,
+              274.95
+            ],
+            [
+              539.52,
+              272.39
+            ],
+            [
+              539.94,
+              269.95
+            ],
+            [
+              540.34,
+              267.59
+            ],
+            [
+              540.67,
+              265.34
+            ],
+            [
+              541.09,
+              263.19
+            ],
+            [
+              541.44,
+              261.1
+            ],
+            [
+              541.77,
+              259.12
+            ],
+            [
+              542.21,
+              257.22
+            ]
+          ],
+          "projected_area_pixels": 4895.77,
+          "geometrically_visible": true,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "-3_3",
+          "opendrive_road_id": 7,
+          "opendrive_lane_id": 2,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0058,
+          "upstream_region_m": 25.0,
+          "width_m": 3.5,
+          "polygon_pixels": [
+            [
+              465.9,
+              255.43
+            ],
+            [
+              464.01,
+              257.31
+            ],
+            [
+              462.18,
+              259.25
+            ],
+            [
+              460.29,
+              261.25
+            ],
+            [
+              458.26,
+              263.34
+            ],
+            [
+              456.26,
+              265.52
+            ],
+            [
+              454.13,
+              267.77
+            ],
+            [
+              451.91,
+              270.13
+            ],
+            [
+              449.59,
+              272.59
+            ],
+            [
+              447.17,
+              275.15
+            ],
+            [
+              444.63,
+              277.83
+            ],
+            [
+              441.98,
+              280.64
+            ],
+            [
+              439.21,
+              283.58
+            ],
+            [
+              436.3,
+              286.66
+            ],
+            [
+              433.25,
+              289.89
+            ],
+            [
+              430.04,
+              293.29
+            ],
+            [
+              426.66,
+              296.87
+            ],
+            [
+              423.1,
+              300.64
+            ],
+            [
+              419.34,
+              304.61
+            ],
+            [
+              415.38,
+              308.82
+            ],
+            [
+              411.17,
+              313.26
+            ],
+            [
+              406.72,
+              317.98
+            ],
+            [
+              401.99,
+              322.99
+            ],
+            [
+              396.96,
+              328.32
+            ],
+            [
+              391.6,
+              334.0
+            ],
+            [
+              385.87,
+              340.07
+            ],
+            [
+              455.24,
+              343.1
+            ],
+            [
+              458.74,
+              336.83
+            ],
+            [
+              462.0,
+              330.97
+            ],
+            [
+              465.06,
+              325.48
+            ],
+            [
+              467.94,
+              320.32
+            ],
+            [
+              470.64,
+              315.47
+            ],
+            [
+              473.19,
+              310.9
+            ],
+            [
+              475.59,
+              306.58
+            ],
+            [
+              477.87,
+              302.5
+            ],
+            [
+              480.02,
+              298.64
+            ],
+            [
+              482.06,
+              294.97
+            ],
+            [
+              484.0,
+              291.49
+            ],
+            [
+              485.85,
+              288.18
+            ],
+            [
+              487.61,
+              285.02
+            ],
+            [
+              489.28,
+              282.02
+            ],
+            [
+              490.88,
+              279.15
+            ],
+            [
+              492.4,
+              276.41
+            ],
+            [
+              493.86,
+              273.79
+            ],
+            [
+              495.26,
+              271.28
+            ],
+            [
+              496.6,
+              268.88
+            ],
+            [
+              497.89,
+              266.57
+            ],
+            [
+              499.06,
+              264.36
+            ],
+            [
+              500.3,
+              262.25
+            ],
+            [
+              501.44,
+              260.2
+            ],
+            [
+              502.51,
+              258.25
+            ],
+            [
+              503.68,
+              256.38
+            ]
+          ],
+          "projected_area_pixels": 4718.32,
+          "geometrically_visible": true,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "-15_4",
+          "opendrive_road_id": 22,
+          "opendrive_lane_id": 1,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0004,
+          "upstream_region_m": 25.0,
+          "width_m": 3.5,
+          "polygon_pixels": [],
+          "projected_area_pixels": 0,
+          "geometrically_visible": false,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "-15_3",
+          "opendrive_road_id": 22,
+          "opendrive_lane_id": 2,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0005,
+          "upstream_region_m": 25.0,
+          "width_m": 3.5,
+          "polygon_pixels": [],
+          "projected_area_pixels": 0,
+          "geometrically_visible": false,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "-6_4",
+          "opendrive_road_id": 6,
+          "opendrive_lane_id": -1,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0027,
+          "upstream_region_m": 25.0,
+          "width_m": 3.5,
+          "polygon_pixels": [],
+          "projected_area_pixels": 0,
+          "geometrically_visible": false,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "-6_3",
+          "opendrive_road_id": 6,
+          "opendrive_lane_id": -2,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0027,
+          "upstream_region_m": 25.0,
+          "width_m": 3.5,
+          "polygon_pixels": [],
+          "projected_area_pixels": 0,
+          "geometrically_visible": false,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        }
+      ]
+    },
+    {
+      "camera_id": "cam_g4",
+      "junction_id": "J3",
+      "sumo_tls_id": "189",
+      "regions": [
+        {
+          "lane_id": "-14_4",
+          "opendrive_road_id": 14,
+          "opendrive_lane_id": -1,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0031,
+          "upstream_region_m": 3.43,
+          "width_m": 3.5,
+          "polygon_pixels": [
+            [
+              474.77,
+              171.12
+            ],
+            [
+              473.54,
+              173.36
+            ],
+            [
+              472.28,
+              175.67
+            ],
+            [
+              470.97,
+              178.07
+            ],
+            [
+              470.4,
+              179.13
+            ],
+            [
+              508.57,
+              180.08
+            ],
+            [
+              508.87,
+              179.01
+            ],
+            [
+              509.53,
+              176.58
+            ],
+            [
+              510.17,
+              174.23
+            ],
+            [
+              510.79,
+              171.96
+            ]
+          ],
+          "projected_area_pixels": 302.19,
+          "geometrically_visible": true,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "-14_3",
+          "opendrive_road_id": 14,
+          "opendrive_lane_id": -2,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0032,
+          "upstream_region_m": 3.43,
+          "width_m": 3.5,
+          "polygon_pixels": [
+            [
+              439.19,
+              170.29
+            ],
+            [
+              437.38,
+              172.5
+            ],
+            [
+              435.51,
+              174.79
+            ],
+            [
+              433.57,
+              177.15
+            ],
+            [
+              432.72,
+              178.2
+            ],
+            [
+              470.39,
+              179.13
+            ],
+            [
+              470.97,
+              178.08
+            ],
+            [
+              472.28,
+              175.68
+            ],
+            [
+              473.54,
+              173.36
+            ],
+            [
+              474.76,
+              171.13
+            ]
+          ],
+          "projected_area_pixels": 296.15,
+          "geometrically_visible": true,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "20_4",
+          "opendrive_road_id": 20,
+          "opendrive_lane_id": 4,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0046,
+          "upstream_region_m": 25.0,
+          "width_m": 3.5,
+          "polygon_pixels": [],
+          "projected_area_pixels": 0,
+          "geometrically_visible": false,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "20_3",
+          "opendrive_road_id": 20,
+          "opendrive_lane_id": 5,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0046,
+          "upstream_region_m": 25.0,
+          "width_m": 3.5,
+          "polygon_pixels": [],
+          "projected_area_pixels": 0,
+          "geometrically_visible": false,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "-22_4",
+          "opendrive_road_id": 16,
+          "opendrive_lane_id": 1,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0046,
+          "upstream_region_m": 25.0,
+          "width_m": 3.5,
+          "polygon_pixels": [],
+          "projected_area_pixels": 0,
+          "geometrically_visible": false,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "-22_3",
+          "opendrive_road_id": 16,
+          "opendrive_lane_id": 2,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0051,
+          "upstream_region_m": 25.0,
+          "width_m": 3.5,
+          "polygon_pixels": [],
+          "projected_area_pixels": 0,
+          "geometrically_visible": false,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "-18_4",
+          "opendrive_road_id": 19,
+          "opendrive_lane_id": -1,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.008,
+          "upstream_region_m": 18.58,
+          "width_m": 3.5,
+          "polygon_pixels": [
+            [
+              959.0,
+              290.74
+            ],
+            [
+              944.26,
+              290.11
+            ],
+            [
+              932.07,
+              289.59
+            ],
+            [
+              959.0,
+              307.31
+            ]
+          ],
+          "projected_area_pixels": 223.12,
+          "geometrically_visible": true,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "-18_3",
+          "opendrive_road_id": 19,
+          "opendrive_lane_id": -2,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.008,
+          "upstream_region_m": 18.59,
+          "width_m": 3.5,
+          "polygon_pixels": [
+            [
+              959.0,
+              267.25
+            ],
+            [
+              943.16,
+              266.63
+            ],
+            [
+              924.13,
+              265.89
+            ],
+            [
+              905.22,
+              265.16
+            ],
+            [
+              894.12,
+              264.73
+            ],
+            [
+              931.87,
+              289.58
+            ],
+            [
+              944.27,
+              290.11
+            ],
+            [
+              959.0,
+              290.74
+            ]
+          ],
+          "projected_area_pixels": 1077.41,
+          "geometrically_visible": true,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        }
+      ]
+    },
+    {
+      "camera_id": "cam_g5",
+      "junction_id": "J4",
+      "sumo_tls_id": "468",
+      "regions": [
+        {
+          "lane_id": "13_4",
+          "opendrive_road_id": 13,
+          "opendrive_lane_id": 1,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0032,
+          "upstream_region_m": 25.0,
+          "width_m": 3.5,
+          "polygon_pixels": [],
+          "projected_area_pixels": 0,
+          "geometrically_visible": false,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "13_3",
+          "opendrive_road_id": 13,
+          "opendrive_lane_id": 2,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0032,
+          "upstream_region_m": 25.0,
+          "width_m": 3.5,
+          "polygon_pixels": [],
+          "projected_area_pixels": 0,
+          "geometrically_visible": false,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "1_4",
+          "opendrive_road_id": 4,
+          "opendrive_lane_id": -1,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0044,
+          "upstream_region_m": 25.0,
+          "width_m": 3.5,
+          "polygon_pixels": [
+            [
+              545.76,
+              251.23
+            ],
+            [
+              545.58,
+              253.72
+            ],
+            [
+              545.47,
+              256.32
+            ],
+            [
+              545.29,
+              259.02
+            ],
+            [
+              545.14,
+              261.85
+            ],
+            [
+              544.96,
+              264.81
+            ],
+            [
+              544.77,
+              267.92
+            ],
+            [
+              544.57,
+              271.18
+            ],
+            [
+              544.36,
+              274.61
+            ],
+            [
+              544.13,
+              278.21
+            ],
+            [
+              543.9,
+              282.01
+            ],
+            [
+              543.65,
+              286.02
+            ],
+            [
+              543.39,
+              290.26
+            ],
+            [
+              543.11,
+              294.74
+            ],
+            [
+              542.82,
+              299.49
+            ],
+            [
+              542.51,
+              304.53
+            ],
+            [
+              542.18,
+              309.9
+            ],
+            [
+              541.83,
+              315.62
+            ],
+            [
+              541.45,
+              321.73
+            ],
+            [
+              541.04,
+              328.27
+            ],
+            [
+              540.61,
+              335.29
+            ],
+            [
+              540.15,
+              342.84
+            ],
+            [
+              539.64,
+              350.99
+            ],
+            [
+              539.1,
+              359.81
+            ],
+            [
+              538.51,
+              369.38
+            ],
+            [
+              537.86,
+              379.81
+            ],
+            [
+              632.85,
+              384.64
+            ],
+            [
+              629.36,
+              373.8
+            ],
+            [
+              626.16,
+              363.87
+            ],
+            [
+              623.22,
+              354.73
+            ],
+            [
+              620.51,
+              346.3
+            ],
+            [
+              617.99,
+              338.5
+            ],
+            [
+              615.66,
+              331.26
+            ],
+            [
+              613.49,
+              324.52
+            ],
+            [
+              611.46,
+              318.22
+            ],
+            [
+              609.57,
+              312.34
+            ],
+            [
+              607.79,
+              306.82
+            ],
+            [
+              606.13,
+              301.64
+            ],
+            [
+              604.56,
+              296.77
+            ],
+            [
+              603.08,
+              292.17
+            ],
+            [
+              601.68,
+              287.83
+            ],
+            [
+              600.36,
+              283.73
+            ],
+            [
+              599.1,
+              279.84
+            ],
+            [
+              597.92,
+              276.15
+            ],
+            [
+              596.79,
+              272.65
+            ],
+            [
+              595.72,
+              269.31
+            ],
+            [
+              594.69,
+              266.14
+            ],
+            [
+              593.72,
+              263.11
+            ],
+            [
+              592.76,
+              260.23
+            ],
+            [
+              591.88,
+              257.46
+            ],
+            [
+              590.99,
+              254.82
+            ],
+            [
+              590.2,
+              252.31
+            ]
+          ],
+          "projected_area_pixels": 9043.28,
+          "geometrically_visible": true,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        },
+        {
+          "lane_id": "1_3",
+          "opendrive_road_id": 4,
+          "opendrive_lane_id": -2,
+          "mapping_verified": true,
+          "stop_to_centerline_error_m": 0.0045,
+          "upstream_region_m": 25.0,
+          "width_m": 3.5,
+          "polygon_pixels": [
+            [
+              502.1,
+              250.24
+            ],
+            [
+              501.0,
+              252.69
+            ],
+            [
+              499.91,
+              255.23
+            ],
+            [
+              498.71,
+              257.89
+            ],
+            [
+              497.5,
+              260.67
+            ],
+            [
+              496.21,
+              263.57
+            ],
+            [
+              494.85,
+              266.62
+            ],
+            [
+              493.43,
+              269.82
+            ],
+            [
+              491.93,
+              273.17
+            ],
+            [
+              490.36,
+              276.7
+            ],
+            [
+              488.7,
+              280.42
+            ],
+            [
+              486.96,
+              284.34
+            ],
+            [
+              485.11,
+              288.48
+            ],
+            [
+              483.16,
+              292.86
+            ],
+            [
+              481.1,
+              297.5
+            ],
+            [
+              478.91,
+              302.42
+            ],
+            [
+              476.58,
+              307.65
+            ],
+            [
+              474.09,
+              313.22
+            ],
+            [
+              471.45,
+              319.16
+            ],
+            [
+              468.61,
+              325.52
+            ],
+            [
+              465.58,
+              332.34
+            ],
+            [
+              462.31,
+              339.66
+            ],
+            [
+              458.8,
+              347.56
+            ],
+            [
+              455.0,
+              356.09
+            ],
+            [
+              450.88,
+              365.34
+            ],
+            [
+              446.39,
+              375.4
+            ],
+            [
+              537.85,
+              380.05
+            ],
+            [
+              538.49,
+              369.6
+            ],
+            [
+              539.08,
+              360.01
+            ],
+            [
+              539.63,
+              351.18
+            ],
+            [
+              540.13,
+              343.02
+            ],
+            [
+              540.6,
+              335.45
+            ],
+            [
+              541.03,
+              328.42
+            ],
+            [
+              541.44,
+              321.87
+            ],
+            [
+              541.82,
+              315.75
+            ],
+            [
+              542.17,
+              310.02
+            ],
+            [
+              542.5,
+              304.65
+            ],
+            [
+              542.81,
+              299.6
+            ],
+            [
+              543.11,
+              294.84
+            ],
+            [
+              543.38,
+              290.35
+            ],
+            [
+              543.65,
+              286.11
+            ],
+            [
+              543.89,
+              282.1
+            ],
+            [
+              544.13,
+              278.3
+            ],
+            [
+              544.35,
+              274.69
+            ],
+            [
+              544.56,
+              271.25
+            ],
+            [
+              544.77,
+              267.99
+            ],
+            [
+              544.96,
+              264.88
+            ],
+            [
+              545.14,
+              261.9
+            ],
+            [
+              545.29,
+              259.07
+            ],
+            [
+              545.47,
+              256.36
+            ],
+            [
+              545.58,
+              253.77
+            ],
+            [
+              545.75,
+              251.3
+            ]
+          ],
+          "projected_area_pixels": 8666.52,
+          "geometrically_visible": true,
+          "coverage_reviewed": false,
+          "occlusion_reviewed": false,
+          "usable_for_counts": false
+        }
+      ]
+    }
+  ]
+}

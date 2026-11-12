@@ -22,7 +22,9 @@ Map bundle: `/workspace/aegis/maps/town10-map-20261112T071329Z-dff47bc2`.
 Demand: `/workspace/aegis/scenarios/town10-demand-20261112T080350Z-bacdddb4/scenario.sumocfg`.
 Demand contains 12 passenger routes and 48 scheduled vehicles, seed 42, with a
 0.05-second step. Camera/signal IDs: cam_g1=719, cam_g3=23, cam_g4=189, cam_g5=468.
-Lane and policy-action mappings remain unverified.
+All 24 physical lane IDs and actual signal programs are now inventoried in
+`configs/runtime_mapping.json`; [policy compatibility and camera coverage](lane_mapping.md)
+remain unverified.
 
 ## Completed validation
 

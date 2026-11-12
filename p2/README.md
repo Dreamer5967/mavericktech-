@@ -17,6 +17,9 @@ Read [runtime status](../docs/runtime.md) before cloud execution and
 | `cosim_smoke.sh` | Guarded 30-second stock CARLA–SUMO bridge test |
 | `validate_pipeline.py` | Approved combined camera observer and one bounded bridge clock owner |
 | `bridge_validation.py` | Stock bridge wrapper with read-only signal/vehicle evaluator checks |
+| `runtime_mapping.py` | Offline hash-verified lane geometry and actual signal program inventory |
+| `lane_calibration.py` | Camera projection helpers for lane regions |
+| `controller_gate.py` | Offline checkpoint, network, lane-slot and green-action compatibility audit |
 | `setup_sumo.py` | Hash-pinned package setup; already completed on this instance |
 
 `camera_sites.oblique.json` is the tested angled configuration; its partial
@@ -64,3 +67,8 @@ clock owner.
 
 Run local tests with `python -B -m unittest discover -s p2/tests -v`.
 They use fakes and fixtures and do not establish live performance.
+
+Run `python -B -m p2.controller_gate` for the current policy compatibility audit.
+See [lane mapping status](../docs/lane_mapping.md) for the verified geometry,
+camera coverage limits and actual SUMO phase indices. This command never connects
+to a simulator or loads a checkpoint into a model.
