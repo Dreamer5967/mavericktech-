@@ -3,7 +3,7 @@
   "map": "Carla/Maps/Town10HD_Opt",
   "network_sha256": "3ef9501d4bb19f868f49395e39007876f834cbfe713f864a7ea8413f98115004",
   "xodr_sha256": "5d883b799f634030af92be1e9d79d107845540ba04338e8c60e095be1aef7be7",
-  "camera_config_sha256": "7e9556b24ea4366cd2e416eded08a078d88aff1fca80ce59f3b0289b296cb077",
+  "camera_config_sha256": "0c33250913cc28e46a7ebb06fc61fc3c1e1febd22efdeb17d0d068e601e80463",
   "status": "PARTIAL_ROI_COUNTS_VALIDATED_STATIC_TARGETS",
   "can_publish_lane_counts": true,
   "limitations": [
