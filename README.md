@@ -10,6 +10,7 @@ recovery-planner source. `main` is the integration branch.
 | `p2/` | Camera capture, YOLO, observation API, static map/demand tools and guarded bridge tests |
 | `services/control/` | Estimation, fixed-time control, policy inference and phase-manager logic |
 | `services/planner/` | Candidate generation, belief rollouts, planning and outcome logging |
+| `services/security/` | Prompt-screening rules and explicit-token role authorization |
 | `training/` | MAPPO actor/critic, training and standalone SUMO environment |
 | `configs/` | Observation, reward, seed and draft action configurations |
 | `contracts/` | Planner output schema |
@@ -43,6 +44,7 @@ Random test fixtures do not count as trained-policy verification.
 - [P2 commands](p2/README.md)
 - [Existing cloud runtime and validation status](docs/runtime.md)
 - [Observation and policy integration boundaries](docs/api.md)
+- [Security module scope](docs/security.md)
 
 P3 source is integrated; live learned control remains blocked by external
 checkpoint verification, lane calibration and actual map-specific phase mapping.
