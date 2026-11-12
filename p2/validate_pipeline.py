@@ -70,7 +70,9 @@ def run(args):
                 time.sleep(0.2)
             bridge=subprocess.Popen([sys.executable,'-B','-u','-m','p2.bridge_validation','--execute',
                 '--scenario',str(args.scenario.resolve()),'--config',str(args.config.resolve()),
-                '--output',str(output/'bridge'),'--seconds',str(args.seconds)],
+                '--output',str(output/'bridge'),'--seconds',str(args.seconds)]+(
+                ['--policy-checkpoint',str(args.policy_checkpoint.resolve()),'--policy-sha256',args.policy_sha256]
+                if args.policy_checkpoint else []),
                 stdout=bridge_log,stderr=subprocess.STDOUT,env=environment)
             started=time.monotonic()
             while bridge.poll() is None:
@@ -140,11 +142,16 @@ def main():
     parser.add_argument('--lane-regions',type=Path)
     parser.add_argument('--seconds',type=float,default=30)
     parser.add_argument('--port',type=int,default=8765)
+    parser.add_argument('--policy-checkpoint',type=Path,
+                        help='Optional verified checkpoint for read-only policy diagnostics.')
+    parser.add_argument('--policy-sha256',help='Required with --policy-checkpoint.')
     parser.add_argument('--output-root',type=Path,default=Path('/workspace/aegis/evidence/pipeline-validation'))
     parser.add_argument('--execute',action='store_true')
     args=parser.parse_args()
     if not 1<=args.seconds<=30 or not 1024<=args.port<=65535:
         parser.error('Use at most 30 seconds and a nonprivileged port.')
+    if (args.policy_checkpoint is None)!=(args.policy_sha256 is None):
+        parser.error('Use --policy-checkpoint and --policy-sha256 together.')
     if not args.execute:
         print('Prepared only: warms observer first, then one bridge clock owner. No process or connection started.')
         return 0

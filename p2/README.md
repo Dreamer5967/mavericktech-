@@ -89,6 +89,11 @@ both validation modules only describe the test.
 settings for its bounded run. Do not start it without approval and an available
 clock owner.
 
+For a verified external MAPPO artifact, `validate_pipeline.py` also accepts
+`--policy-checkpoint` and `--policy-sha256`. This records camera-only policy
+proposals alongside the fixed-time bridge run. It never changes a signal phase;
+the bridge remains the single clock owner and `policy_enabled` remains false.
+
 Run local tests with `python -B -m unittest discover -s p2/tests -v`.
 They use fakes and fixtures and do not establish live performance.
 

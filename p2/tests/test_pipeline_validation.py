@@ -16,6 +16,11 @@ class PipelineValidationTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, 'approval'):
                 run_bridge(None, None, 30, None)
 
+    def test_read_only_policy_arguments_must_be_a_verified_pair(self):
+        with patch.dict(os.environ, {'AEGIS_APPROVE_LIVE_COSIM':'yes'}, clear=True):
+            with self.assertRaisesRegex(ValueError, 'both checkpoint path and SHA256'):
+                run_bridge(None, None, 30, None, policy_checkpoint='external.pt')
+
     def test_observer_accepts_external_clock_without_calling_tick(self):
         class World:
             def get_settings(self):
