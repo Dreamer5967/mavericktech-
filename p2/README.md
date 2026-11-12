@@ -94,6 +94,18 @@ production schema remain to be implemented.
 
 ## SUMO gate
 
+Static demand is now prepared at
+`/workspace/aegis/scenarios/town10-demand-20261112T080350Z-bacdddb4/scenario.sumocfg`.
+It contains 12 passenger routes between all 12 directed pairs of the selected
+four signal systems and 48 scheduled vehicles with seed 42. These are generated
+scenario inputs, not simulated or evaluated traffic results. `prepare_demand.py`
+checks network hashes and lane permissions without starting a simulator.
+
+`cosim_smoke.sh` is a prepared 30-second fixed-time bridge test. It is blocked
+unless `AEGIS_APPROVE_LIVE_COSIM=yes`; it changes synchronization settings and
+advances the live clocks. It has NOT been executed. It reuses the existing CARLA
+server/map and refuses an existing synchronous owner or active RGB sensors.
+
 The original system SUMO 1.4.0 remains at /usr/bin. With explicit user approval,
 eclipse-sumo/traci/sumolib 1.20.0 and lxml 5.3.0 were added to the existing venv-sim
 using pinned hashes and --no-deps. Native version checks, required TraCI API/Logic
@@ -114,6 +126,11 @@ only live clock owner. Bridge starts and live clock advancement still require th
 user's explicit go-ahead.
 
 ## Verification
+
+The higher-rate MJPEG experiment was not validated through the SSH transport;
+the connection timed out. It was retained locally outside the published source.
+The published feed retains the verified JPEG/telemetry approach. No high-FPS
+delivery or browser-rendering rate is claimed.
 
 Tests use local fakes and temporary fixtures, never the cloud. They cover bounded
 capture, owned-actor cleanup, failure before sensor creation, detector warm-up

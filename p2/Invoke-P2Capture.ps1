@@ -22,7 +22,7 @@ $startedAt = [DateTime]::UtcNow.ToString('o')
 Write-Host 'AEGIS: enter your SSH key passphrase in this window only.'
 $forwardOptions = @()
 if ($TaskKind -eq 'LiveFeed') {
-    Write-Host 'This task runs continuous cameras/YOLO for ten minutes and forwards the read-only feed to http://127.0.0.1:8765.'
+    Write-Host 'This task runs a bounded camera/YOLO feed test and forwards it to http://127.0.0.1:8765.'
     $remoteCommand = "tr -d '\r' | AEGIS_APPROVE_LIVE_CAMERA_FEED=yes bash --noprofile --norc -s"
     $forwardOptions = @('-L','127.0.0.1:8765:127.0.0.1:8765','-o','ExitOnForwardFailure=yes')
 } elseif ($TaskKind -eq 'Capture') {
@@ -42,7 +42,7 @@ try {
     Get-Content -Raw -LiteralPath $RunnerPath |
         & ssh -T -o StrictHostKeyChecking=yes -o UpdateHostKeys=no -o ConnectTimeout=10 `
           -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -i $IdentityFile -p $SshPort `
-          @forwardOptions $destination $remoteCommand |
+          @forwardOptions $destination $remoteCommand 2>&1 |
         Tee-Object -FilePath $LogPath
     $sshExitCode = $LASTEXITCODE
 } finally {
