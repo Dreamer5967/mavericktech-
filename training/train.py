@@ -359,6 +359,7 @@ def run_training(
     # Export log
     df = pd.DataFrame(log_rows)
     out_csv = os.path.join(BASE_DIR, "results", f"training_stage{stage}.csv")
+    os.makedirs(os.path.join(BASE_DIR, "results"), exist_ok=True)
     df.to_csv(out_csv, index=False)
     print(f"\n{'=' * 65}")
     print(f"  Training Stage {stage} complete!")

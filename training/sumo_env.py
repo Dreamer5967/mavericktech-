@@ -395,6 +395,7 @@ class AEGISTrafficEnv:
                 s.bind(("", 0))
                 self.port = s.getsockname()[1]
 
+        (PROJECT_ROOT / "results").mkdir(parents=True, exist_ok=True)
         sumo_cmd = [
             sumo_bin_path,
             "-n", self.net_file,

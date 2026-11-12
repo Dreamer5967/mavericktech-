@@ -52,6 +52,7 @@ def benchmark_planner_timing(num_trials: int = 50):
 
     df = pd.DataFrame(rows)
     out_path = os.path.join(BASE_DIR, "results", "planner_timing.csv")
+    os.makedirs(os.path.join(BASE_DIR, "results"), exist_ok=True)
     df.to_csv(out_path, index=False)
 
     mean_ms = df["wall_clock_ms"].mean()

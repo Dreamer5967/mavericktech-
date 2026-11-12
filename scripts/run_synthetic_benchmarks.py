@@ -1,14 +1,15 @@
 """
-Automated Traffic Benchmark Runner
+Synthetic Traffic Diagnostic Runner
 ==================================
 Runs the matched comparison matrix:
   {fixed_time, mappo_no_recovery, mappo_with_recovery}
   x {0%, 10%, 20%, 40% camera dropout}
   x {test seeds: 8, 9, 10}
 
-Records all real measurements directly into:
-- evaluation/traffic_results.csv
-- evaluation/planner_results.csv
+Uses synthetic queue dynamics and randomly initialized test actors, not a trained
+policy or CARLA/SUMO measurements. Writes ignored outputs to:
+- results/traffic_results.csv
+- results/planner_results.csv
 - results/benchmark_summary.csv
 """
 
@@ -47,10 +48,12 @@ def run_benchmark_matrix():
     controllers = ["fixed_time", "mappo_no_recovery", "mappo_with_recovery"]
     fault_rates = [0.0, 0.10, 0.20, 0.40]
 
-    traffic_csv_path = os.path.join(BASE_DIR, "evaluation", "traffic_results.csv")
-    planner_csv_path = os.path.join(BASE_DIR, "evaluation", "planner_results.csv")
+    traffic_csv_path = os.path.join(BASE_DIR, "results", "traffic_results.csv")
+    planner_csv_path = os.path.join(BASE_DIR, "results", "planner_results.csv")
 
-    # Checkpoint setup
+    os.makedirs(os.path.join(BASE_DIR, "results"), exist_ok=True)
+
+    # Synthetic test actor setup
     obs_dim = 25
     action_dim = 4
     torch.manual_seed(42)
@@ -164,7 +167,8 @@ def run_benchmark_matrix():
                     "fuel_total": round(fuel_mg, 1),
                     "fuel_unit": "mg",
                     "teleports": 0,
-                    "status": "COMPLETED"
+                    "status": "COMPLETED",
+                    "data_mode": "SYNTHETIC_RANDOM_ACTOR_DIAGNOSTIC"
                 }
                 traffic_rows.append(row)
                 print(f"DONE (Waiting: {row['waiting_mean_s']}s, Completed: {completed_trips})")

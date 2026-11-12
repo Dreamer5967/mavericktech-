@@ -1,0 +1,6 @@
+# Candidate minimal addition for the existing cloud venv-sim. Not a full environment lock.
+# Use only after authorization to install these four packages; always use --no-deps --only-binary=:all: --require-hashes.
+eclipse-sumo==1.20.0 --hash=sha256:3b773c757289b01fd51a835560e4c77afb74a26d1225250cad4a23302f9ef010
+traci==1.20.0 --hash=sha256:afcff11ff1551a8727a2ab64a208f9baee0721e9774aad70143500093ec66e92
+sumolib==1.20.0 --hash=sha256:0331c68a3ca571b395fb7311cb91058462c6b1cbb4be056e38b4188510057a45
+lxml==5.3.0 --hash=sha256:41ce1f1e2c7755abfc7e759dc34d7d05fd221723ff822947132dc934d122fe22

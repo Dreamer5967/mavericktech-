@@ -1,5 +1,5 @@
 {
-  "_status": "P2_INVENTORY_INTEGRATED",
+  "_status": "SIGNAL_IDS_INTEGRATED_PHASE_MAPPING_UNVERIFIED",
   "_description": "Action space definition per junction updated with P2 SUMO TLS inventory (Town10HD_Opt).",
   "_p2_signal_mapping": {
     "cam_g1": "719",
@@ -13,14 +13,43 @@
       "camera_id": "cam_g1",
       "sumo_tls_id": "719",
       "num_phases": 4,
-      "phase_names": ["NS_GREEN", "EW_GREEN", "NS_LEFT", "EW_LEFT"],
+      "phase_names": [
+        "NS_GREEN",
+        "EW_GREEN",
+        "NS_LEFT",
+        "EW_LEFT"
+      ],
       "transition_paths": {
-        "NS_GREEN->EW_GREEN": ["YELLOW_NS", "ALL_RED", "EW_GREEN"],
-        "EW_GREEN->NS_GREEN": ["YELLOW_EW", "ALL_RED", "NS_GREEN"],
-        "NS_GREEN->NS_LEFT": ["YELLOW_NS", "ALL_RED", "NS_LEFT"],
-        "NS_LEFT->EW_GREEN": ["YELLOW_NS_LEFT", "ALL_RED", "EW_GREEN"],
-        "EW_GREEN->EW_LEFT": ["YELLOW_EW", "ALL_RED", "EW_LEFT"],
-        "EW_LEFT->NS_GREEN": ["YELLOW_EW_LEFT", "ALL_RED", "NS_GREEN"]
+        "NS_GREEN->EW_GREEN": [
+          "YELLOW_NS",
+          "ALL_RED",
+          "EW_GREEN"
+        ],
+        "EW_GREEN->NS_GREEN": [
+          "YELLOW_EW",
+          "ALL_RED",
+          "NS_GREEN"
+        ],
+        "NS_GREEN->NS_LEFT": [
+          "YELLOW_NS",
+          "ALL_RED",
+          "NS_LEFT"
+        ],
+        "NS_LEFT->EW_GREEN": [
+          "YELLOW_NS_LEFT",
+          "ALL_RED",
+          "EW_GREEN"
+        ],
+        "EW_GREEN->EW_LEFT": [
+          "YELLOW_EW",
+          "ALL_RED",
+          "EW_LEFT"
+        ],
+        "EW_LEFT->NS_GREEN": [
+          "YELLOW_EW_LEFT",
+          "ALL_RED",
+          "NS_GREEN"
+        ]
       },
       "min_green_s": 10,
       "yellow_s": 3,
@@ -32,14 +61,43 @@
       "camera_id": "cam_g3",
       "sumo_tls_id": "23",
       "num_phases": 4,
-      "phase_names": ["NS_GREEN", "EW_GREEN", "NS_LEFT", "EW_LEFT"],
+      "phase_names": [
+        "NS_GREEN",
+        "EW_GREEN",
+        "NS_LEFT",
+        "EW_LEFT"
+      ],
       "transition_paths": {
-        "NS_GREEN->EW_GREEN": ["YELLOW_NS", "ALL_RED", "EW_GREEN"],
-        "EW_GREEN->NS_GREEN": ["YELLOW_EW", "ALL_RED", "NS_GREEN"],
-        "NS_GREEN->NS_LEFT": ["YELLOW_NS", "ALL_RED", "NS_LEFT"],
-        "NS_LEFT->EW_GREEN": ["YELLOW_NS_LEFT", "ALL_RED", "EW_GREEN"],
-        "EW_GREEN->EW_LEFT": ["YELLOW_EW", "ALL_RED", "EW_LEFT"],
-        "EW_LEFT->NS_GREEN": ["YELLOW_EW_LEFT", "ALL_RED", "NS_GREEN"]
+        "NS_GREEN->EW_GREEN": [
+          "YELLOW_NS",
+          "ALL_RED",
+          "EW_GREEN"
+        ],
+        "EW_GREEN->NS_GREEN": [
+          "YELLOW_EW",
+          "ALL_RED",
+          "NS_GREEN"
+        ],
+        "NS_GREEN->NS_LEFT": [
+          "YELLOW_NS",
+          "ALL_RED",
+          "NS_LEFT"
+        ],
+        "NS_LEFT->EW_GREEN": [
+          "YELLOW_NS_LEFT",
+          "ALL_RED",
+          "EW_GREEN"
+        ],
+        "EW_GREEN->EW_LEFT": [
+          "YELLOW_EW",
+          "ALL_RED",
+          "EW_LEFT"
+        ],
+        "EW_LEFT->NS_GREEN": [
+          "YELLOW_EW_LEFT",
+          "ALL_RED",
+          "NS_GREEN"
+        ]
       },
       "min_green_s": 10,
       "yellow_s": 3,
@@ -51,14 +109,43 @@
       "camera_id": "cam_g4",
       "sumo_tls_id": "189",
       "num_phases": 4,
-      "phase_names": ["NS_GREEN", "EW_GREEN", "NS_LEFT", "EW_LEFT"],
+      "phase_names": [
+        "NS_GREEN",
+        "EW_GREEN",
+        "NS_LEFT",
+        "EW_LEFT"
+      ],
       "transition_paths": {
-        "NS_GREEN->EW_GREEN": ["YELLOW_NS", "ALL_RED", "EW_GREEN"],
-        "EW_GREEN->NS_GREEN": ["YELLOW_EW", "ALL_RED", "NS_GREEN"],
-        "NS_GREEN->NS_LEFT": ["YELLOW_NS", "ALL_RED", "NS_LEFT"],
-        "NS_LEFT->EW_GREEN": ["YELLOW_NS_LEFT", "ALL_RED", "EW_GREEN"],
-        "EW_GREEN->EW_LEFT": ["YELLOW_EW", "ALL_RED", "EW_LEFT"],
-        "EW_LEFT->NS_GREEN": ["YELLOW_EW_LEFT", "ALL_RED", "NS_GREEN"]
+        "NS_GREEN->EW_GREEN": [
+          "YELLOW_NS",
+          "ALL_RED",
+          "EW_GREEN"
+        ],
+        "EW_GREEN->NS_GREEN": [
+          "YELLOW_EW",
+          "ALL_RED",
+          "NS_GREEN"
+        ],
+        "NS_GREEN->NS_LEFT": [
+          "YELLOW_NS",
+          "ALL_RED",
+          "NS_LEFT"
+        ],
+        "NS_LEFT->EW_GREEN": [
+          "YELLOW_NS_LEFT",
+          "ALL_RED",
+          "EW_GREEN"
+        ],
+        "EW_GREEN->EW_LEFT": [
+          "YELLOW_EW",
+          "ALL_RED",
+          "EW_LEFT"
+        ],
+        "EW_LEFT->NS_GREEN": [
+          "YELLOW_EW_LEFT",
+          "ALL_RED",
+          "NS_GREEN"
+        ]
       },
       "min_green_s": 10,
       "yellow_s": 3,
@@ -70,14 +157,43 @@
       "camera_id": "cam_g5",
       "sumo_tls_id": "468",
       "num_phases": 4,
-      "phase_names": ["NS_GREEN", "EW_GREEN", "NS_LEFT", "EW_LEFT"],
+      "phase_names": [
+        "NS_GREEN",
+        "EW_GREEN",
+        "NS_LEFT",
+        "EW_LEFT"
+      ],
       "transition_paths": {
-        "NS_GREEN->EW_GREEN": ["YELLOW_NS", "ALL_RED", "EW_GREEN"],
-        "EW_GREEN->NS_GREEN": ["YELLOW_EW", "ALL_RED", "NS_GREEN"],
-        "NS_GREEN->NS_LEFT": ["YELLOW_NS", "ALL_RED", "NS_LEFT"],
-        "NS_LEFT->EW_GREEN": ["YELLOW_NS_LEFT", "ALL_RED", "EW_GREEN"],
-        "EW_GREEN->EW_LEFT": ["YELLOW_EW", "ALL_RED", "EW_LEFT"],
-        "EW_LEFT->NS_GREEN": ["YELLOW_EW_LEFT", "ALL_RED", "NS_GREEN"]
+        "NS_GREEN->EW_GREEN": [
+          "YELLOW_NS",
+          "ALL_RED",
+          "EW_GREEN"
+        ],
+        "EW_GREEN->NS_GREEN": [
+          "YELLOW_EW",
+          "ALL_RED",
+          "NS_GREEN"
+        ],
+        "NS_GREEN->NS_LEFT": [
+          "YELLOW_NS",
+          "ALL_RED",
+          "NS_LEFT"
+        ],
+        "NS_LEFT->EW_GREEN": [
+          "YELLOW_NS_LEFT",
+          "ALL_RED",
+          "EW_GREEN"
+        ],
+        "EW_GREEN->EW_LEFT": [
+          "YELLOW_EW",
+          "ALL_RED",
+          "EW_LEFT"
+        ],
+        "EW_LEFT->NS_GREEN": [
+          "YELLOW_EW_LEFT",
+          "ALL_RED",
+          "NS_GREEN"
+        ]
       },
       "min_green_s": 10,
       "yellow_s": 3,

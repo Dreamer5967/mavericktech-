@@ -83,8 +83,11 @@ class P2IntegrationVerificationTests(unittest.TestCase):
 
     def test_05_inference_live_step_succeeds(self):
         """Blocker 1 & 5: Live inference initializes and steps with Town10HD_Opt mapping."""
-        ckpt = os.path.join(BASE_DIR, "checkpoints", "mappo_cpu_best.pt")
-        self.assertTrue(os.path.isfile(ckpt), f"Local checkpoint missing at {ckpt}")
+        ckpt = os.environ.get("AEGIS_P3_CHECKPOINT", os.path.join(BASE_DIR, "checkpoints", "mappo_cpu_best.pt"))
+        if not os.path.isfile(ckpt):
+            if os.environ.get("AEGIS_REQUIRE_P3_CHECKPOINT") == "1":
+                self.fail(f"Required external checkpoint missing at {ckpt}")
+            self.skipTest("External checkpoint unavailable; this is not a live inference sign-off.")
 
         engine = AEGISInferenceEngine(checkpoint_path=ckpt, fail_closed=True)
         self.assertEqual(len(engine.junction_list), 4)

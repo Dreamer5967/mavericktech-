@@ -10,6 +10,7 @@ Output: Validated action dictionary: { "J1": phase_idx, "J2": phase_idx, ... }
 
 import os
 import json
+import hashlib
 import torch
 import numpy as np
 from typing import Dict, Any, Optional, List
@@ -32,7 +33,8 @@ class AEGISInferenceEngine:
         config_dir: Optional[str] = None,
         use_planner: bool = True,
         fail_closed: bool = True,
-        device: str = "cpu"
+        device: str = "cpu",
+        expected_checkpoint_sha256: Optional[str] = None,
     ):
         self.device = device
         self.use_planner = use_planner
@@ -71,7 +73,21 @@ class AEGISInferenceEngine:
         # Load Actor - Fail closed on missing/unverified checkpoint
         self.actor = ActorMLP(self.obs_dim, self.max_phases, hidden_dim=64).to(device)
         if checkpoint_path and os.path.isfile(checkpoint_path):
-            state = torch.load(checkpoint_path, map_location=device)
+            if self.fail_closed or expected_checkpoint_sha256 is not None:
+                expected = expected_checkpoint_sha256
+                if expected is None:
+                    manifest_file = os.path.join(base_dir, "manifests", "model_manifest.json")
+                    with open(manifest_file) as manifest_stream:
+                        expected = json.load(manifest_stream).get("checkpoint_sha256")
+                if not isinstance(expected, str) or len(expected) != 64:
+                    raise ValueError("Verified checkpoint SHA256 is required for live inference.")
+                digest = hashlib.sha256()
+                with open(checkpoint_path, "rb") as checkpoint_stream:
+                    for chunk in iter(lambda: checkpoint_stream.read(1024 * 1024), b""):
+                        digest.update(chunk)
+                if digest.hexdigest() != expected:
+                    raise ValueError("Checkpoint SHA256 mismatch; inference is blocked.")
+            state = torch.load(checkpoint_path, map_location=device, weights_only=True)
             if "actor_state_dict" in state:
                 self.actor.load_state_dict(state["actor_state_dict"])
             else:

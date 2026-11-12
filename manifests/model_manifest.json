@@ -13,9 +13,22 @@
     "cam_g4": "189",
     "cam_g5": "468"
   },
-  "train_seeds": [1, 2, 3, 4, 5],
-  "dev_seeds": [6, 7],
-  "held_out_seeds": [8, 9, 10],
+  "train_seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "dev_seeds": [
+    6,
+    7
+  ],
+  "held_out_seeds": [
+    8,
+    9,
+    10
+  ],
   "training_steps": 10000,
   "library_versions": {
     "torch": "2.15.0",
@@ -25,5 +38,9 @@
   },
   "actor_truth_access": false,
   "critic_truth_access_training_only": true,
-  "data_mode": "SYNTHETIC_PRE_COSIM_EVALUATION"
+  "data_mode": "SYNTHETIC_PRE_COSIM_EVALUATION",
+  "deployment_status": "BLOCKED_PENDING_CHECKPOINT_AND_MAP_VERIFICATION",
+  "checkpoint_verification": "EXTERNAL_ARTIFACT_NOT_VERIFIED",
+  "lane_mapping_verified": false,
+  "signal_phase_mapping_verified": false
 }

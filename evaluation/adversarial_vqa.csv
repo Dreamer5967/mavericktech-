@@ -1,1 +1,0 @@
-run_id,dataset,sample_id,attacked_model,attack,epsilon_raw_01,defense,clean_score,attacked_score,defended_score,detector_flag,true_attack_label,status

@@ -21,6 +21,7 @@ class OutcomeLogger:
         base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         self.log_path = log_path or os.path.join(base_dir, "results", "planner_predictions_vs_outcomes.csv")
         self.pending_decisions: Dict[str, Dict[str, Any]] = {}
+        os.makedirs(os.path.dirname(os.path.abspath(self.log_path)), exist_ok=True)
         self._init_csv()
 
     def _init_csv(self):
