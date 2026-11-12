@@ -48,6 +48,8 @@ def main():
         if not all(r['geometrically_visible'] for r in camera['regions']):
             raise ValueError('Layout still contains unprojected lanes.')
         print(camera['camera_id'],'projected regions',len(camera['regions']))
+        for region in camera['regions']:
+            region.pop('ground_polygon_world',None)  # Runtime needs image polygons only.
     for path,data in [(args.out_config,config),(args.out_regions,regions)]:
         with path.open('x',encoding='utf-8') as stream:json.dump(data,stream,indent=2);stream.write('\n')
 

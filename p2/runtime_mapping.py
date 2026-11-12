@@ -141,6 +141,9 @@ def main():
         read(args.inventory / 'map_manifest.json'), read(args.inventory / 'lane_geometry.json'),
         read(repository / 'p2/camera_sites.oblique.json'), read(repository / 'configs/action_mapping.json'))
     args.out.mkdir(parents=True, exist_ok=False)
+    for camera in calibration['cameras']:
+        for region in camera['regions']:
+            region.pop('ground_polygon_world',None)
     for name, value in [('lane_regions.json', calibration), ('runtime_mapping.json', runtime)]:
         (args.out / name).write_text(json.dumps(value, indent=2) + '\n', encoding='utf-8')
     for camera in calibration['cameras']:
