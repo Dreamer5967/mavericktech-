@@ -27,8 +27,14 @@ print('Approved co-simulation preflight passed. Existing server and map will be 
 PY
 cd /workspace/aegis/carla/Co-Simulation/Sumo
 set +e
-timeout --signal=INT --kill-after=20s 30s "$prefix/bin/python" -B -u run_synchronization.py \
-  "$scenario" --tls-manager sumo --step-length 0.05
+timeout --signal=INT --kill-after=20s 30s "$prefix/bin/python" -B -u - "$scenario" <<'P2_COMPAT_BRIDGE'
+import runpy,sys,traci,sumolib
+# Legacy bundled CARLA bridge expects this module attribute. Process-local only.
+traci.sumolib=sumolib
+scenario=sys.argv[1]
+sys.argv=['run_synchronization.py',scenario,'--tls-manager','sumo','--step-length','0.05']
+runpy.run_path('run_synchronization.py',run_name='__main__')
+P2_COMPAT_BRIDGE
 bridge_status=$?
 set -e
 printf 'Bridge exit status: %s (124 indicates the planned wall-time cutoff; review logs for errors).\n' "$bridge_status"

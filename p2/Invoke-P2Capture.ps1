@@ -5,7 +5,7 @@ param(
     [Parameter(Mandatory=$true)][string]$RunnerPath,
     [Parameter(Mandatory=$true)][string]$LogPath,
     [ValidatePattern('^[a-zA-Z0-9_-]+$')][string]$RemoteUser = 'root',
-    [ValidateSet('Capture','SumoSetup','StaticMap','LiveFeed')][string]$TaskKind = 'Capture'
+    [ValidateSet('Capture','SumoSetup','StaticMap','LiveFeed','Cosim')][string]$TaskKind = 'Capture'
 )
 
 # The private key stays in OpenSSH. This script never reads or records its contents.
@@ -21,7 +21,10 @@ $startedAt = [DateTime]::UtcNow.ToString('o')
     ConvertTo-Json | Set-Content -LiteralPath $statusPath -Encoding UTF8
 Write-Host 'AEGIS: enter your SSH key passphrase in this window only.'
 $forwardOptions = @()
-if ($TaskKind -eq 'LiveFeed') {
+if ($TaskKind -eq 'Cosim') {
+    Write-Host 'Approved 30-second CARLA/SUMO clock test. Existing server/map are reused.'
+    $remoteCommand = "tr -d '\r' | AEGIS_APPROVE_LIVE_COSIM=yes bash --noprofile --norc -s"
+} elseif ($TaskKind -eq 'LiveFeed') {
     Write-Host 'This task runs a bounded camera/YOLO feed test and forwards it to http://127.0.0.1:8765.'
     $remoteCommand = "tr -d '\r' | AEGIS_APPROVE_LIVE_CAMERA_FEED=yes bash --noprofile --norc -s"
     $forwardOptions = @('-L','127.0.0.1:8765:127.0.0.1:8765','-o','ExitOnForwardFailure=yes')
@@ -35,7 +38,7 @@ if ($TaskKind -eq 'LiveFeed') {
     Write-Host 'This task exports the existing map and converts static network files. It starts no simulator.'
     $remoteCommand = "tr -d '\r' | bash --noprofile --norc -s"
 }
-Write-Host 'CARLA stays on its current map; there are no manual simulation ticks.'
+if ($TaskKind -ne 'Cosim') { Write-Host 'CARLA stays on its current map; there are no manual simulation ticks.' }
 $sshExitCode = 255
 try {
     $destination = $RemoteUser + '@' + $RemoteHost

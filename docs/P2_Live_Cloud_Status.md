@@ -2,6 +2,17 @@
 
 ## Latest verified additions: 12 November 2026, 07:13 UTC
 
+Live co-simulation test at 08:12 UTC: with explicit user approval, the existing
+CARLA server and Town10HD_Opt map ran with SUMO signal authority for a 30-second
+wall-time limit. SUMO reached 28.05 simulated seconds; the read-only observer
+recorded 57 synchronous samples and up to 14 CARLA vehicle actors. Planned timeout
+triggered cleanup. Post-check confirmed the same map and synchronous_mode=False.
+No CARLA restart or map load occurred. The legacy bridge required a process-local
+traci.sumolib alias; installed simulator files were not edited. Observer evidence:
+`/workspace/aegis/evidence/cosim-smoke/test-20261112T081204Z-6199.jsonl`.
+Two unlinked map landmarks (955/956) produced warnings. Independent light-state
+agreement checks, calibrated lane perception, and P3 closed-loop control remain.
+
 Continuous-feed addition at 07:30 UTC: a ten-minute four-camera/YOLO worker was
 started without simulator ticks or map changes. The read-only API on cloud
 loopback port 8765 was tunneled to the laptop. Increasing revisions and actual

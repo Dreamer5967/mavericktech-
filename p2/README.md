@@ -103,7 +103,14 @@ checks network hashes and lane permissions without starting a simulator.
 
 `cosim_smoke.sh` is a prepared 30-second fixed-time bridge test. It is blocked
 unless `AEGIS_APPROVE_LIVE_COSIM=yes`; it changes synchronization settings and
-advances the live clocks. It has NOT been executed. It reuses the existing CARLA
+advances the live clocks. With explicit user approval it completed a 30-second
+wall-time test on 12 November 2026. SUMO reached 28.05 simulated seconds; a read-only
+observer recorded 57 synchronous samples, a 27.8-second observed simulation span,
+and up to 14 CARLA vehicle actors. The planned timeout invoked bridge cleanup;
+the post-check confirmed Town10HD_Opt and asynchronous mode. No CARLA restart or
+map load was performed. A process-local `traci.sumolib=sumolib` alias is needed
+by the bundled legacy bridge. Per-signal state equality and closed-loop P3 control
+were not independently validated in this smoke test. It reuses the existing CARLA
 server/map and refuses an existing synchronous owner or active RGB sensors.
 
 The original system SUMO 1.4.0 remains at /usr/bin. With explicit user approval,
@@ -121,7 +128,7 @@ Five SUMO traffic-light programs were created. All selected camera landmarks map
 without missing IDs: cam_g1→719, cam_g3→23, cam_g4→189, cam_g5→468.
 
 Before starting a bridge: review network connectivity and phase paths, add demand,
-and run a bounded synchronized test. No live co-simulation has run. P2 remains the
+and extend the successful bounded synchronized test. P2 remains the
 only live clock owner. Bridge starts and live clock advancement still require the
 user's explicit go-ahead.
 
