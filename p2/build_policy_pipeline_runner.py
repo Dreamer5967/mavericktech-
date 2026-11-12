@@ -40,7 +40,7 @@ def main():
                         help='Generate a bounded learned-policy actuation test runner.')
     args=parser.parse_args()
     if not args.checkpoint.is_file():parser.error('Verified external checkpoint is required.')
-    if not 1<=args.seconds<=120:parser.error('Bounded run must be 1–120 seconds.')
+    if not 1<=args.seconds<=300:parser.error('Bounded run must be 1–300 seconds.')
     if args.out.exists():parser.error('Refusing to overwrite an existing runner.')
     sources={name:(ROOT/name).read_text(encoding='utf-8') for name in SOURCE_FILES}
     files={**sources,'camera_config.json':args.config.read_text(encoding='utf-8'),

@@ -123,8 +123,8 @@ def main():
     parser.add_argument('--enable-policy',action='store_true',
                         help='Run bounded MAPPO signal actuation; requires AEGIS_APPROVE_LEARNED_POLICY=yes.')
     args=parser.parse_args()
-    if not 1<=args.seconds<=120:
-        parser.error('This validation is limited to at most 120 seconds of clock ownership.')
+    if not 1<=args.seconds<=300:
+        parser.error('This validation is limited to at most 300 seconds of clock ownership.')
     if not args.execute:
         print('Prepared only: would run one bounded clock owner and inspect selected signal agreement.')
         return 0
