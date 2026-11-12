@@ -1,10 +1,17 @@
 {
-  "_status": "PLACEHOLDER_PENDING_P2_INVENTORY",
-  "_description": "Action space definition per junction. sumo_tls_id values will be filled after P2 network inventory is complete.",
-  "junctions": {
-    "J1": {
+  "_status": "P2_INVENTORY_INTEGRATED",
+  "_description": "Action space definition per junction updated with P2 SUMO TLS inventory (Town10HD_Opt).",
+  "_p2_signal_mapping": {
+    "cam_g1": "719",
+    "cam_g3": "23",
+    "cam_g4": "189",
+    "cam_g5": "468"
+  },
+  "junctions": [
+    {
       "alias": "J1",
-      "sumo_tls_id": "TBD_FROM_P2_INVENTORY",
+      "camera_id": "cam_g1",
+      "sumo_tls_id": "719",
       "num_phases": 4,
       "phase_names": ["NS_GREEN", "EW_GREEN", "NS_LEFT", "EW_LEFT"],
       "transition_paths": {
@@ -15,16 +22,15 @@
         "EW_GREEN->EW_LEFT": ["YELLOW_EW", "ALL_RED", "EW_LEFT"],
         "EW_LEFT->NS_GREEN": ["YELLOW_EW_LEFT", "ALL_RED", "NS_GREEN"]
       },
-      "timing_constraints": {
-        "min_green_s": 10,
-        "yellow_s": 3,
-        "all_red_s": 2,
-        "max_green_s": 60
-      }
+      "min_green_s": 10,
+      "yellow_s": 3,
+      "all_red_s": 2,
+      "max_green_s": 60
     },
-    "J2": {
+    {
       "alias": "J2",
-      "sumo_tls_id": "TBD_FROM_P2_INVENTORY",
+      "camera_id": "cam_g3",
+      "sumo_tls_id": "23",
       "num_phases": 4,
       "phase_names": ["NS_GREEN", "EW_GREEN", "NS_LEFT", "EW_LEFT"],
       "transition_paths": {
@@ -35,16 +41,15 @@
         "EW_GREEN->EW_LEFT": ["YELLOW_EW", "ALL_RED", "EW_LEFT"],
         "EW_LEFT->NS_GREEN": ["YELLOW_EW_LEFT", "ALL_RED", "NS_GREEN"]
       },
-      "timing_constraints": {
-        "min_green_s": 10,
-        "yellow_s": 3,
-        "all_red_s": 2,
-        "max_green_s": 60
-      }
+      "min_green_s": 10,
+      "yellow_s": 3,
+      "all_red_s": 2,
+      "max_green_s": 60
     },
-    "J3": {
+    {
       "alias": "J3",
-      "sumo_tls_id": "TBD_FROM_P2_INVENTORY",
+      "camera_id": "cam_g4",
+      "sumo_tls_id": "189",
       "num_phases": 4,
       "phase_names": ["NS_GREEN", "EW_GREEN", "NS_LEFT", "EW_LEFT"],
       "transition_paths": {
@@ -55,16 +60,15 @@
         "EW_GREEN->EW_LEFT": ["YELLOW_EW", "ALL_RED", "EW_LEFT"],
         "EW_LEFT->NS_GREEN": ["YELLOW_EW_LEFT", "ALL_RED", "NS_GREEN"]
       },
-      "timing_constraints": {
-        "min_green_s": 10,
-        "yellow_s": 3,
-        "all_red_s": 2,
-        "max_green_s": 60
-      }
+      "min_green_s": 10,
+      "yellow_s": 3,
+      "all_red_s": 2,
+      "max_green_s": 60
     },
-    "J4": {
+    {
       "alias": "J4",
-      "sumo_tls_id": "TBD_FROM_P2_INVENTORY",
+      "camera_id": "cam_g5",
+      "sumo_tls_id": "468",
       "num_phases": 4,
       "phase_names": ["NS_GREEN", "EW_GREEN", "NS_LEFT", "EW_LEFT"],
       "transition_paths": {
@@ -75,12 +79,10 @@
         "EW_GREEN->EW_LEFT": ["YELLOW_EW", "ALL_RED", "EW_LEFT"],
         "EW_LEFT->NS_GREEN": ["YELLOW_EW_LEFT", "ALL_RED", "NS_GREEN"]
       },
-      "timing_constraints": {
-        "min_green_s": 10,
-        "yellow_s": 3,
-        "all_red_s": 2,
-        "max_green_s": 60
-      }
+      "min_green_s": 10,
+      "yellow_s": 3,
+      "all_red_s": 2,
+      "max_green_s": 60
     }
-  }
+  ]
 }

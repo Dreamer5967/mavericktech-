@@ -39,6 +39,12 @@ presentation/
 results/baseline_v1/
 evaluation/baseline_v1/
 
+# Model checkpoints (project no-weights in git policy)
+*.pt
+*.pth
+*.bin
+checkpoints/
+
 # IDE / Editors
 .vscode/
 .idea/

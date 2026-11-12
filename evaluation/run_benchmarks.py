@@ -150,7 +150,7 @@ def run_benchmark_matrix():
                 row = {
                     "run_id": run_id,
                     "controller": ctrl,
-                    "map_hash": "Town05_sha256_e4b1",
+                    "map_hash": "Town10HD_Opt_sha256_cd2be280cae08ead",
                     "checkpoint_hash": "mappo_cpu_best_e10",
                     "demand_seed": seed,
                     "fault_seed": seed + 100,

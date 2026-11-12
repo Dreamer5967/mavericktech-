@@ -1,4 +1,9 @@
 {
+  "schema_version": "1.0",
+  "description": "Observation vector layout per junction for AEGIS live inference & training.",
+  "num_junctions": 4,
+  "num_lanes_per_junction": 4,
+  "decision_interval_s": 5,
   "_metadata": {
     "schema_version": "1.0",
     "description": "Frozen observation vector definition per junction for the AEGIS traffic control project.",

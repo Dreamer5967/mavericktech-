@@ -12,7 +12,7 @@ import os
 import json
 import torch
 import numpy as np
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 
 from training.mappo.actor import ActorMLP
 from services.control.phase_manager import SafetyPhaseManager, PhaseProposal
@@ -23,6 +23,7 @@ class AEGISInferenceEngine:
     """
     Production inference engine for live traffic signal control.
     Integrates Actor policy, Safety Phase Manager, and Recovery Planner.
+    Fails closed if verified model checkpoint or configuration is missing.
     """
 
     def __init__(
@@ -30,10 +31,12 @@ class AEGISInferenceEngine:
         checkpoint_path: Optional[str] = None,
         config_dir: Optional[str] = None,
         use_planner: bool = True,
+        fail_closed: bool = True,
         device: str = "cpu"
     ):
         self.device = device
         self.use_planner = use_planner
+        self.fail_closed = fail_closed
 
         base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         cfg_dir = config_dir or os.path.join(base_dir, "configs")
@@ -43,42 +46,66 @@ class AEGISInferenceEngine:
         with open(os.path.join(cfg_dir, "action_mapping.json")) as f:
             self.action_schema = json.load(f)
 
-        self.num_junctions = self.obs_schema["num_junctions"]
-        self.num_lanes = self.obs_schema["num_lanes_per_junction"]
-        self.max_phases = max(j["num_phases"] for j in self.action_schema["junctions"])
+        # Resilient schema parsing: handles root or _metadata placement
+        meta = self.obs_schema.get("_metadata", {})
+        self.num_junctions = self.obs_schema.get("num_junctions", meta.get("num_junctions", 4))
+        self.num_lanes = self.obs_schema.get("num_lanes_per_junction", meta.get("num_lanes_per_junction", 4))
+
+        # Resilient junction parsing: handles list or dict
+        junctions_raw = self.action_schema.get("junctions", [])
+        if isinstance(junctions_raw, dict):
+            self.junction_list = list(junctions_raw.values())
+        else:
+            self.junction_list = list(junctions_raw)
+
+        if not self.junction_list:
+            raise ValueError("[AEGIS Init Error] No junctions defined in action_mapping.json")
+
+        self.max_phases = max(j.get("num_phases", len(j.get("phase_names", [4]))) for j in self.junction_list)
 
         # Calculate exact obs dimension
         self.obs_dim = (
             self.num_lanes * 3 + self.max_phases + 1 + self.num_junctions * 2
         )
 
-        # Load Actor
+        # Load Actor - Fail closed on missing/unverified checkpoint
         self.actor = ActorMLP(self.obs_dim, self.max_phases, hidden_dim=64).to(device)
-        if checkpoint_path and os.path.exists(checkpoint_path):
+        if checkpoint_path and os.path.isfile(checkpoint_path):
             state = torch.load(checkpoint_path, map_location=device)
             if "actor_state_dict" in state:
                 self.actor.load_state_dict(state["actor_state_dict"])
             else:
                 self.actor.load_state_dict(state)
+            self.checkpoint_loaded = True
+        else:
+            if self.fail_closed:
+                raise FileNotFoundError(
+                    f"[AEGIS Security Fail-Closed] Live inference cannot run without a verified "
+                    f"checkpoint artifact. Provided path: '{checkpoint_path}'. "
+                    f"To bypass for debugging only, set fail_closed=False."
+                )
+            self.checkpoint_loaded = False
+
         self.actor.eval()
 
         # Build Phase Manager
         allowed_phases = {
-            j["alias"]: set(j["phase_names"]) for j in self.action_schema["junctions"]
+            j["alias"]: set(j["phase_names"]) for j in self.junction_list
         }
+        first_j = self.junction_list[0]
         self.phase_mgr = SafetyPhaseManager(
             allowed_phases=allowed_phases,
-            min_green_s=self.action_schema["junctions"][0].get("min_green_s", 10.0),
-            yellow_s=self.action_schema["junctions"][0].get("yellow_s", 3.0),
-            all_red_s=self.action_schema["junctions"][0].get("all_red_s", 2.0),
-            max_green_s=self.action_schema["junctions"][0].get("max_green_s", 60.0),
+            min_green_s=first_j.get("min_green_s", 10.0),
+            yellow_s=first_j.get("yellow_s", 3.0),
+            all_red_s=first_j.get("all_red_s", 2.0),
+            max_green_s=first_j.get("max_green_s", 60.0),
         )
 
         # Recovery Planner
         self.planner = RecoveryPlannerCoordinator(
             actor_model=self.actor,
             horizon_s=30,
-            decision_dt=self.obs_schema.get("decision_interval_s", 5)
+            decision_dt=self.obs_schema.get("decision_interval_s", meta.get("decision_interval_s", 5))
         )
 
     def step(
@@ -102,7 +129,6 @@ class AEGISInferenceEngine:
         planner_records = []
 
         if self.use_planner:
-            # Plan across all junctions
             plan = self.planner.plan(
                 current_obs=observations,
                 action_masks=action_masks,
@@ -114,21 +140,20 @@ class AEGISInferenceEngine:
 
             for jid, obs in observations.items():
                 mask = action_masks.get(jid, np.ones(self.max_phases, dtype=bool))
-                # For demonstration, winning first action applies
                 action_idx = plan["first_action"]
                 if not mask[action_idx]:
                     valid_indices = np.where(mask)[0]
                     action_idx = int(valid_indices[0]) if len(valid_indices) > 0 else 0
                 executed_actions[jid] = action_idx
         else:
-            # Direct Actor inference without lookahead planner
             for jid, obs in observations.items():
                 mask = action_masks.get(jid, np.ones(self.max_phases, dtype=bool))
                 act, _ = self.actor.get_action(obs, mask, deterministic=True)
                 executed_actions[jid] = act
 
         # Advance phase manager safety timer
-        active_signals = self.phase_mgr.tick(dt=self.obs_schema.get("decision_interval_s", 5.0))
+        dt = self.obs_schema.get("decision_interval_s", 5.0)
+        active_signals = self.phase_mgr.tick(dt=dt)
 
         return {
             "actions": executed_actions,

@@ -98,20 +98,26 @@ class AEGISTrafficEnv:
         with open(cfg_dir / "reward_config.json") as f:
             self.reward_config = json.load(f)
 
-        # Junction setup
-        self.num_junctions = self.obs_config["num_junctions"]
-        self.num_lanes = self.obs_config["num_lanes_per_junction"]
-        self.junction_ids = [j["alias"] for j in self.action_config["junctions"]]
-        self.tls_ids = [j["sumo_tls_id"] for j in self.action_config["junctions"]]
-        self.num_phases = [j["num_phases"] for j in self.action_config["junctions"]]
+        # Junction setup (resilient to schema layout)
+        meta = self.obs_config.get("_metadata", {})
+        self.num_junctions = self.obs_config.get("num_junctions", meta.get("num_junctions", 4))
+        self.num_lanes = self.obs_config.get("num_lanes_per_junction", meta.get("num_lanes_per_junction", 4))
+
+        junctions_raw = self.action_config.get("junctions", [])
+        j_list = list(junctions_raw.values()) if isinstance(junctions_raw, dict) else list(junctions_raw)
+
+        self.junction_ids = [j["alias"] for j in j_list]
+        self.tls_ids = [str(j["sumo_tls_id"]) for j in j_list]
+        self.num_phases = [j["num_phases"] for j in j_list]
         self.max_phases = max(self.num_phases)
-        self.phase_names = [j["phase_names"] for j in self.action_config["junctions"]]
+        self.phase_names = [j["phase_names"] for j in j_list]
 
         # Phase transition parameters
-        self.min_green_s = self.action_config["junctions"][0].get("min_green_s", 10)
-        self.yellow_s = self.action_config["junctions"][0].get("yellow_s", 3)
-        self.all_red_s = self.action_config["junctions"][0].get("all_red_s", 2)
-        self.max_green_s = self.action_config["junctions"][0].get("max_green_s", 60)
+        first_j = j_list[0] if j_list else {}
+        self.min_green_s = first_j.get("min_green_s", 10)
+        self.yellow_s = first_j.get("yellow_s", 3)
+        self.all_red_s = first_j.get("all_red_s", 2)
+        self.max_green_s = first_j.get("max_green_s", 60)
 
         # Observation dimensions
         self.obs_dim = (
