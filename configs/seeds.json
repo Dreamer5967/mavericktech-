@@ -1,0 +1,7 @@
+{
+  "_description": "Random seed splits for reproducible training, validation, and testing in the AEGIS project.",
+  "train_seeds": [1, 2, 3, 4, 5],
+  "dev_seeds": [6, 7],
+  "test_seeds": [8, 9, 10],
+  "_test_seeds_note": "RESERVED FOR FINAL BENCHMARKS ONLY"
+}

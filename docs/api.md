@@ -30,3 +30,18 @@ Never pass evaluator ground truth into policy observations.
 When control is integrated, keep proposal, scheduled action and actual execution
 as distinct records. Incidents, reset, questions and experiment routes remain
 separate P4 work and are not implemented by this adapter.
+
+## Policy source integration
+
+`services/control/inference_entrypoint.py` consumes per-junction feature vectors
+and action masks; it does not consume the raw camera snapshot directly. The
+model declares four lane slots per junction. Whole-image counts cannot fill
+those lane slots. A reviewed lane adapter, real phase-index mapping and runtime
+network-hash verification are still required before connecting live control.
+
+Checkpoint loading verifies SHA256 against `manifests/model_manifest.json`
+(or an explicitly supplied expected digest for an offline fixture) and uses
+`torch.load(weights_only=True)`. The declared external artifact has not yet been
+verified. A correctly formatted manifest is not proof of model provenance.
+The engine returns proposed actions; its internal phase-manager output is not a
+record of executed simulator actions. No P2 feed route applies those proposals.

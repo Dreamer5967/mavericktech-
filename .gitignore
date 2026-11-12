@@ -72,3 +72,11 @@ runs/
 /AEGIS_Implementation_Handbook.pdf
 /team/*.docx
 /team/*.pdf
+
+# Generated model and experiment outputs
+/checkpoints/
+/results/
+tripinfo_*.xml
+.idea/
+*.swp
+*.swo
